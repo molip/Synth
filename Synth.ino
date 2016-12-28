@@ -142,14 +142,13 @@ int sine(int val) // [0, 4095] -> [0, 4095]
 }
 
 const float mult = 1.059463094359;
-const unsigned long targetLevel = 262144;
-const float startPitch = 2400;
-const int length = 1000;
+float startPitch = 400;
+const int length = 3000;
 const int intervals[] = { 2, 2, 1, 2, 2, 2, 1, };
 
-unsigned long level;
+unsigned int level;
 float pitch = startPitch;
-int intPitch;
+unsigned int intPitch;
 int ticks;
 int type;
 int note;
@@ -172,17 +171,14 @@ void timer()
 				pitch *= mult;
 		}
 
-		intPitch = (int)pitch;
+		intPitch = pitch;
 	}
 
 	unsigned long start = micros();
 	
 	level += intPitch;
 
-	if (level >= targetLevel)
-		level -= targetLevel;
-
-	int intLevel = level >> 6;
+	int intLevel = level >> 4;
 	int output  = 0;
 	
 	if (type == 0)

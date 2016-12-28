@@ -30,7 +30,7 @@ void setup()
   SPI.begin();  
   SPI.setClockDivider(SPI_CLOCK_DIV2);
 
-  Timer1.initialize(100); // microseconds
+  Timer1.initialize(30); // microseconds
   Timer1.attachInterrupt(timer);
 
   Serial.begin(115200);
@@ -143,7 +143,7 @@ int sine(int val) // [0, 4095] -> [0, 4095]
 
 const float mult = 1.059463094359;
 float startPitch = 400;
-const int length = 3000;
+const int length = 8192;
 const int intervals[] = { 2, 2, 1, 2, 2, 2, 1, };
 
 unsigned int level;
@@ -190,7 +190,7 @@ void timer()
 	else
 		output = intLevel > 2048 ? 4095 : 0; // Square.
 
-	setOutput((long)output * (length - ticks) / length);
+	setOutput((long)output * (length - ticks) >> 13);
 	//setOutput(output);
 
 	if (ticks == 0)

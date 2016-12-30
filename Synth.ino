@@ -2,6 +2,8 @@
 #include <TimerOne.h>
 #include <avr/pgmspace.h>
 
+#include "Types.h"
+
 /*
 Based on http://www.kerrywong.com/2012/07/25/code-for-mcp4821-mcp4822/
 
@@ -30,7 +32,7 @@ void setup()
   SPI.begin();  
   SPI.setClockDivider(SPI_CLOCK_DIV2);
 
-  Timer1.initialize(30); // microseconds
+  Timer1.initialize(60); // microseconds
   Timer1.attachInterrupt(timer);
 
   Serial.begin(115200);
@@ -142,56 +144,87 @@ int sine(int val) // [0, 4095] -> [0, 4095]
 }
 
 const float mult = 1.059463094359;
-float startPitch = 400;
-const int length = 8192;
+float startPitch = 800;
+const int lengthBits = 12;
+const int length = 1 << lengthBits;
 const int intervals[] = { 2, 2, 1, 2, 2, 2, 1, };
 
-unsigned int level;
 float pitch = startPitch;
 unsigned int intPitch;
 int ticks;
 int type;
-int note;
+int noteNum;
+
+Note notes[16];
+unsigned int notesBegin = 0, notesEnd = 0;
+
+// Returns level [0, 4095] * (1 << lengthBits).
+unsigned long ProcessNote(Note& note)
+{
+	note.phase += note.delta;
+
+	unsigned int intPhase = note.phase >> 4;
+	unsigned int output = 0;
+	
+	if (type == 0)
+		output = sine(intPhase); // Sine.
+	else if (type == 1)
+		output = 2 * (intPhase >= 2048 ? 4095 - intPhase : intPhase); // Triangle.
+	else if (type == 2)
+		output = intPhase; // Sawtooth. 
+	else
+		output = intPhase > 2048 ? 4095 : 0; // Square.
+
+	return (unsigned long)output * note.ticksLeft--;
+}
+
+void PushNote(unsigned int delta)
+{
+	Note& note = notes[notesEnd];
+	note.phase = 0;
+	note.delta = delta;
+	note.ticksLeft = length;
+
+	notesEnd = (notesEnd + 1) & 0xf; 
+	if (notesEnd == notesBegin) // Discard oldest. 
+		notesBegin = (notesBegin + 1) & 0xf; 
+}
+
 void timer()
 {
 	if (++ticks == length)
 	{
 		ticks = 0;
 		
-		if (note == 7)
+		if (noteNum == 7)
 		{
-			note = 0;
+			noteNum = 0;
 			pitch = startPitch;
 			type = (type + 1) % 4;
 		}
 		else
 		{
-			int interval = intervals[note++];
+			int interval = intervals[noteNum++];
 			for (int i = 0; i < interval; ++i)
 				pitch *= mult;
 		}
 
-		intPitch = pitch;
+		PushNote((unsigned int)pitch);
+		PushNote((unsigned int)(pitch * 1.3333));
 	}
 
 	unsigned long start = micros();
 	
-	level += intPitch;
-
-	int intLevel = level >> 4;
-	int output  = 0;
+	unsigned long output = 0;
+	for (int noteIndex = notesBegin; noteIndex != notesEnd; noteIndex = (noteIndex + 1) & 0xf)
+	{
+		Note& note = notes[noteIndex];
+		output += ProcessNote(note);
+		if (note.ticksLeft == 0) // Assumes all note lengths are equal. 
+			notesBegin = (notesBegin + 1) & 0xf;
+	}	
 	
-	if (type == 0)
-		output = sine(intLevel); // Sine.
-	else if (type == 1)
-		output = 2 * (intLevel >= 2048 ? 4095 - intLevel : intLevel); // Triangle.
-	else if (type == 2)
-		output = intLevel; // Sawtooth. 
-	else
-		output = intLevel > 2048 ? 4095 : 0; // Square.
-
-	setOutput((long)output * (length - ticks) >> 13);
-	//setOutput(output);
+	setOutput(output >> (lengthBits + 1)); // Headroom for 2 notes.
 
 	if (ticks == 0)
 	{

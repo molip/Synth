@@ -158,13 +158,13 @@ int noteNum;
 Note notes[16];
 unsigned int notesBegin = 0, notesEnd = 0;
 
-// Returns level [0, 4095] * (1 << lengthBits).
-unsigned long ProcessNote(Note& note)
+// Returns level [-2048, 2047] * (1 << lengthBits).
+long ProcessNote(Note& note)
 {
 	note.phase += note.delta;
 
 	unsigned int intPhase = note.phase >> 4;
-	unsigned int output = 0;
+	int output = 0;
 	
 	if (type == 0)
 		output = sine(intPhase); // Sine.
@@ -175,7 +175,7 @@ unsigned long ProcessNote(Note& note)
 	else
 		output = intPhase > 2048 ? 4095 : 0; // Square.
 
-	return (unsigned long)output * note.ticksLeft--;
+	return (long)(output - 2048) * note.ticksLeft--;
 }
 
 void PushNote(unsigned int delta)
@@ -215,7 +215,7 @@ void timer()
 
 	unsigned long start = micros();
 	
-	unsigned long output = 0;
+	long output = 0;
 	for (int noteIndex = notesBegin; noteIndex != notesEnd; noteIndex = (noteIndex + 1) & 0xf)
 	{
 		Note& note = notes[noteIndex];
@@ -224,7 +224,7 @@ void timer()
 			notesBegin = (notesBegin + 1) & 0xf;
 	}	
 	
-	setOutput(output >> (lengthBits + 1)); // Headroom for 2 notes.
+	setOutput(2048 + (output >> (lengthBits + 1))); // Headroom for 2 notes.
 
 	if (ticks == 0)
 	{

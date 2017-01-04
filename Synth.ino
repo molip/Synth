@@ -1,5 +1,7 @@
 #include <SPI.h>
 #include <TimerOne.h>
+#include <SoftwareSerial.h>
+
 #include <avr/pgmspace.h>
 
 #include "Types.h"
@@ -9,7 +11,7 @@ Based on http://www.kerrywong.com/2012/07/25/code-for-mcp4821-mcp4822/
 
 MCP4822 pins: 
 	1	+5V
-	2	Digital 10
+	2	PIN_CS
 	3	Digital 13
 	4	Digital 11
 	5	GND
@@ -24,45 +26,123 @@ const int PIN_CS = 10;
 const int GAIN_1 = 0x1;
 const int GAIN_2 = 0x0;
 
+SoftwareSerial mySerial(4, 3); // RX, TX
 
+#define MIDISERIAL mySerial
+//#define MIDISERIAL Serial
+
+#define MIDI_NOTE_OFF 128
+#define MIDI_NOTE_ON 144
+
+boolean gotTick;
+
+const float mult = 1.059463094359;
+unsigned int pitches[12];
 
 void setup()
 {
-  pinMode(PIN_CS, OUTPUT);
-  SPI.begin();  
-  SPI.setClockDivider(SPI_CLOCK_DIV2);
+	float pitch = 80; // Arbitrary.
+	for (int i = 0; i < 12; ++i)
+	{
+		pitches[i] = (int)pitch;
+		pitch *= mult;
+	}
 
-  Timer1.initialize(60); // microseconds
-  Timer1.attachInterrupt(timer);
+	pinMode(13, OUTPUT);
+	
+	pinMode(PIN_CS, OUTPUT);
+	SPI.begin();  
+	SPI.setClockDivider(SPI_CLOCK_DIV2);
 
-  Serial.begin(115200);
+	Timer1.initialize(80); // microseconds
+	Timer1.attachInterrupt(timer);
+
+	//Serial.begin(57600);
+
+	MIDISERIAL.begin(31250);
 }
  
 //assuming single channel, gain=2
 void setOutput(unsigned int val)
 {
-  byte lowByte = val & 0xff;
-  byte highByte = ((val >> 8) & 0xff) | 0x10;
-   
-  PORTB &= 0xfb;
-  SPI.transfer(highByte);
-  SPI.transfer(lowByte);
-  PORTB |= 0x4;
+	byte lowByte = val & 0xff;
+	byte highByte = ((val >> 8) & 0xff) | 0x10;
+
+	PORTB &= 0xfb;
+	SPI.transfer(highByte);
+	SPI.transfer(lowByte);
+	PORTB |= 0x4;
 }
  
 void setOutput(byte channel, byte gain, byte shutdown, unsigned int val)
 {
-  byte lowByte = val & 0xff;
-  byte highByte = ((val >> 8) & 0xff) | channel << 7 | gain << 5 | shutdown << 4;
-   
-  PORTB &= 0xfb;
-  SPI.transfer(highByte);
-  SPI.transfer(lowByte);
-  PORTB |= 0x4;
+	byte lowByte = val & 0xff;
+	byte highByte = ((val >> 8) & 0xff) | channel << 7 | gain << 5 | shutdown << 4;
+
+	PORTB &= 0xfb;
+	SPI.transfer(highByte);
+	SPI.transfer(lowByte);
+	PORTB |= 0x4;
 }
+
+byte ReadMIDI()
+{
+	int data = MIDISERIAL.read();
+
+	if (data < 0)
+	{
+		digitalWrite(13, true);
+		delay(200);
+		digitalWrite(13, false);
+		return 0;
+	}
+	return data;
+}
+
+byte midiCommand;
+byte midiNote;
  
 void loop()
 {
+	if (gotTick)
+	{
+		gotTick = false;
+		DoTick();
+	}
+
+	if (MIDISERIAL.available() > 0) 
+	{
+		byte midiByte = ReadMIDI();
+
+		if (midiByte & 0x80)
+		{
+			// remove channel info
+			byte midiChannel = midiByte & 0xf;
+			midiCommand = midiByte & 0xf0;
+			midiNote = 0;
+
+			//Serial.print("Command: "); Serial.print(midiCommand); Serial.print("\n");
+		}
+		else
+		{
+			if (midiCommand == MIDI_NOTE_ON)
+			{
+				if (midiNote == 0)
+				{
+					midiNote = midiByte;
+					//Serial.print("Note: "); Serial.println(midiNote);
+				}
+				else
+				{
+					byte velocity = midiByte;
+					if (velocity > 0)
+						PushNote(midiNote);
+					midiNote = 0;
+					//Serial.print("Velocity: "); Serial.print(velocity); Serial.print("\n");
+				}
+			}
+		}
+	}
 }
 
 // 2048 values. Could mirror if we run out of space. 
@@ -197,20 +277,23 @@ const char table[] PROGMEM = {
 0x79,0x7a,0x7a,0x7a,0x7b,0x7b,0x7c,0x7c,0x7c,0x7d,0x7d,0x7e,0x7e,0x7e,0x7f,0x7f,
 };
 
-const float mult = 1.059463094359;
 float startPitch = 800;
-const int lengthBits = 12;
+const int lengthBits = 13;
 const int length = 1 << lengthBits;
 const int intervals[] = { 2, 2, 1, 2, 2, 2, 1, };
 
 float pitch = startPitch;
 unsigned int intPitch;
 int ticks;
-int type;
+int type = 0;
 int noteNum;
 
-Note notes[16];
+const byte noteBufferBits = 2;
+const byte noteBufferMask = (1 << noteBufferBits) - 1;
+Note noteBuffer[1 << noteBufferBits];
 unsigned int notesBegin = 0, notesEnd = 0;
+#define INCREMENT_NOTE_INDEX(i) i = (i + 1) & noteBufferMask
+
 
 // Returns level [-0x800, 0xfff] * (1 << lengthBits).
 long ProcessNote(Note& note)
@@ -232,59 +315,41 @@ long ProcessNote(Note& note)
 	return (long)(output - 0x800) * note.ticksLeft--;
 }
 
-void PushNote(unsigned int delta)
+void PushNote(byte noteIndex)
 {
-	Note& note = notes[notesEnd];
+	int octave = noteIndex / 12;
+	int pitchIndex = noteIndex % 12;
+	
+	unsigned int pitch = pitches[pitchIndex];
+	pitch = pitch << octave;
+
+	Note& note = noteBuffer[notesEnd];
 	note.phase = 0;
-	note.delta = delta;
+	note.delta = pitch;
 	note.ticksLeft = length;
 
-	notesEnd = (notesEnd + 1) & 0xf; 
+	INCREMENT_NOTE_INDEX(notesEnd);
 	if (notesEnd == notesBegin) // Discard oldest. 
-		notesBegin = (notesBegin + 1) & 0xf; 
+		INCREMENT_NOTE_INDEX(notesBegin);
 }
 
 void timer()
 {
-	if (++ticks == length)
-	{
-		ticks = 0;
-		
-		if (noteNum == 7)
-		{
-			noteNum = 0;
-			pitch = startPitch;
-			type = (type + 1) % 4;
-		}
-		else
-		{
-			int interval = intervals[noteNum++];
-			for (int i = 0; i < interval; ++i)
-				pitch *= mult;
-		}
+	gotTick = true;
+}
 
-		PushNote((unsigned int)pitch);
-		PushNote((unsigned int)(pitch * 1.3333));
-	}
-
+void DoTick()
+{
 	unsigned long start = micros();
 	
 	long output = 0;
-	for (int noteIndex = notesBegin; noteIndex != notesEnd; noteIndex = (noteIndex + 1) & 0xf)
+	for (int noteIndex = notesBegin; noteIndex != notesEnd; INCREMENT_NOTE_INDEX(noteIndex))
 	{
-		Note& note = notes[noteIndex];
+		Note& note = noteBuffer[noteIndex];
 		output += ProcessNote(note);
 		if (note.ticksLeft == 0) // Assumes all note lengths are equal. 
-			notesBegin = (notesBegin + 1) & 0xf;
+			INCREMENT_NOTE_INDEX(notesBegin);
 	}	
 	
-	setOutput(0x800 + (output >> (lengthBits + 1))); // Headroom for 2 notes.
-
-	if (ticks == 0)
-	{
-		unsigned long duration = micros() - start;
-		Serial.print(duration); 
-		Serial.print("\n"); 
-	}
+	setOutput(0x800 + (output >> (lengthBits + noteBufferBits)));
 }
-

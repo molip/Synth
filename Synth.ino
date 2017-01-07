@@ -26,7 +26,7 @@ const int PIN_CS = 10;
 const int GAIN_1 = 0x1;
 const int GAIN_2 = 0x0;
 
-SoftwareSerial mySerial(4, 3); // RX, TX
+SoftwareSerial mySerial(2, 3); // RX, TX
 
 #define MIDISERIAL mySerial
 //#define MIDISERIAL Serial
@@ -48,7 +48,10 @@ void setup()
 		pitch *= mult;
 	}
 
-	pinMode(13, OUTPUT);
+	pinMode(4, INPUT_PULLUP);
+	pinMode(5, INPUT_PULLUP);
+	pinMode(6, INPUT_PULLUP);
+	pinMode(7, INPUT_PULLUP);
 	
 	pinMode(PIN_CS, OUTPUT);
 	SPI.begin();  
@@ -91,9 +94,7 @@ byte ReadMIDI()
 
 	if (data < 0)
 	{
-		digitalWrite(13, true);
 		delay(200);
-		digitalWrite(13, false);
 		return 0;
 	}
 	return data;
@@ -134,9 +135,17 @@ void loop()
 				}
 				else
 				{
+					byte type = 0;
+					if (!digitalRead(7))
+						type = 1;
+					else if (!digitalRead(6))
+						type = 2;
+					else if (!digitalRead(5))
+						type = 3;
+					
 					byte velocity = midiByte;
 					if (velocity > 0)
-						PushNote(midiNote);
+						PushNote(midiNote, type);
 					midiNote = 0;
 					//Serial.print("Velocity: "); Serial.print(velocity); Serial.print("\n");
 				}
@@ -285,7 +294,6 @@ const int intervals[] = { 2, 2, 1, 2, 2, 2, 1, };
 float pitch = startPitch;
 unsigned int intPitch;
 int ticks;
-int type = 0;
 int noteNum;
 
 const byte noteBufferBits = 2;
@@ -303,11 +311,11 @@ long ProcessNote(Note& note)
 	unsigned int phase = note.phase >> 4; // [0, 0xfff]
 	int output = 0;
 	
-	if (type == 0) 
+	if (note.type == 0) 
 		output = pgm_read_byte_near(table + (phase >> 1)) << 4; // Sine.
-	else if (type == 1)
+	else if (note.type == 1)
 		output = 2 * ((phase & 0x800) ? 0xfff - phase : phase); // Triangle.
-	else if (type == 2)
+	else if (note.type == 2)
 		output = phase; // Sawtooth. 
 	else
 		output = phase > 0x800 ? 0xfff : 0; // Square.
@@ -315,7 +323,7 @@ long ProcessNote(Note& note)
 	return (long)(output - 0x800) * note.ticksLeft--;
 }
 
-void PushNote(byte noteIndex)
+void PushNote(byte noteIndex, byte type)
 {
 	int octave = noteIndex / 12;
 	int pitchIndex = noteIndex % 12;
@@ -327,6 +335,7 @@ void PushNote(byte noteIndex)
 	note.phase = 0;
 	note.delta = pitch;
 	note.ticksLeft = length;
+	note.type = type;
 
 	INCREMENT_NOTE_INDEX(notesEnd);
 	if (notesEnd == notesBegin) // Discard oldest. 

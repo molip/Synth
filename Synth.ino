@@ -297,9 +297,11 @@ int ticks;
 int noteNum;
 
 const byte noteBufferBits = 2;
-const byte noteBufferMask = (1 << noteBufferBits) - 1;
-Note noteBuffer[1 << noteBufferBits];
-unsigned int notesBegin = 0, notesEnd = 0;
+const byte noteBufferLength = 1 << noteBufferBits;
+const byte noteBufferMask = noteBufferLength - 1;
+Note noteBuffer[noteBufferLength];
+unsigned int notesBegin = 0;
+byte noteBufferCount;
 #define INCREMENT_NOTE_INDEX(i) i = (i + 1) & noteBufferMask
 
 
@@ -331,15 +333,16 @@ void PushNote(byte noteIndex, byte type)
 	unsigned int pitch = pitches[pitchIndex];
 	pitch = pitch << octave;
 
-	Note& note = noteBuffer[notesEnd];
+	Note& note = noteBuffer[(notesBegin + noteBufferCount) & noteBufferMask];
 	note.phase = 0;
 	note.delta = pitch;
 	note.ticksLeft = length;
 	note.type = type;
 
-	INCREMENT_NOTE_INDEX(notesEnd);
-	if (notesEnd == notesBegin) // Discard oldest. 
+	if (noteBufferLength == noteBufferCount) // Discard oldest. 
 		INCREMENT_NOTE_INDEX(notesBegin);
+	else
+		++noteBufferCount;
 }
 
 void timer()
@@ -349,15 +352,19 @@ void timer()
 
 void DoTick()
 {
-	unsigned long start = micros();
-	
 	long output = 0;
-	for (int noteIndex = notesBegin; noteIndex != notesEnd; INCREMENT_NOTE_INDEX(noteIndex))
+	int noteIndex = notesBegin;
+	const int count = noteBufferCount;
+	for (int i = 0; i < count; ++i)
 	{
 		Note& note = noteBuffer[noteIndex];
 		output += ProcessNote(note);
 		if (note.ticksLeft == 0) // Assumes all note lengths are equal. 
+		{
 			INCREMENT_NOTE_INDEX(notesBegin);
+			--noteBufferCount;
+		}
+		INCREMENT_NOTE_INDEX(noteIndex);
 	}	
 	
 	setOutput(0x800 + (output >> (lengthBits + noteBufferBits)));

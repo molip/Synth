@@ -1,7 +1,7 @@
 struct Note
 {
-	unsigned int phase; 		// [0, 0xffff]
-	unsigned int delta;
+	uint16_t phase; 		// [0, 0xffff]
+	uint16_t delta;
 	unsigned int ticksLeft;
 	byte type;
 };

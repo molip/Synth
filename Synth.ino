@@ -1,4 +1,3 @@
-#include <SPI.h>
 #include <TimerOne.h>
 #include <SoftwareSerial.h>
 
@@ -6,30 +5,18 @@
 
 #include "Types.h"
 
-/*
-Based on http://www.kerrywong.com/2012/07/25/code-for-mcp4821-mcp4822/
+#ifdef __AVR_ATmega328P__
+	//SoftwareSerial mySerial(2, 3); // RX, TX
+	//#define MIDISERIAL mySerial
+	#define MIDISERIAL Serial
+	#define INIT_DAC() MCP4822_init()
+	#define SET_OUTPUT(val)	MCP4822_setOutput(val)
+#else
+	#define MIDISERIAL Serial2
 
-MCP4822 pins: 
-	1	+5V
-	2	PIN_CS
-	3	Digital 13
-	4	Digital 11
-	5	GND
-	6	N/C
-	7	10uF -> 1k -> out
-	8	GND
-
-	delta = frequency * timerInterval * 4096 
-*/
-
-const int PIN_CS = 10;
-const int GAIN_1 = 0x1;
-const int GAIN_2 = 0x0;
-
-SoftwareSerial mySerial(2, 3); // RX, TX
-
-#define MIDISERIAL mySerial
-//#define MIDISERIAL Serial
+	#define INIT_DAC() analogWriteResolution(12)
+	#define SET_OUTPUT(val) analogWrite(A21, val)
+#endif
 
 #define MIDI_NOTE_OFF 128
 #define MIDI_NOTE_ON 144
@@ -53,9 +40,7 @@ void setup()
 	pinMode(6, INPUT_PULLUP);
 	pinMode(7, INPUT_PULLUP);
 	
-	pinMode(PIN_CS, OUTPUT);
-	SPI.begin();  
-	SPI.setClockDivider(SPI_CLOCK_DIV2);
+	INIT_DAC();
 
 	Timer1.initialize(80); // microseconds
 	Timer1.attachInterrupt(timer);
@@ -63,41 +48,6 @@ void setup()
 	//Serial.begin(57600);
 
 	MIDISERIAL.begin(31250);
-}
- 
-//assuming single channel, gain=2
-void setOutput(unsigned int val)
-{
-	byte lowByte = val & 0xff;
-	byte highByte = ((val >> 8) & 0xff) | 0x10;
-
-	PORTB &= 0xfb;
-	SPI.transfer(highByte);
-	SPI.transfer(lowByte);
-	PORTB |= 0x4;
-}
- 
-void setOutput(byte channel, byte gain, byte shutdown, unsigned int val)
-{
-	byte lowByte = val & 0xff;
-	byte highByte = ((val >> 8) & 0xff) | channel << 7 | gain << 5 | shutdown << 4;
-
-	PORTB &= 0xfb;
-	SPI.transfer(highByte);
-	SPI.transfer(lowByte);
-	PORTB |= 0x4;
-}
-
-byte ReadMIDI()
-{
-	int data = MIDISERIAL.read();
-
-	if (data < 0)
-	{
-		delay(200);
-		return 0;
-	}
-	return data;
 }
 
 byte midiCommand;
@@ -113,7 +63,7 @@ void loop()
 
 	if (MIDISERIAL.available() > 0) 
 	{
-		byte midiByte = ReadMIDI();
+		byte midiByte = MIDISERIAL.read();
 
 		if (midiByte & 0x80)
 		{
@@ -367,5 +317,5 @@ void DoTick()
 		INCREMENT_NOTE_INDEX(noteIndex);
 	}	
 	
-	setOutput(0x800 + (output >> (lengthBits + noteBufferBits)));
+	SET_OUTPUT(0x800 + (output >> (lengthBits + noteBufferBits)));
 }

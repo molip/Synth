@@ -28,17 +28,18 @@ boolean gotTick;
 const float pitchMult = 1.059463094359;
 float deltas[12];
 
-const unsigned long sampleRate = 50000;
+const uint32_t sampleRate = 50000;
 
-const int lengthBits = 15;
-const int length = 1 << lengthBits;
 
-const byte noteBufferBits = 3;
+
+const byte noteBufferBits = 4;
 const byte noteBufferLength = 1 << noteBufferBits;
 Note noteBuffer[noteBufferLength];
 
 byte midiCommand;
 byte midiNote;
+
+uint32_t lastReport;
  
 void setup()
 {
@@ -75,9 +76,14 @@ void loop()
 	if (gotTick)
 	{
 		gotTick = false;
-		//unsigned long start = micros();
+		unsigned long start = micros();
 		DoTick();
-		//Serial.println(micros() - start);
+		
+		if (start > lastReport + 1000000)
+		{	
+			lastReport = start;
+			Serial.println(micros() - start);
+		}
 	}
 
 	if (MIDISERIAL.available() > 0) 
@@ -114,7 +120,14 @@ void loop()
 					
 					byte velocity = midiByte;
 					if (velocity > 0)
-						StartNote(midiNote, type);
+					{
+						Envelope env;
+						env.attack = analogRead(A3) / 512.0;
+						env.decay = analogRead(A2) / 512.0;
+						env.sustain = analogRead(A0) / 1023.0;
+						env.release = analogRead(A1) / 512.0;
+						StartNote(midiNote, type, env);
+					}
 					else
 						StopNote(midiNote);
 					midiNote = 0;
@@ -139,13 +152,14 @@ void loop()
 	}
 }
 
-// Returns level [-0x800, 0xfff] * (1 << lengthBits).
-long ProcessNote(Note& note)
+// Returns level [-0x800, 0xfff] << 16
+int32_t ProcessNote(Note& note)
 {
-	note.phase += note.delta;
+	note.phase += note.phaseDelta;
+	++note.ticks;
 
-	unsigned int phase = note.phase >> 4; // [0, 0xfff]
-	int output = 0;
+	uint16_t phase = note.phase >> 4; // [0, 0xfff]
+	uint16_t output = 0;
 	
 	if (note.type == 0) 
 		output = pgm_read_byte_near(table + (phase >> 1)) << 4; // Sine.
@@ -155,8 +169,42 @@ long ProcessNote(Note& note)
 		output = phase; // Sawtooth. 
 	else
 		output = phase > 0x800 ? 0xfff : 0; // Square.
-
-	return (long)(output - 0x800) * note.ticksLeft;
+	
+	switch (note.stage)
+	{
+		case 0:
+			if (note.attackDelta && note.level < ULONG_MAX - note.attackDelta)
+				note.level += note.attackDelta;
+			else
+			{
+				note.level = ULONG_MAX;
+				note.stage = 1;
+			}
+			break;
+		case 1:
+			if (note.decayDelta && note.level > note.sustainLevel + note.decayDelta)
+				note.level -= note.decayDelta;
+			else
+			{
+				note.level = note.sustainLevel;
+				note.stage = 2;
+			}
+		case 2:
+			break;
+		case 3:
+			if (note.level > note.releaseDelta)
+				note.level -= note.releaseDelta;
+			else
+			{
+				note.level = 0;
+				note.midiNote = -1;
+			}
+			break;
+	}
+	
+	//Serial.println(note.level);
+	int32_t envOutput = (output - 0x800) * (note.level >> 16);
+	return envOutput;
 }
 
 int FindNote(int8_t midiNote)
@@ -169,16 +217,16 @@ int FindNote(int8_t midiNote)
 
 int FindOldestNote()
 {
-	unsigned long minTicksLeft = ULONG_MAX;
+	unsigned long maxTicks = 0;
 	int index = 0;
 	for (int i = 0; i < noteBufferLength; ++i) 
 		if (noteBuffer[i].midiNote >= 0)
-			if (minTicksLeft > noteBuffer[i].ticksLeft)
-				minTicksLeft = noteBuffer[i].ticksLeft, index = i;
-	return index;
+			if (maxTicks < noteBuffer[i].ticks)
+				maxTicks = noteBuffer[i].ticks, index = i;
+	return 0;
 }
 
-void StartNote(int8_t midiNote, byte type)
+void StartNote(int8_t midiNote, byte type, const Envelope& env)
 {
 	int index = FindNote(midiNote);
 	if (index < 0)
@@ -186,7 +234,13 @@ void StartNote(int8_t midiNote, byte type)
 	if (index < 0)
 		index = FindOldestNote();
 
-	Serial.print("StartNote: midiNote = "); Serial.print((int)midiNote); Serial.print(" index = "); Serial.println(index); 
+	Note& note = noteBuffer[index];
+	InitNote(note, midiNote, type, env);
+}
+
+void InitNote(Note& note, int8_t midiNote, byte type, const Envelope& env)
+{
+	//Serial.print("StartNote: midiNote = "); Serial.print((int)midiNote); Serial.print(" index = "); Serial.println(index); 
 	
 	int octave = midiNote / 12;
 	int pitchIndex = midiNote % 12;
@@ -195,12 +249,18 @@ void StartNote(int8_t midiNote, byte type)
 	for (int i = 0; i < octave; ++i)
 		delta = delta + delta;
 
-	Note& note = noteBuffer[index];
 	note.midiNote = midiNote;
 	note.phase = 0;
-	note.delta = delta;
-	note.ticksLeft = length;
+	note.phaseDelta = delta;
+	note.releaseDelta = 0;
+	note.level = 0;
+	note.release = env.release;
+	note.stage = 0;
 	note.type = type;
+	note.ticks = 0;
+	note.sustainLevel = float(ULONG_MAX) * env.sustain;
+	note.attackDelta = env.attack ? float(ULONG_MAX) / (env.attack * sampleRate) : 0;
+	note.decayDelta = env.decay ? (ULONG_MAX - note.sustainLevel) / (env.decay * sampleRate) : 0;
 }
 
 void StopNote(byte midiNote)
@@ -209,7 +269,13 @@ void StopNote(byte midiNote)
 	if (index >= 0)
 	{
 		Note& note = noteBuffer[index];
-		note.midiNote = -1;
+		if (note.release)
+		{
+			note.stage = 3;
+			note.releaseDelta = note.release ? note.level / (note.release * sampleRate) : 0;
+		}
+		else
+			note.midiNote = -1;
 	}
 }
 
@@ -227,12 +293,8 @@ void DoTick()
 		if (note.midiNote >= 0)
 		{
 			output += ProcessNote(note);
-			if (note.ticksLeft == 0)
-			{
-				note.midiNote = -1;
-			}	
 		}
 	}	
 	
-	SET_OUTPUT(0x800 + (output >> (lengthBits + noteBufferBits)));
+	SET_OUTPUT(0x800 + (output >> (16 + noteBufferBits)));
 }

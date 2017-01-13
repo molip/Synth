@@ -1,5 +1,6 @@
 #include <TimerOne.h>
 #include <SoftwareSerial.h>
+#include <limits.h>
 
 #include <avr/pgmspace.h>
 
@@ -27,18 +28,14 @@ boolean gotTick;
 const float pitchMult = 1.059463094359;
 float deltas[12];
 
-const unsigned long sampleRate = 12500;
+const unsigned long sampleRate = 50000;
 
-const int lengthBits = 13;
+const int lengthBits = 15;
 const int length = 1 << lengthBits;
 
-const byte noteBufferBits = 2;
+const byte noteBufferBits = 3;
 const byte noteBufferLength = 1 << noteBufferBits;
-const byte noteBufferMask = noteBufferLength - 1;
 Note noteBuffer[noteBufferLength];
-unsigned int notesBegin = 0;
-byte noteBufferCount;
-#define INCREMENT_NOTE_INDEX(i) i = (i + 1) & noteBufferMask
 
 byte midiCommand;
 byte midiNote;
@@ -55,6 +52,9 @@ void setup()
 		delta *= pitchMult;
 	}
 
+	for (int i = 0; i < noteBufferLength; ++i)
+		noteBuffer[i].midiNote = -1;
+	
 	pinMode(4, INPUT_PULLUP);
 	pinMode(5, INPUT_PULLUP);
 	pinMode(6, INPUT_PULLUP);
@@ -65,7 +65,7 @@ void setup()
 	Timer1.initialize(interval); 
 	Timer1.attachInterrupt(timer);
 
-	//Serial.begin(57600);
+	Serial.begin(57600);
 
 	MIDISERIAL.begin(31250);
 }
@@ -75,7 +75,9 @@ void loop()
 	if (gotTick)
 	{
 		gotTick = false;
+		//unsigned long start = micros();
 		DoTick();
+		//Serial.println(micros() - start);
 	}
 
 	if (MIDISERIAL.available() > 0) 
@@ -112,9 +114,25 @@ void loop()
 					
 					byte velocity = midiByte;
 					if (velocity > 0)
-						PushNote(midiNote, type);
+						StartNote(midiNote, type);
+					else
+						StopNote(midiNote);
 					midiNote = 0;
 					//Serial.print("Velocity: "); Serial.print(velocity); Serial.print("\n");
+				}
+			}
+			else if (midiCommand == MIDI_NOTE_OFF)
+			{
+				if (midiNote == 0)
+				{
+					midiNote = midiByte;
+					//Serial.print("Note: "); Serial.println(midiNote);
+				}
+				else
+				{
+					byte velocity = midiByte;
+					StopNote(midiNote);
+					midiNote = 0;
 				}
 			}
 		}
@@ -138,28 +156,61 @@ long ProcessNote(Note& note)
 	else
 		output = phase > 0x800 ? 0xfff : 0; // Square.
 
-	return (long)(output - 0x800) * note.ticksLeft--;
+	return (long)(output - 0x800) * note.ticksLeft;
 }
 
-void PushNote(byte noteIndex, byte type)
+int FindNote(int8_t midiNote)
 {
-	int octave = noteIndex / 12;
-	int pitchIndex = noteIndex % 12;
+	for (int i = 0; i < noteBufferLength; ++i) 
+		if (noteBuffer[i].midiNote == midiNote)
+			return i;
+	return -1;
+}
+
+int FindOldestNote()
+{
+	unsigned long minTicksLeft = ULONG_MAX;
+	int index = 0;
+	for (int i = 0; i < noteBufferLength; ++i) 
+		if (noteBuffer[i].midiNote >= 0)
+			if (minTicksLeft > noteBuffer[i].ticksLeft)
+				minTicksLeft = noteBuffer[i].ticksLeft, index = i;
+	return index;
+}
+
+void StartNote(int8_t midiNote, byte type)
+{
+	int index = FindNote(midiNote);
+	if (index < 0)
+		index = FindNote(-1);
+	if (index < 0)
+		index = FindOldestNote();
+
+	Serial.print("StartNote: midiNote = "); Serial.print((int)midiNote); Serial.print(" index = "); Serial.println(index); 
+	
+	int octave = midiNote / 12;
+	int pitchIndex = midiNote % 12;
 	
 	float delta = deltas[pitchIndex];
 	for (int i = 0; i < octave; ++i)
 		delta = delta + delta;
 
-	Note& note = noteBuffer[(notesBegin + noteBufferCount) & noteBufferMask];
+	Note& note = noteBuffer[index];
+	note.midiNote = midiNote;
 	note.phase = 0;
 	note.delta = delta;
 	note.ticksLeft = length;
 	note.type = type;
+}
 
-	if (noteBufferLength == noteBufferCount) // Discard oldest. 
-		INCREMENT_NOTE_INDEX(notesBegin);
-	else
-		++noteBufferCount;
+void StopNote(byte midiNote)
+{
+	int index = FindNote(midiNote);
+	if (index >= 0)
+	{
+		Note& note = noteBuffer[index];
+		note.midiNote = -1;
+	}
 }
 
 void timer()
@@ -170,18 +221,17 @@ void timer()
 void DoTick()
 {
 	long output = 0;
-	int noteIndex = notesBegin;
-	const int count = noteBufferCount;
-	for (int i = 0; i < count; ++i)
+	for (int i = 0; i < noteBufferLength; ++i)
 	{
-		Note& note = noteBuffer[noteIndex];
-		output += ProcessNote(note);
-		if (note.ticksLeft == 0) // Assumes all note lengths are equal. 
+		Note& note = noteBuffer[i];
+		if (note.midiNote >= 0)
 		{
-			INCREMENT_NOTE_INDEX(notesBegin);
-			--noteBufferCount;
+			output += ProcessNote(note);
+			if (note.ticksLeft == 0)
+			{
+				note.midiNote = -1;
+			}	
 		}
-		INCREMENT_NOTE_INDEX(noteIndex);
 	}	
 	
 	SET_OUTPUT(0x800 + (output >> (lengthBits + noteBufferBits)));

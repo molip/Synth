@@ -12,6 +12,8 @@ struct Note
 	uint32_t ticks;
 	byte stage;				// [0, 3]
 	byte type;
+	Note* mod;
+	float modAmount; // [0, 1]
 };
 
 struct Envelope

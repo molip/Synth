@@ -26,11 +26,10 @@
 boolean gotTick;
 
 const float pitchMult = 1.059463094359;
-float deltas[12];
+float freqs[12];
 
 const uint32_t sampleRate = 50000;
-
-
+const float freqToDeltaScale = 0x10000 / (float)sampleRate;
 
 const byte noteBufferBits = 4;
 const byte noteBufferLength = 1 << noteBufferBits;
@@ -46,11 +45,11 @@ void setup()
 	const unsigned long interval = 1000000 / sampleRate;
 	const float baseFreq = 16.35; // C0
 	
-	float delta = baseFreq * 0x10000 / sampleRate;
+	float freq = baseFreq;
 	for (int i = 0; i < 12; ++i)
 	{
-		deltas[i] = delta;
-		delta *= pitchMult;
+		freqs[i] = freq;
+		freq *= pitchMult;
 	}
 
 	for (int i = 0; i < noteBufferLength; ++i)
@@ -122,10 +121,10 @@ void loop()
 					if (velocity > 0)
 					{
 						Envelope env;
-						env.attack = analogRead(A3) / 512.0;
-						env.decay = analogRead(A2) / 512.0;
-						env.sustain = analogRead(A0) / 1023.0;
-						env.release = analogRead(A1) / 512.0;
+						env.attack = 0;
+						env.decay = 0;
+						env.sustain = 1;
+						env.release = 1;
 						StartNote(midiNote, type, env);
 					}
 					else
@@ -152,15 +151,33 @@ void loop()
 	}
 }
 
-// Returns level [-0x800, 0xfff] << 16
+// Returns level [-0x800, 0xfff] << 16 (28 bit)
 int32_t ProcessNote(Note& note)
 {
-	note.phase += note.phaseDelta;
+	uint16_t phaseDelta = note.phaseDelta;
+
+	// FM
+	// if (note.mod) 
+	// {
+		// int32_t phaseOffset = ProcessNote(*note.mod) >> 12; // 16 bit.
+		// phaseDelta += phaseOffset * note.modAmount * 0.1; // ?
+	// }
+
+	note.phase += phaseDelta;
 	++note.ticks;
 
-	uint16_t phase = note.phase >> 4; // [0, 0xfff]
+	uint16_t phase = note.phase;
 	uint16_t output = 0;
 	
+	// PM
+	if (note.mod)
+	{
+		int32_t phaseOffset = ProcessNote(*note.mod) >> 12; // 16 bit.
+		phase += phaseOffset * note.modAmount;
+	}
+	
+	phase = phase >> 4; // [0, 0xfff]
+
 	if (note.type == 0) 
 		output = pgm_read_byte_near(table + (phase >> 1)) << 4; // Sine.
 	else if (note.type == 1)
@@ -198,6 +215,7 @@ int32_t ProcessNote(Note& note)
 			{
 				note.level = 0;
 				note.midiNote = -1;
+				delete note.mod;
 			}
 			break;
 	}
@@ -226,8 +244,20 @@ int FindOldestNote()
 	return 0;
 }
 
+Note* MakeMod(int8_t midiNote, float attack)
+{
+	Note* mod = new Note;
+	Envelope modEnv;
+	modEnv.attack = attack;
+	modEnv.decay = modEnv.release = 0;
+	modEnv.sustain = 1;
+	InitNote(*mod, MidiNoteToFrequency(midiNote), 0, modEnv);
+}
+
 void StartNote(int8_t midiNote, byte type, const Envelope& env)
 {
+	unsigned long start = micros();
+
 	int index = FindNote(midiNote);
 	if (index < 0)
 		index = FindNote(-1);
@@ -235,23 +265,41 @@ void StartNote(int8_t midiNote, byte type, const Envelope& env)
 		index = FindOldestNote();
 
 	Note& note = noteBuffer[index];
-	InitNote(note, midiNote, type, env);
+	float freq = MidiNoteToFrequency(midiNote);
+	InitNote(note, freq, type, env);
+
+	Serial.print("StartNote: "); Serial.println(micros() - start);
+	
+#if 0
+	int8_t modNoteOffset = ((24 * analogRead(A3)) >> 10) - 12;
+	float modAmount = 8 * analogRead(A2) / 1023.0;
+	float modAttack = analogRead(A1) / 512.0;
+
+	Serial.print("modNoteOffset: "); Serial.println(modNoteOffset);
+	Serial.print("modAmount: "); Serial.println(modAmount);
+	Serial.print("modAttack: "); Serial.println(modAttack);
+	
+	note.modamount = modamount;
+	note.mod = makemod(midinote + modnoteoffset, modattack);
+#endif
 }
 
-void InitNote(Note& note, int8_t midiNote, byte type, const Envelope& env)
+float MidiNoteToFrequency(int8_t midiNote)
 {
-	//Serial.print("StartNote: midiNote = "); Serial.print((int)midiNote); Serial.print(" index = "); Serial.println(index); 
-	
 	int octave = midiNote / 12;
 	int pitchIndex = midiNote % 12;
 	
-	float delta = deltas[pitchIndex];
+	float freq = freqs[pitchIndex];
 	for (int i = 0; i < octave; ++i)
-		delta = delta + delta;
+		freq = freq + freq;
+	return freq;
+}
 
+void InitNote(Note& note, float freq, byte type, const Envelope& env)
+{
 	note.midiNote = midiNote;
 	note.phase = 0;
-	note.phaseDelta = delta;
+	note.phaseDelta = freq * freqToDeltaScale;
 	note.releaseDelta = 0;
 	note.level = 0;
 	note.release = env.release;
@@ -261,6 +309,8 @@ void InitNote(Note& note, int8_t midiNote, byte type, const Envelope& env)
 	note.sustainLevel = float(ULONG_MAX) * env.sustain;
 	note.attackDelta = env.attack ? float(ULONG_MAX) / (env.attack * sampleRate) : 0;
 	note.decayDelta = env.decay ? (ULONG_MAX - note.sustainLevel) / (env.decay * sampleRate) : 0;
+	note.mod = nullptr;
+	note.modAmount = 0;
 }
 
 void StopNote(byte midiNote)
@@ -275,7 +325,10 @@ void StopNote(byte midiNote)
 			note.releaseDelta = note.release ? note.level / (note.release * sampleRate) : 0;
 		}
 		else
+		{
 			note.midiNote = -1;
+			delete note.mod;
+		}
 	}
 }
 

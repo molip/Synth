@@ -8,6 +8,7 @@
 #include "Sine.h"
 #include "Config.h"
 
+#include "EnvelopeModule.h"
 #include "MIDIModule.h"
 #include "OscillatorModule.h"
 #include "OutputModule.h"
@@ -28,8 +29,11 @@
 boolean gotTick;
 
 uint32_t lastReport;
- 
+
+UnsignedValueModule attackValMod(100), decayValMod(1000), sustainValMod(0x8000), releaseValMod(1000);
+
 MIDIModule midiMod;
+EnvelopeModule envMod;
 OscillatorModule oscMod;
 OutputModule outMod;
 
@@ -52,8 +56,15 @@ void setup()
 
 	MIDISERIAL.begin(31250);
 
-	oscMod._levelInput._source = &midiMod._gateOutput;
+	envMod._attackInput._source = &attackValMod._output;
+	envMod._decayInput._source = &decayValMod._output;
+	envMod._sustainInput._source = &sustainValMod._output;
+	envMod._releaseInput._source = &releaseValMod._output;
+	envMod._gateInput._source = &midiMod._gateOutput;
+	
+	oscMod._levelInput._source = &envMod._output;
 	oscMod._pitchInput._source = &midiMod._pitchOutput;
+	
 	outMod._input._source = &oscMod._output;
 }
 
@@ -86,9 +97,11 @@ void timer()
 
 void DoTick()
 {
+	envMod.Update();
 	oscMod.Update();
 	outMod.Update();
 
 	midiMod._gateOutput.ResetChanged();
 	midiMod._pitchOutput.ResetChanged();
+	envMod._output.ResetChanged();
 }

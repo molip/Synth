@@ -8,9 +8,9 @@ template <typename T>
 class Output
 {
 public:
-	void SetValue(T val)
+	void SetValue(T val, bool forceChanged = false)
 	{
-		_changed = val != _value;
+		_changed = forceChanged || val != _value;
 		_value = val;
 	}
 	T GetValue() const { return _value; }
@@ -44,4 +44,17 @@ public:
 
 	virtual ~Module() = default;
 	virtual void Update() = 0;
+};
+
+class UnsignedValueModule : public Module
+{
+public:
+	UnsignedValueModule(unsigned_t val)
+	{
+		_output.SetValue(val);
+	}
+	
+	virtual void Update() {}
+	
+	UnsignedOutput _output;
 };

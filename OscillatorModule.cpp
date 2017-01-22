@@ -10,14 +10,14 @@ uint16_t OscillatorModule::PitchToPhaseDelta(unsigned_t pitch)
 	for (int i = 0; i < octave; ++i)
 		freq = freq + freq;
 
-	Serial.print("freq: "); Serial.println(freq);
+	//Serial.print("freq: "); Serial.println(freq);
 
 	return uint16_t(freq * Config::freqToDeltaScale);
 }
 
 void OscillatorModule::Update()
 {
-	unsigned_t level = _levelInput._source->GetValue();
+	unsigned_t level = _levelInput.GetValue();
 	if (level == 0)
 	{
 		_output.SetValue(0);
@@ -25,9 +25,9 @@ void OscillatorModule::Update()
 		return;
 	}
 
-	if (_pitchInput._source->HasChanged())
+	if (_pitchInput.HasChanged())
 	{
-		_phaseDelta = PitchToPhaseDelta(_pitchInput._source->GetValue());
+		_phaseDelta = PitchToPhaseDelta(_pitchInput.GetValue());
 	}
 
 	_phase += _phaseDelta;

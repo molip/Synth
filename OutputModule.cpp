@@ -2,5 +2,5 @@
 
 void OutputModule::Update()
 {
-	analogWrite(A21, (_input._source->GetValue() + 0x8000) >> 4);
+	analogWrite(A21, (_input.GetValue() + 0x8000) >> 4);
 }

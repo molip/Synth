@@ -25,8 +25,11 @@ template <typename T>
 class Input
 {
 public:
-	Output<T>* _source = nullptr; // TODO: array.
+	T GetValue() const { return _source->GetValue(); }
+	bool HasChanged() const { return _source->HasChanged(); }
+	void Connect(Output<T>& output) { _source = &output; }
 private:
+	Output<T>* _source = nullptr; // TODO: array.
 };
 
 using SignedOutput = Output<int16_t>;
@@ -43,7 +46,7 @@ public:
 	const unsigned_t UnsignedMax = 0xffff;
 
 	virtual ~Module() = default;
-	virtual void Update() = 0;
+	virtual void Update() {}
 };
 
 class UnsignedValueModule : public Module
@@ -53,8 +56,6 @@ public:
 	{
 		_output.SetValue(val);
 	}
-	
-	virtual void Update() {}
 	
 	UnsignedOutput _output;
 };

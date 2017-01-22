@@ -4,6 +4,6 @@
 class OutputModule : public Module
 {
 public:
-	virtual void Update();
+	virtual void Update() override;
 	SignedInput _input;
 };

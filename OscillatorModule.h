@@ -4,7 +4,7 @@
 class OscillatorModule : public Module
 {
 public:
-	virtual void Update();
+	virtual void Update() override;
 	UnsignedInput _levelInput, _pitchInput;
 	SignedOutput _output;
 private:

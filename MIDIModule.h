@@ -1,9 +1,9 @@
 #pragma once 
 #include "Module.h"
+
 class MIDIModule : public Module
 {
 public:
-	virtual void Update() {} // ?
 
 	void ProcessMIDI(byte midiByte);
 

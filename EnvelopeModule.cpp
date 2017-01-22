@@ -4,13 +4,13 @@
 
 void EnvelopeModule::Update()
 {
-	if (_gateInput._source->HasChanged())
+	if (_gateInput.HasChanged())
 	{
-		if (_gateInput._source->GetValue() != 0) // Gate on.
+		if (_gateInput.GetValue() != 0) // Gate on.
 		{
-			unsigned_t attack = _attackInput._source->GetValue();
-			unsigned_t decay = _decayInput._source->GetValue();
-			_sustainLevel = _sustainInput._source->GetValue() << 16;
+			unsigned_t attack = _attackInput.GetValue();
+			unsigned_t decay = _decayInput.GetValue();
+			_sustainLevel = _sustainInput.GetValue() << 16;
 
 			_attackDelta = attack ? ULONG_MAX / (attack * Config::sampleRateMS) : 0;
 			_decayDelta = decay ? (ULONG_MAX - _sustainLevel) / (decay * Config::sampleRateMS) : 0;
@@ -20,7 +20,7 @@ void EnvelopeModule::Update()
 		}
 		else // Gate off.
 		{
-			if (uint32_t release = _releaseInput._source->GetValue())
+			if (uint32_t release = _releaseInput.GetValue())
 			{
 				_stage = Stage::Release;
 				_releaseDelta = _level / (release * Config::sampleRateMS);

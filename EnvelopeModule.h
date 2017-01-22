@@ -4,7 +4,7 @@
 class EnvelopeModule : public Module
 {
 public:
-	virtual void Update();
+	virtual void Update() override;
 	UnsignedInput _gateInput; // Bool.
 	UnsignedInput _attackInput, _decayInput, _releaseInput; // ms.
 	UnsignedInput _sustainInput; // Level.

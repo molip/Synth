@@ -26,13 +26,12 @@ void MIDIModule::ProcessMIDI(byte midiByte)
 			else
 			{
 				byte velocity = midiByte;
+				
 				if (velocity > 0)
-				{
-					_pitchOutput.SetValue(_midiNote << 9); // To 16 bit.
-					_gateOutput.SetValue(UnsignedMax);
-				}
+					StartNote(_midiNote);
 				else
-					_gateOutput.SetValue(0);
+					StopNote(_midiNote);
+
 				_midiNote = 0;
 				//Serial.print("Velocity: "); Serial.print(velocity); Serial.print("\n");
 			}
@@ -46,9 +45,25 @@ void MIDIModule::ProcessMIDI(byte midiByte)
 			}
 			else
 			{
-				_gateOutput.SetValue(0);
+				StopNote(_midiNote);
 				_midiNote = 0;
 			}
 		}
+	}
+}
+
+void MIDIModule::StartNote(byte midiNote)
+{
+	_pitchOutput.SetValue(midiNote << 9); // To 16 bit.
+	_gateOutput.SetValue(UnsignedMax, true);
+	_midiNotePlaying = midiNote;
+}
+
+void MIDIModule::StopNote(byte midiNote)
+{
+	if (_midiNote == _midiNotePlaying) // Avoid stopping note when releasing an old one.
+	{
+		_gateOutput.SetValue(0, true);
+		_midiNotePlaying = 0;
 	}
 }

@@ -11,6 +11,7 @@
 #include "EnvelopeModule.h"
 #include "MIDIModule.h"
 #include "OscillatorModule.h"
+#include "MixerModule.h"
 #include "OutputModule.h"
 
 #ifdef __AVR_ATmega328P__
@@ -30,11 +31,34 @@ boolean gotTick;
 
 uint32_t lastReport;
 
-UnsignedValueModule attackValMod(100), decayValMod(1000), sustainValMod(0x8000), releaseValMod(1000);
+class Instance
+{
+public:
+	Instance() : attackValMod(100), decayValMod(1000), sustainValMod(0x8000), releaseValMod(1000)
+	{
+		envMod._attackInput.Connect(attackValMod._output);
+		envMod._decayInput.Connect(decayValMod._output);
+		envMod._sustainInput.Connect(sustainValMod._output);
+		envMod._releaseInput.Connect(releaseValMod._output);
+	
+		oscMod._levelInput.Connect(envMod._output);
+	}
+	
+	void Update()
+	{
+		envMod.Update();
+		oscMod.Update();
+	}
+	
+	UnsignedValueModule attackValMod, decayValMod, sustainValMod, releaseValMod;
 
+	EnvelopeModule envMod;
+	OscillatorModule oscMod;
+};
+
+Instance instances[MIDIModule::Polyphony];
 MIDIModule midiMod;
-EnvelopeModule envMod;
-OscillatorModule oscMod;
+MixerModule mixerMod(MIDIModule::Polyphony);
 OutputModule outMod;
 
 void setup()
@@ -56,16 +80,14 @@ void setup()
 
 	MIDISERIAL.begin(31250);
 
-	envMod._attackInput._source = &attackValMod._output;
-	envMod._decayInput._source = &decayValMod._output;
-	envMod._sustainInput._source = &sustainValMod._output;
-	envMod._releaseInput._source = &releaseValMod._output;
-	envMod._gateInput._source = &midiMod._gateOutput;
-	
-	oscMod._levelInput._source = &envMod._output;
-	oscMod._pitchInput._source = &midiMod._pitchOutput;
-	
-	outMod._input._source = &oscMod._output;
+	for (int i = 0; i < MIDIModule::Polyphony; ++i)
+	{
+		instances[i].envMod._gateInput.Connect(midiMod._notes[i].gateOutput);
+		instances[i].oscMod._pitchInput.Connect(midiMod._notes[i].pitchOutput);
+		mixerMod._inputs[i].Connect(instances[i].oscMod._output);
+	}
+
+	outMod._input.Connect(mixerMod._ouput);
 }
 
 void loop()
@@ -97,11 +119,11 @@ void timer()
 
 void DoTick()
 {
-	envMod.Update();
-	oscMod.Update();
+	for (int i = 0; i < MIDIModule::Polyphony; ++i)
+		instances[i].Update();
+
+	mixerMod.Update();
 	outMod.Update();
 
-	midiMod._gateOutput.ResetChanged();
-	midiMod._pitchOutput.ResetChanged();
-	envMod._output.ResetChanged();
+	midiMod.ResetChanged();
 }

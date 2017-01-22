@@ -21,7 +21,7 @@ public:
 	static float pitchMult;
 	static float freqs[12];
 
-	static const uint32_t sampleRate;
+	static const uint32_t sampleRate, sampleRateMS;
 	static float freqToDeltaScale;
 	
 	static const value_t valueMax;

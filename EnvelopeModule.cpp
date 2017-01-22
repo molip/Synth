@@ -12,8 +12,8 @@ void EnvelopeModule::Update()
 			unsigned_t decay = _decayInput._source->GetValue();
 			_sustainLevel = _sustainInput._source->GetValue() << 16;
 
-			_attackDelta = attack ? ULONG_MAX / (attack * Config::sampleRate * 0.001) : 0;
-			_decayDelta = decay ? (ULONG_MAX - _sustainLevel) / (decay * Config::sampleRate * 0.001) : 0;
+			_attackDelta = attack ? ULONG_MAX / (attack * Config::sampleRateMS) : 0;
+			_decayDelta = decay ? (ULONG_MAX - _sustainLevel) / (decay * Config::sampleRateMS) : 0;
 
 			_level = 0;
 			_stage = Stage::Attack;
@@ -23,7 +23,7 @@ void EnvelopeModule::Update()
 			if (uint32_t release = _releaseInput._source->GetValue())
 			{
 				_stage = Stage::Release;
-				_releaseDelta = _level / (release * Config::sampleRate * 0.001);
+				_releaseDelta = _level / (release * Config::sampleRateMS);
 			}
 			else
 			{

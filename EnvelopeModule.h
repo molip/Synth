@@ -4,11 +4,9 @@
 class EnvelopeModule : public Module
 {
 public:
+	EnvelopeModule();
 	virtual void Update() override;
-	UnsignedInput _gateInput; // Bool.
-	UnsignedInput _attackInput, _decayInput, _releaseInput; // ms.
-	UnsignedInput _sustainInput; // Level.
-	UnsignedOutput _output; // Level.
+	virtual bool WantUpdate() const override { return true; }
 
 private:
 	enum class Stage { Off, Attack, Decay, Sustain, Release };

@@ -11,7 +11,7 @@
 #include "EnvelopeModule.h"
 #include "MIDIModule.h"
 #include "OscillatorModule.h"
-#include "MixerModule.h"
+#include "PolyMixerModule.h"
 #include "OutputModule.h"
 
 #ifdef __AVR_ATmega328P__
@@ -34,14 +34,19 @@ uint32_t lastReport;
 class Instance
 {
 public:
-	Instance() : attackValMod(100), decayValMod(1000), sustainValMod(0x8000), releaseValMod(1000)
+	Instance()
 	{
-		envMod._attackInput.Connect(attackValMod._output);
-		envMod._decayInput.Connect(decayValMod._output);
-		envMod._sustainInput.Connect(sustainValMod._output);
-		envMod._releaseInput.Connect(releaseValMod._output);
+		attackValMod.SetValue(100);
+		decayValMod.SetValue(1000);
+		sustainValMod.SetValue(0x8000);
+		releaseValMod.SetValue(1000);
+
+		envMod.GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Attack].Connect(attackValMod.GetPins<UnsignedOutput>()[0]);
+		envMod.GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Decay].Connect(decayValMod.GetPins<UnsignedOutput>()[0]);
+		envMod.GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Sustain].Connect(sustainValMod.GetPins<UnsignedOutput>()[0]);
+		envMod.GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Release].Connect(releaseValMod.GetPins<UnsignedOutput>()[0]);
 	
-		oscMod._levelInput.Connect(envMod._output);
+		oscMod.GetPins<UnsignedInput>()[Pin::Oscillator::UnsignedInput::Level].Connect(envMod.GetPins<UnsignedOutput>()[Pin::Envelope::UnsignedOutput::Level]);
 	}
 	
 	void Update()
@@ -56,9 +61,11 @@ public:
 	OscillatorModule oscMod;
 };
 
-Instance instances[MIDIModule::Polyphony];
-MIDIModule midiMod;
-MixerModule mixerMod(MIDIModule::Polyphony);
+const int Polyphony = 16;
+
+Instance instances[Polyphony];
+MIDIModule midiMod(Polyphony);
+PolyMixerModule mixerMod;
 OutputModule outMod;
 
 void setup()
@@ -80,14 +87,18 @@ void setup()
 
 	MIDISERIAL.begin(31250);
 
-	for (int i = 0; i < MIDIModule::Polyphony; ++i)
+	midiMod.SetPolyphony(Polyphony);
+	mixerMod.SetPolyphony(Polyphony);
+
+	for (int i = 0; i < Polyphony; ++i)
 	{
-		instances[i].envMod._gateInput.Connect(midiMod._notes[i].gateOutput);
-		instances[i].oscMod._pitchInput.Connect(midiMod._notes[i].pitchOutput);
-		mixerMod._inputs[i].Connect(instances[i].oscMod._output);
+		instances[i].envMod.GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Gate].Connect(midiMod.GetPolyPins<UnsignedOutput>()[Pin::MIDI::UnsignedPolyOutput::Gate][i]);
+		instances[i].oscMod.GetPins<UnsignedInput>()[Pin::Oscillator::UnsignedInput::Pitch].Connect(midiMod.GetPolyPins<UnsignedOutput>()[Pin::MIDI::UnsignedPolyOutput::Pitch][i]);
+		
+		mixerMod.GetPolyPins<SignedInput>()[Pin::PolyMixer::SignedPolyInput::Signal][i].Connect(instances[i].oscMod.GetPins<SignedOutput>()[Pin::Oscillator::SignedOutput::Signal]);
 	}
 
-	outMod._input.Connect(mixerMod._ouput);
+	outMod.GetPins<SignedInput>()[Pin::Target::SignedInput::Signal].Connect(mixerMod.GetPins<SignedOutput>()[Pin::PolyMixer::SignedOutput::Signal]);
 }
 
 void loop()
@@ -119,7 +130,7 @@ void timer()
 
 void DoTick()
 {
-	for (int i = 0; i < MIDIModule::Polyphony; ++i)
+	for (int i = 0; i < Polyphony; ++i)
 		instances[i].Update();
 
 	mixerMod.Update();

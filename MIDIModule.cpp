@@ -5,16 +5,19 @@
 #define MIDI_NOTE_OFF 128
 #define MIDI_NOTE_ON 144
 
-MIDIModule::MIDIModule()
+MIDIModule::MIDIModule(int polyphony)
 {
+	_notes.SetSize(polyphony);
+	_unsignedPolyOutputs.SetSize(Pin::MIDI::UnsignedPolyOutput::_Count);
 }
 
 void MIDIModule::ResetChanged() 
 {
-	for (int i = 0; i < Polyphony; ++i)
+	int count = _unsignedPolyOutputs[Pin::MIDI::UnsignedPolyOutput::Gate].GetSize();
+	for (int i = 0; i < count; ++i)
 	{
-		_notes[i].gateOutput.ResetChanged();
-		_notes[i].pitchOutput.ResetChanged();
+		_unsignedPolyOutputs[Pin::MIDI::UnsignedPolyOutput::Gate][i].ResetChanged();
+		_unsignedPolyOutputs[Pin::MIDI::UnsignedPolyOutput::Pitch][i].ResetChanged();
 	}
 }
 
@@ -77,8 +80,8 @@ void MIDIModule::StartNote(int8_t midiNote)
 
 	Note& note = _notes[index];
 	note.midiNote = midiNote;
-	note.pitchOutput.SetValue(midiNote << 9); // To 16 bit.
-	note.gateOutput.SetValue(UnsignedMax, true);
+	_unsignedPolyOutputs[Pin::MIDI::UnsignedPolyOutput::Pitch][index].SetValue(midiNote << 9); // To 16 bit.
+	_unsignedPolyOutputs[Pin::MIDI::UnsignedPolyOutput::Gate][index].SetValue(UnsignedMax, true);
 	note.order = ++_startCount;
 }
 
@@ -89,7 +92,7 @@ void MIDIModule::StopNote(int8_t midiNote)
 	{
 		//Serial.print("Stopping note: "); Serial.println(index);
 
-		_notes[index].gateOutput.SetValue(0, true);
+		_unsignedPolyOutputs[Pin::MIDI::UnsignedPolyOutput::Gate][index].SetValue(0, true);
 		_notes[index].midiNote = -1;
 		_notes[index].order = ++_endCount;
 	}
@@ -97,7 +100,7 @@ void MIDIModule::StopNote(int8_t midiNote)
 
 int MIDIModule::FindNote(int8_t midiNote) const
 {
-	for (int i = 0; i < Polyphony; ++i) 
+	for (int i = 0; i < _notes.GetSize(); ++i) 
 		if (_notes[i].midiNote == midiNote)
 			return i;
 	return -1;
@@ -109,7 +112,7 @@ int MIDIModule::FindOldestNote() const
 
 	// Find first ended. 
 	int index = -1;
-	for (int i = 0; i < Polyphony; ++i) 
+	for (int i = 0; i < _notes.GetSize(); ++i) 
 		if (_notes[i].midiNote < 0 && oldestEnd > _notes[i].order)
 			oldestEnd = _notes[i].order, index = i;
 	
@@ -118,7 +121,7 @@ int MIDIModule::FindOldestNote() const
 
 	// They're all still active; find first started. 
 	unsigned long oldestStart = ULONG_MAX;
-	for (int i = 0; i < Polyphony; ++i) 
+	for (int i = 0; i < _notes.GetSize(); ++i) 
 		if (_notes[i].midiNote >= 0 && oldestStart > _notes[i].order)
 			oldestStart = _notes[i].order, index = i;
 

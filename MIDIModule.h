@@ -1,12 +1,11 @@
 #pragma once 
 #include "Module.h"
+#include "Array.h"
 
 class MIDIModule : public Module
 {
 public:
-	static const int Polyphony = 16;
-
-	MIDIModule();
+	MIDIModule(int polyphony);
 	void ResetChanged();
 
 	void ProcessMIDI(int8_t midiByte);
@@ -14,12 +13,11 @@ public:
 	class Note 
 	{
 	public:
-		UnsignedOutput gateOutput, pitchOutput;
 		int midiNote = -1;
 		unsigned long order = 0; // Start order if active, otherwise end order. 
 	};
 
-	Note _notes[Polyphony];
+	Array<Note> _notes;
 
 private:
 	void StartNote(int8_t midiNote);

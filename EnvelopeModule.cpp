@@ -2,15 +2,27 @@
 
 #include <Limits.h>
 
+EnvelopeModule::EnvelopeModule()
+{
+	_unsignedInputs.SetSize(Pin::Envelope::UnsignedInput::_Count);
+	_unsignedOutputs.SetSize(Pin::Envelope::UnsignedOutput::_Count);
+}
+
 void EnvelopeModule::Update()
 {
-	if (_gateInput.HasChanged())
+	const UnsignedInput& gateInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Gate];
+
+	if (gateInput.HasChanged())
 	{
-		if (_gateInput.GetValue() != 0) // Gate on.
+		if (gateInput.GetValue() != 0) // Gate on.
 		{
-			unsigned_t attack = _attackInput.GetValue();
-			unsigned_t decay = _decayInput.GetValue();
-			_sustainLevel = _sustainInput.GetValue() << 16;
+			const UnsignedInput& attackInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Attack];
+			const UnsignedInput& decayInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Decay];
+			const UnsignedInput& sustainInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Sustain];
+
+			unsigned_t attack = attackInput.GetValue();
+			unsigned_t decay = decayInput.GetValue();
+			_sustainLevel = sustainInput.GetValue() << 16;
 
 			_attackDelta = attack ? ULONG_MAX / (attack * Config::sampleRateMS) : 0;
 			_decayDelta = decay ? (ULONG_MAX - _sustainLevel) / (decay * Config::sampleRateMS) : 0;
@@ -20,7 +32,9 @@ void EnvelopeModule::Update()
 		}
 		else // Gate off.
 		{
-			if (uint32_t release = _releaseInput.GetValue())
+			const UnsignedInput& releaseInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Release];
+		
+			if (uint32_t release = releaseInput.GetValue())
 			{
 				_stage = Stage::Release;
 				_releaseDelta = _level / (release * Config::sampleRateMS);
@@ -68,5 +82,6 @@ void EnvelopeModule::Update()
 		break;
 	}
 
-	_output.SetValue(_level >> 16);
+	UnsignedOutput& levelOutput = _unsignedOutputs[Pin::Envelope::UnsignedOutput::Level];
+	levelOutput.SetValue(_level >> 16);
 }

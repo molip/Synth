@@ -1,11 +1,13 @@
 #pragma once 
 
 #include "Config.h"
+#include "Array.h"
+#include "Pins.h"
 
 #include <arduino.h>
 
 template <typename T>
-class Output
+class OutputT
 {
 public:
 	void SetValue(T val, bool forceChanged = false)
@@ -22,21 +24,25 @@ private:
 };
 
 template <typename T>
-class Input
+class InputT
 {
 public:
 	T GetValue() const { return _source->GetValue(); }
 	bool HasChanged() const { return _source->HasChanged(); }
-	void Connect(Output<T>& output) { _source = &output; }
+	void Connect(OutputT<T>& output) { _source = &output; }
 private:
-	Output<T>* _source = nullptr; // TODO: array.
+	OutputT<T>* _source = nullptr; 
 };
 
-using SignedOutput = Output<int16_t>;
-using UnsignedOutput = Output<uint16_t>;
+using SignedOutput = OutputT<int16_t>;
+using UnsignedOutput = OutputT<uint16_t>;
+using SignedPolyOutput = Array<OutputT<int16_t>>;
+using UnsignedPolyOutput = Array<OutputT<uint16_t>>;
 
-using SignedInput = Input<int16_t>;
-using UnsignedInput = Input<uint16_t>;
+using SignedInput = InputT<int16_t>;
+using UnsignedInput = InputT<uint16_t>;
+using SignedPolyInput = Array<InputT<int16_t>>;
+using UnsignedPolyInput = Array<InputT<uint16_t>>;
 
 class Module
 {
@@ -47,15 +53,30 @@ public:
 
 	virtual ~Module() = default;
 	virtual void Update() {}
+	virtual bool WantUpdate() const { return false; }
+
+	void SetPolyphony(int polyphony);
+
+	template<typename T> Array<T>& GetPins();
+	template<typename T> Array<Array<T>>& GetPolyPins();
+
+protected:
+	Array<SignedOutput> _signedOutputs;
+	Array<UnsignedOutput> _unsignedOutputs;
+	Array<SignedPolyOutput> _signedPolyOutputs;
+	Array<UnsignedPolyOutput> _unsignedPolyOutputs;
+
+	Array<SignedInput> _signedInputs;
+	Array<UnsignedInput> _unsignedInputs;
+	Array<SignedPolyInput> _signedPolyInputs;
+	Array<UnsignedPolyInput> _unsignedPolyInputs;
 };
 
 class UnsignedValueModule : public Module
 {
 public:
-	UnsignedValueModule(unsigned_t val)
-	{
-		_output.SetValue(val);
-	}
-	
-	UnsignedOutput _output;
+	UnsignedValueModule();
+	void SetValue(unsigned_t val);
 };
+
+enum class ModuleType { None, MIDI, Envelope, Oscillator, Mixer, Target, UnsignedValue, _Count };

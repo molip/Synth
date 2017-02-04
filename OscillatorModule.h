@@ -4,9 +4,10 @@
 class OscillatorModule : public Module
 {
 public:
+	OscillatorModule();
 	virtual void Update() override;
-	UnsignedInput _levelInput, _pitchInput;
-	SignedOutput _output;
+	virtual bool WantUpdate() const override { return true; }
+
 private:
 	uint16_t PitchToPhaseDelta(unsigned_t pitch);
 

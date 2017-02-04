@@ -1,5 +1,11 @@
 #include "OscillatorModule.h"
 
+OscillatorModule::OscillatorModule()
+{
+	_unsignedInputs.SetSize(Pin::Oscillator::UnsignedInput::_Count);
+	_signedOutputs.SetSize(Pin::Oscillator::SignedOutput::_Count);
+}
+
 uint16_t OscillatorModule::PitchToPhaseDelta(unsigned_t pitch) 
 {
 	int8_t midiNote = pitch >> 9; // 7 bit;
@@ -17,17 +23,21 @@ uint16_t OscillatorModule::PitchToPhaseDelta(unsigned_t pitch)
 
 void OscillatorModule::Update()
 {
-	unsigned_t level = _levelInput.GetValue();
+	const UnsignedInput& levelInput = _unsignedInputs[Pin::Oscillator::UnsignedInput::Level];
+	const UnsignedInput& pitchInput = _unsignedInputs[Pin::Oscillator::UnsignedInput::Pitch];
+	SignedOutput& signalOutput = _signedOutputs[Pin::Oscillator::SignedOutput::Signal];
+
+	unsigned_t level = levelInput.GetValue();
 	if (level == 0)
 	{
-		_output.SetValue(0);
+		signalOutput.SetValue(0);
 		_phase = 0;
 		return;
 	}
 
-	if (_pitchInput.HasChanged())
+	if (pitchInput.HasChanged())
 	{
-		_phaseDelta = PitchToPhaseDelta(_pitchInput.GetValue());
+		_phaseDelta = PitchToPhaseDelta(pitchInput.GetValue());
 	}
 
 	_phase += _phaseDelta;
@@ -36,6 +46,5 @@ void OscillatorModule::Update()
 
 	//Serial.println(output);
 
-	_output.SetValue(((output - 0x8000) * level) >> 16); // Signed.
-	//_output.SetValue((output - 0x8000); // Signed.
+	signalOutput.SetValue(((output - 0x8000) * level) >> 16); // Signed.
 }

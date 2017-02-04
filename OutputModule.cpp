@@ -1,6 +1,12 @@
 #include "OutputModule.h"
 
+OutputModule::OutputModule()
+{
+	_signedInputs.SetSize(Pin::Target::SignedInput::_Count);
+}
+
 void OutputModule::Update()
 {
-	analogWrite(A21, (_input.GetValue() + 0x8000) >> 4);
+	const SignedInput& signal = _signedInputs[Pin::Target::SignedInput::Signal];
+	analogWrite(A21, (signal.GetValue() + 0x8000) >> 4);
 }

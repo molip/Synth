@@ -1,10 +1,10 @@
 #pragma once 
 #include "Module.h"
 
-class OutputModule : public Module
+class PolyMixerModule : public Module
 {
 public:
-	OutputModule();
+	PolyMixerModule();
 	virtual void Update() override;
 	virtual bool WantUpdate() const override { return true; }
 };

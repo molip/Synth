@@ -7,12 +7,7 @@
 #include "Types.h"
 #include "Sine.h"
 #include "Config.h"
-
-#include "EnvelopeModule.h"
-#include "MIDIModule.h"
-#include "OscillatorModule.h"
-#include "PolyMixerModule.h"
-#include "OutputModule.h"
+#include "Graph.h"
 
 #ifdef __AVR_ATmega328P__
 	//SoftwareSerial mySerial(2, 3); // RX, TX
@@ -30,43 +25,6 @@
 boolean gotTick;
 
 uint32_t lastReport;
-
-class Instance
-{
-public:
-	Instance()
-	{
-		attackValMod.SetValue(100);
-		decayValMod.SetValue(1000);
-		sustainValMod.SetValue(0x8000);
-		releaseValMod.SetValue(1000);
-
-		envMod.GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Attack].Connect(attackValMod.GetPins<UnsignedOutput>()[0]);
-		envMod.GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Decay].Connect(decayValMod.GetPins<UnsignedOutput>()[0]);
-		envMod.GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Sustain].Connect(sustainValMod.GetPins<UnsignedOutput>()[0]);
-		envMod.GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Release].Connect(releaseValMod.GetPins<UnsignedOutput>()[0]);
-	
-		oscMod.GetPins<UnsignedInput>()[Pin::Oscillator::UnsignedInput::Level].Connect(envMod.GetPins<UnsignedOutput>()[Pin::Envelope::UnsignedOutput::Level]);
-	}
-	
-	void Update()
-	{
-		envMod.Update();
-		oscMod.Update();
-	}
-	
-	UnsignedValueModule attackValMod, decayValMod, sustainValMod, releaseValMod;
-
-	EnvelopeModule envMod;
-	OscillatorModule oscMod;
-};
-
-const int Polyphony = 16;
-
-Instance instances[Polyphony];
-MIDIModule midiMod(Polyphony);
-PolyMixerModule mixerMod;
-OutputModule outMod;
 
 void setup()
 {
@@ -87,26 +45,55 @@ void setup()
 
 	MIDISERIAL.begin(31250);
 
-	midiMod.SetPolyphony(Polyphony);
-	mixerMod.SetPolyphony(Polyphony);
+	Graph* graph = new Graph;
+	graph->Init(3, 6, 16);
 
-	for (int i = 0; i < Polyphony; ++i)
+	graph->AddMonoModule(ModuleType::MIDI);		// 0
+	
+	graph->AddPolyModule(ModuleType::UnsignedValue);	// 0 (attack)
+	graph->AddPolyModule(ModuleType::UnsignedValue);	// 1 (decay)
+	graph->AddPolyModule(ModuleType::UnsignedValue);	// 2 (sustain)
+	graph->AddPolyModule(ModuleType::UnsignedValue);	// 3 (release)
+	graph->AddPolyModule(ModuleType::Envelope);			// 4
+	graph->AddPolyModule(ModuleType::Oscillator);		// 5
+
+	graph->AddMonoModule(ModuleType::Mixer);	// 1
+	graph->AddMonoModule(ModuleType::Target);	// 2
+
+	for (int i = 0; i < graph->GetPolyphony(); ++i)
 	{
-		instances[i].envMod.GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Gate].Connect(midiMod.GetPolyPins<UnsignedOutput>()[Pin::MIDI::UnsignedPolyOutput::Gate][i]);
-		instances[i].oscMod.GetPins<UnsignedInput>()[Pin::Oscillator::UnsignedInput::Pitch].Connect(midiMod.GetPolyPins<UnsignedOutput>()[Pin::MIDI::UnsignedPolyOutput::Pitch][i]);
+		static_cast<UnsignedValueModule*>(graph->GetPolyModule(0, i))->SetValue(100);
+		static_cast<UnsignedValueModule*>(graph->GetPolyModule(1, i))->SetValue(1000);
+		static_cast<UnsignedValueModule*>(graph->GetPolyModule(2, i))->SetValue(0x8000);
+		static_cast<UnsignedValueModule*>(graph->GetPolyModule(3, i))->SetValue(1000);
+
+		graph->GetPolyModule(4, i)->GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Attack].Connect(graph->GetPolyModule(0, i)->GetPins<UnsignedOutput>()[0]);
+		graph->GetPolyModule(4, i)->GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Decay].Connect(graph->GetPolyModule(1, i)->GetPins<UnsignedOutput>()[0]);
+		graph->GetPolyModule(4, i)->GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Sustain].Connect(graph->GetPolyModule(2, i)->GetPins<UnsignedOutput>()[0]);
+		graph->GetPolyModule(4, i)->GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Release].Connect(graph->GetPolyModule(3, i)->GetPins<UnsignedOutput>()[0]);
+	
+		graph->GetPolyModule(5, i)->GetPins<UnsignedInput>()[Pin::Oscillator::UnsignedInput::Level].Connect(graph->GetPolyModule(4, i)->GetPins<UnsignedOutput>()[Pin::Envelope::UnsignedOutput::Level]);
+
+		graph->GetPolyModule(4, i)->GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Gate].Connect(graph->GetMonoModule(0)->GetPolyPins<UnsignedOutput>()[Pin::MIDI::UnsignedPolyOutput::Gate][i]);
+		graph->GetPolyModule(5, i)->GetPins<UnsignedInput>()[Pin::Oscillator::UnsignedInput::Pitch].Connect(graph->GetMonoModule(0)->GetPolyPins<UnsignedOutput>()[Pin::MIDI::UnsignedPolyOutput::Pitch][i]);
 		
-		mixerMod.GetPolyPins<SignedInput>()[Pin::PolyMixer::SignedPolyInput::Signal][i].Connect(instances[i].oscMod.GetPins<SignedOutput>()[Pin::Oscillator::SignedOutput::Signal]);
+		graph->GetMonoModule(1)->GetPolyPins<SignedInput>()[Pin::PolyMixer::SignedPolyInput::Signal][i].Connect(graph->GetPolyModule(5, i)->GetPins<SignedOutput>()[Pin::Oscillator::SignedOutput::Signal]);
 	}
 
-	outMod.GetPins<SignedInput>()[Pin::Target::SignedInput::Signal].Connect(mixerMod.GetPins<SignedOutput>()[Pin::PolyMixer::SignedOutput::Signal]);
+	graph->GetMonoModule(2)->GetPins<SignedInput>()[Pin::Target::SignedInput::Signal].Connect(graph->GetMonoModule(1)->GetPins<SignedOutput>()[Pin::PolyMixer::SignedOutput::Signal]);
+
+	graph->Activate();
 }
 
 void loop()
 {
+    Graph* graph = Graph::GetActive();
+
 	if (MIDISERIAL.available() > 0) 
 	{
-		byte midiByte = MIDISERIAL.read();
-		midiMod.ProcessMIDI(midiByte);
+        byte data = MIDISERIAL.read();
+        if (graph)
+            graph->ProcessMIDI(data);
 	}
 
 	if (gotTick)
@@ -130,11 +117,6 @@ void timer()
 
 void DoTick()
 {
-	for (int i = 0; i < Polyphony; ++i)
-		instances[i].Update();
-
-	mixerMod.Update();
-	outMod.Update();
-
-	midiMod.ResetChanged();
+	if (Graph* graph = Graph::GetActive())
+		graph->Update();
 }

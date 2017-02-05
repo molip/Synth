@@ -8,6 +8,7 @@
 #include "Sine.h"
 #include "Config.h"
 #include "Graph.h"
+#include "Input.h"
 
 #ifdef __AVR_ATmega328P__
 	//SoftwareSerial mySerial(2, 3); // RX, TX
@@ -25,6 +26,72 @@
 boolean gotTick;
 
 uint32_t lastReport;
+
+void TestInput()
+{
+	delay(1000);
+
+	Serial.println("Hello");
+
+	using namespace Input;
+	using ModType = AddConnectionCommand::Connection::ModType;
+	using PinType = AddConnectionCommand::Connection::PinType;
+
+	byte inputData[] = 
+	{
+		(byte)CommandType::StartGraph,
+		(byte)CommandType::InitGraph, 3, 6, 16, 
+		(byte)CommandType::AddMonoModule, (byte)ModuleType::MIDI, // 0			
+		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 0 (attack)
+		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 1 (decay)
+		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 2 (sustain)
+		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 3 (release)
+		(byte)CommandType::AddPolyModule, (byte)ModuleType::Envelope,		// 4
+		(byte)CommandType::AddPolyModule, (byte)ModuleType::Oscillator,		// 5
+		(byte)CommandType::AddMonoModule, (byte)ModuleType::Mixer,	// 1
+		(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
+
+		(byte)CommandType::SetPolyUnsignedValue, 0, 100 & 0xff, 100 >> 8, 
+		(byte)CommandType::SetPolyUnsignedValue, 1, 1000 & 0xff, 1000 >> 8, 
+		(byte)CommandType::SetPolyUnsignedValue, 2, 0x8000 & 0xff, 0x8000 >> 8, 
+		(byte)CommandType::SetPolyUnsignedValue, 3, 1000 & 0xff, 1000 >> 8, 
+
+		(byte)CommandType::AddConnection, 
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Attack,
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 0, 0,
+		(byte)CommandType::AddConnection, 
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Decay,
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 1, 0,
+		(byte)CommandType::AddConnection, 
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Sustain,
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 2, 0,
+		(byte)CommandType::AddConnection, 
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Release,
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 3, 0,
+
+		(byte)CommandType::AddConnection, 
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Level,
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedOutput::Level,
+		(byte)CommandType::AddConnection, 
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Gate,
+			(byte)ModType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Gate,
+		(byte)CommandType::AddConnection, 
+			(byte)ModType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Pitch,
+			(byte)ModType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Pitch,
+
+		(byte)CommandType::AddConnection, 
+			(byte)ModType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedPolyInput::Signal,
+			(byte)ModType::Poly, (byte)PinType::Signed, 5, Pin::Oscillator::SignedOutput::Signal,
+		(byte)CommandType::AddConnection, 
+			(byte)ModType::Mono, (byte)PinType::Signed, 2, Pin::Target::SignedInput::Signal,
+			(byte)ModType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedOutput::Signal,
+
+		(byte)CommandType::EndGraph,
+	};
+
+	for (int i = 0; i < sizeof inputData; ++i)
+		Input::Process(inputData[i]);
+}
 
 void setup()
 {
@@ -45,45 +112,9 @@ void setup()
 
 	MIDISERIAL.begin(31250);
 
-	Graph* graph = new Graph;
-	graph->Init(3, 6, 16);
-
-	graph->AddMonoModule(ModuleType::MIDI);		// 0
-	
-	graph->AddPolyModule(ModuleType::UnsignedValue);	// 0 (attack)
-	graph->AddPolyModule(ModuleType::UnsignedValue);	// 1 (decay)
-	graph->AddPolyModule(ModuleType::UnsignedValue);	// 2 (sustain)
-	graph->AddPolyModule(ModuleType::UnsignedValue);	// 3 (release)
-	graph->AddPolyModule(ModuleType::Envelope);			// 4
-	graph->AddPolyModule(ModuleType::Oscillator);		// 5
-
-	graph->AddMonoModule(ModuleType::Mixer);	// 1
-	graph->AddMonoModule(ModuleType::Target);	// 2
-
-	for (int i = 0; i < graph->GetPolyphony(); ++i)
-	{
-		static_cast<UnsignedValueModule*>(graph->GetPolyModule(0, i))->SetValue(100);
-		static_cast<UnsignedValueModule*>(graph->GetPolyModule(1, i))->SetValue(1000);
-		static_cast<UnsignedValueModule*>(graph->GetPolyModule(2, i))->SetValue(0x8000);
-		static_cast<UnsignedValueModule*>(graph->GetPolyModule(3, i))->SetValue(1000);
-
-		graph->GetPolyModule(4, i)->GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Attack].Connect(graph->GetPolyModule(0, i)->GetPins<UnsignedOutput>()[0]);
-		graph->GetPolyModule(4, i)->GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Decay].Connect(graph->GetPolyModule(1, i)->GetPins<UnsignedOutput>()[0]);
-		graph->GetPolyModule(4, i)->GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Sustain].Connect(graph->GetPolyModule(2, i)->GetPins<UnsignedOutput>()[0]);
-		graph->GetPolyModule(4, i)->GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Release].Connect(graph->GetPolyModule(3, i)->GetPins<UnsignedOutput>()[0]);
-	
-		graph->GetPolyModule(5, i)->GetPins<UnsignedInput>()[Pin::Oscillator::UnsignedInput::Level].Connect(graph->GetPolyModule(4, i)->GetPins<UnsignedOutput>()[Pin::Envelope::UnsignedOutput::Level]);
-
-		graph->GetPolyModule(4, i)->GetPins<UnsignedInput>()[Pin::Envelope::UnsignedInput::Gate].Connect(graph->GetMonoModule(0)->GetPolyPins<UnsignedOutput>()[Pin::MIDI::UnsignedPolyOutput::Gate][i]);
-		graph->GetPolyModule(5, i)->GetPins<UnsignedInput>()[Pin::Oscillator::UnsignedInput::Pitch].Connect(graph->GetMonoModule(0)->GetPolyPins<UnsignedOutput>()[Pin::MIDI::UnsignedPolyOutput::Pitch][i]);
-		
-		graph->GetMonoModule(1)->GetPolyPins<SignedInput>()[Pin::PolyMixer::SignedPolyInput::Signal][i].Connect(graph->GetPolyModule(5, i)->GetPins<SignedOutput>()[Pin::Oscillator::SignedOutput::Signal]);
-	}
-
-	graph->GetMonoModule(2)->GetPins<SignedInput>()[Pin::Target::SignedInput::Signal].Connect(graph->GetMonoModule(1)->GetPins<SignedOutput>()[Pin::PolyMixer::SignedOutput::Signal]);
-
-	graph->Activate();
+	TestInput();
 }
+
 
 void loop()
 {

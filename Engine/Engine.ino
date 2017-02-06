@@ -33,10 +33,6 @@ void TestInput()
 
 	Serial.println("Hello");
 
-	using namespace Input;
-	using ModType = AddConnectionCommand::Connection::ModType;
-	using PinType = AddConnectionCommand::Connection::PinType;
-
 	byte inputData[] = 
 	{
 		(byte)CommandType::StartGraph,
@@ -57,39 +53,39 @@ void TestInput()
 		(byte)CommandType::SetPolyUnsignedValue, 3, 1000 & 0xff, 1000 >> 8, 
 
 		(byte)CommandType::AddConnection, 
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Attack,
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 0, 0,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Attack,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, 0,
 		(byte)CommandType::AddConnection, 
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Decay,
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 1, 0,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Decay,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, 0,
 		(byte)CommandType::AddConnection, 
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Sustain,
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 2, 0,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Sustain,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 2, 0,
 		(byte)CommandType::AddConnection, 
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Release,
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 3, 0,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Release,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 3, 0,
 
 		(byte)CommandType::AddConnection, 
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Level,
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedOutput::Level,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Level,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedOutput::Level,
 		(byte)CommandType::AddConnection, 
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Gate,
-			(byte)ModType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Gate,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Gate,
+			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Gate,
 		(byte)CommandType::AddConnection, 
-			(byte)ModType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Pitch,
-			(byte)ModType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Pitch,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Pitch,
+			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Pitch,
 
 		(byte)CommandType::AddConnection, 
-			(byte)ModType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedPolyInput::Signal,
-			(byte)ModType::Poly, (byte)PinType::Signed, 5, Pin::Oscillator::SignedOutput::Signal,
+			(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedPolyInput::Signal,
+			(byte)InstanceType::Poly, (byte)PinType::Signed, 5, Pin::Oscillator::SignedOutput::Signal,
 		(byte)CommandType::AddConnection, 
-			(byte)ModType::Mono, (byte)PinType::Signed, 2, Pin::Target::SignedInput::Signal,
-			(byte)ModType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedOutput::Signal,
+			(byte)InstanceType::Mono, (byte)PinType::Signed, 2, Pin::Target::SignedInput::Signal,
+			(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedOutput::Signal,
 
 		(byte)CommandType::EndGraph,
 	};
 
-	for (int i = 0; i < sizeof inputData; ++i)
+	for (size_t i = 0; i < sizeof inputData; ++i)
 		Input::Process(inputData[i]);
 }
 

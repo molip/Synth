@@ -135,8 +135,8 @@ bool AddModuleCommand::Execute(Graph& graph) const
 
 void AddConnectionCommand::Connection::AddData(byte data) 
 {
-	if (_modType == ModType::None)
-		_modType = (ModType)data;
+	if (_modType == InstanceType::None)
+		_modType = (InstanceType)data;
 	else if (_pinType == PinType::None)
 		_pinType = (PinType)data;
 	else if (_modIndex < 0)

@@ -2,7 +2,7 @@
 
 #include "Config.h"
 #include "Array.h"
-#include "Pins.h"
+#include "Common.h"
 
 #include <arduino.h>
 
@@ -78,5 +78,3 @@ public:
 	UnsignedValueModule();
 	void SetValue(unsigned_t val);
 };
-
-enum class ModuleType { None, MIDI, Envelope, Oscillator, Mixer, Target, UnsignedValue, _Count };

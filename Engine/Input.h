@@ -12,9 +12,6 @@ namespace Input
 {
 	void Process(byte data);
 
-	enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetMonoUnsignedValue, SetPolyUnsignedValue };
-	enum class Error { None, UnknownCommandType, InvalidParameter, TooManyParameters, PinTypeMismatch, GraphAlreadyStarted };
-
 	class Command
 	{
 	public:
@@ -68,11 +65,8 @@ namespace Input
 		class Connection
 		{
 		public:
-			enum class ModType { None, Mono, Poly, _Count };
-			enum class PinType { None, Signed, Unsigned, _Count };
-
 			void AddData(byte data); // Returns true if data accepted. 
-			bool IsMono() const { return _modType == ModType::Mono; }
+			bool IsMono() const { return _modType == InstanceType::Mono; }
 			bool IsSigned() const { return _pinType == PinType::Signed; }
 
 			template <typename T> T& GetMonoPin(Graph& graph) const 
@@ -82,7 +76,7 @@ namespace Input
 
 			template <typename T> T& GetPolyPin(Graph& graph, int i) const 
 			{
-				if (_modType == ModType::Mono) // Poly pin. 
+				if (_modType == InstanceType::Mono) // Poly pin. 
 					return graph.GetMonoModule(_modIndex)->GetPolyPins<T>()[_pinIndex][i];
 				else // Poly module. 
 					return graph.GetPolyModule(_modIndex, i)->GetPins<T>()[_pinIndex];
@@ -99,7 +93,7 @@ namespace Input
 					GetPolyPin<InputT<TVal>>(graph, i).Connect(output.GetPolyPin<OutputT<TVal>>(graph, i));
 			}
 
-			ModType _modType = ModType::None;
+			InstanceType _modType = InstanceType::None;
 			PinType _pinType = PinType::None;
 			int _modIndex = -1;
 			int _pinIndex = -1;

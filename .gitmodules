@@ -1,0 +1,3 @@
+[submodule "Editor/libKernel"]
+	path = Editor/libKernel
+	url = https://github.com/molip/libKernel

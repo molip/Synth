@@ -28,6 +28,7 @@ BEGIN_MESSAGE_MAP(CSynthEditorView, CView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CSynthEditorView::OnFilePrintPreview)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
+	ON_COMMAND(ID_FILE_UPLOAD, &CSynthEditorView::OnFileUpload)
 END_MESSAGE_MAP()
 
 // CSynthEditorView construction/destruction
@@ -128,3 +129,7 @@ CSynthEditorDoc* CSynthEditorView::GetDocument() const // non-debug version is i
 }
 #endif //_DEBUG
 
+void CSynthEditorView::OnFileUpload()
+{
+	GetDocument()->Upload();
+}

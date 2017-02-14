@@ -27,68 +27,6 @@ boolean gotTick;
 
 uint32_t lastReport;
 
-void TestInput()
-{
-	delay(1000);
-
-	Serial.println("Hello");
-
-	byte inputData[] = 
-	{
-		(byte)CommandType::StartGraph,
-		(byte)CommandType::InitGraph, 3, 6, 16, 
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::MIDI, // 0			
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 0 (attack)
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 1 (decay)
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 2 (sustain)
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 3 (release)
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::Envelope,		// 4
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::Oscillator,		// 5
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::Mixer,	// 1
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
-
-		(byte)CommandType::SetPolyUnsignedValue, 0, 100 & 0xff, 100 >> 8, 
-		(byte)CommandType::SetPolyUnsignedValue, 1, 1000 & 0xff, 1000 >> 8, 
-		(byte)CommandType::SetPolyUnsignedValue, 2, 0x8000 & 0xff, 0x8000 >> 8, 
-		(byte)CommandType::SetPolyUnsignedValue, 3, 1000 & 0xff, 1000 >> 8, 
-
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Attack,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, 0,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Decay,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, 0,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Sustain,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 2, 0,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Release,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 3, 0,
-
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Level,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedOutput::Level,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Gate,
-			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Gate,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Pitch,
-			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Pitch,
-
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedPolyInput::Signal,
-			(byte)InstanceType::Poly, (byte)PinType::Signed, 5, Pin::Oscillator::SignedOutput::Signal,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Mono, (byte)PinType::Signed, 2, Pin::Target::SignedInput::Signal,
-			(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedOutput::Signal,
-
-		(byte)CommandType::EndGraph,
-	};
-
-	for (size_t i = 0; i < sizeof inputData; ++i)
-		Input::Process(inputData[i]);
-}
-
 void setup()
 {
 	Config::Init();
@@ -107,14 +45,18 @@ void setup()
 	Serial.begin(57600);
 
 	MIDISERIAL.begin(31250);
-
-	TestInput();
 }
 
 
 void loop()
 {
     Graph* graph = Graph::GetActive();
+
+    if (Serial.available() > 0) 
+    {
+        byte data = Serial.read();
+        Input::Process(data);
+	}
 
 	if (MIDISERIAL.available() > 0) 
 	{

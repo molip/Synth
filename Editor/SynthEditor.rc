@@ -92,7 +92,7 @@ BEGIN
     BUTTON      ID_EDIT_COPY
     BUTTON      ID_EDIT_PASTE
     SEPARATOR
-    BUTTON      ID_FILE_PRINT
+    BUTTON      ID_FILE_UPLOAD
     BUTTON      ID_APP_ABOUT
 END
 
@@ -470,6 +470,11 @@ END
 STRINGTABLE
 BEGIN
     IDS_BUILD_TAB           "Build"
+END
+
+STRINGTABLE
+BEGIN
+    ID_FILE_UPLOAD          "Upload the graph"
 END
 
 #endif    // English (United States) resources

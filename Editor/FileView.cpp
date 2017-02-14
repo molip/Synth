@@ -4,6 +4,8 @@
 #include "FileView.h"
 #include "Resource.h"
 #include "SynthEditor.h"
+#include "SynthEditorDoc.h"
+
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -35,6 +37,7 @@ BEGIN_MESSAGE_MAP(CFileView, CDockablePane)
 	ON_COMMAND(ID_EDIT_CLEAR, OnEditClear)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
+	ON_NOTIFY(TVN_SELCHANGED, 4, OnTreeViewSelectionChanged)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -93,7 +96,13 @@ void CFileView::FillFileView()
 	HTREEITEM hRoot = m_wndFileView.InsertItem(_T("Files"), 0, 0);
 	m_wndFileView.SetItemState(hRoot, TVIS_BOLD, TVIS_BOLD);
 
-	m_wndFileView.InsertItem(_T("File"), 1, 1, hRoot);
+	HTREEITEM item = m_wndFileView.InsertItem(_T("Patch 1"), 1, 1, hRoot);
+	m_wndFileView.SetItemData(item, 100);
+	m_wndFileView.SelectItem(item);
+
+	item = m_wndFileView.InsertItem(_T("Patch 2"), 1, 1, hRoot);
+	m_wndFileView.SetItemData(item, 101);
+
 	m_wndFileView.Expand(hRoot, TVE_EXPAND);
 }
 
@@ -227,4 +236,11 @@ void CFileView::OnChangeVisualStyle()
 	m_wndFileView.SetImageList(&m_FileViewImages, TVSIL_NORMAL);
 }
 
+void CFileView::OnTreeViewSelectionChanged(NMHDR* header, LRESULT* result)
+{
+	NMTREEVIEW* tvHeader = reinterpret_cast<NMTREEVIEW*>(header);
+	if (DWORD_PTR data = m_wndFileView.GetItemData(tvHeader->itemNew.hItem))
+		if (CSynthEditorDoc* doc = CSynthEditorDoc::Instance())
+			doc->SetPatchIndex(data - 100);
 
+}

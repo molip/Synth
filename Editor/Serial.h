@@ -20,6 +20,8 @@ public:
 
 	std::wstring GetPortName() const { return _portName; }
 
+	bool Write(const byte* data, DWORD bytes);
+
 private:
 	void Read();
 	std::wstring FindPortName() const;

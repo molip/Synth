@@ -143,5 +143,124 @@ void CSynthEditorDoc::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
+const byte inputData0[] = 
+{
+	(byte)CommandType::StartGraph,
+	(byte)CommandType::InitGraph, 3, 6, 2, 
+	(byte)CommandType::AddMonoModule, (byte)ModuleType::MIDI, // 0			
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 0 (attack)
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 1 (decay)
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 2 (sustain)
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 3 (release)
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::Envelope,		// 4
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::Oscillator,		// 5
+	(byte)CommandType::AddMonoModule, (byte)ModuleType::Mixer,	// 1
+	(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
 
-// CSynthEditorDoc commands
+	(byte)CommandType::SetPolyUnsignedValue, 0, LOBYTE(100), HIBYTE(100), 
+	(byte)CommandType::SetPolyUnsignedValue, 1, LOBYTE(1000), HIBYTE(1000), 
+	(byte)CommandType::SetPolyUnsignedValue, 2, LOBYTE(0x8000), HIBYTE(0x8000), 
+	(byte)CommandType::SetPolyUnsignedValue, 3, LOBYTE(1000), HIBYTE(1000), 
+
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Attack,
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, 0,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Decay,
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, 0,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Sustain,
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 2, 0,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Release,
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 3, 0,
+
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Level,
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedOutput::Level,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Gate,
+		(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Gate,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Pitch,
+		(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Pitch,
+
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedPolyInput::Signal,
+		(byte)InstanceType::Poly, (byte)PinType::Signed, 5, Pin::Oscillator::SignedOutput::Signal,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Mono, (byte)PinType::Signed, 2, Pin::Target::SignedInput::Signal,
+		(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedOutput::Signal,
+
+	(byte)CommandType::EndGraph,
+};
+
+const byte inputData1[] = 
+{
+	(byte)CommandType::StartGraph,
+	(byte)CommandType::InitGraph, 3, 6, 4, 
+	(byte)CommandType::AddMonoModule, (byte)ModuleType::MIDI, // 0			
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 0 (attack)
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 1 (decay)
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 2 (sustain)
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 3 (release)
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::Envelope,		// 4
+	(byte)CommandType::AddPolyModule, (byte)ModuleType::Oscillator,		// 5
+	(byte)CommandType::AddMonoModule, (byte)ModuleType::Mixer,	// 1
+	(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
+
+	(byte)CommandType::SetPolyUnsignedValue, 0, LOBYTE(1000), HIBYTE(1000), 
+	(byte)CommandType::SetPolyUnsignedValue, 1, LOBYTE(0), HIBYTE(0), 
+	(byte)CommandType::SetPolyUnsignedValue, 2, LOBYTE(0xffff), HIBYTE(0xffff), 
+	(byte)CommandType::SetPolyUnsignedValue, 3, LOBYTE(100), HIBYTE(100), 
+
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Attack,
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, 0,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Decay,
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, 0,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Sustain,
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 2, 0,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Release,
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 3, 0,
+
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Level,
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedOutput::Level,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Gate,
+		(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Gate,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Pitch,
+		(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedPolyOutput::Pitch,
+
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedPolyInput::Signal,
+		(byte)InstanceType::Poly, (byte)PinType::Signed, 5, Pin::Oscillator::SignedOutput::Signal,
+	(byte)CommandType::AddConnection, 
+		(byte)InstanceType::Mono, (byte)PinType::Signed, 2, Pin::Target::SignedInput::Signal,
+		(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedOutput::Signal,
+
+	(byte)CommandType::EndGraph,
+};
+
+const byte* patches[] = { inputData0, inputData1 };
+const DWORD patchSizes[] = { sizeof inputData0, sizeof inputData1 };
+
+void CSynthEditorDoc::SetPatchIndex(int index)
+{
+	_patchIndex = index;
+}
+
+void CSynthEditorDoc::Upload() const
+{
+	Serial serial;
+	if (serial.Open())
+	{
+		serial.Write(patches[_patchIndex], patchSizes[_patchIndex]);
+		serial.Close();
+	}
+}

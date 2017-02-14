@@ -5,7 +5,7 @@
 
 namespace
 {
-	const int UsbSpeed = 230400;
+	const int UsbSpeed = 57600;
 }
 
 Serial::Serial() : _file(nullptr)
@@ -19,17 +19,19 @@ Serial::~Serial()
 
 std::wstring Serial::FindPortName() const
 {
-	WCHAR devs[1 << 16];
-	DWORD chars = ::QueryDosDevice(nullptr, devs, 1 << 16);
+	return L"COM6";
 
-	for (const WCHAR* p = devs; *p;)
-	{
-		std::wstring s = p;
-		if (s.substr(0, 3) == L"COM")
-			return s;
-		p += s.length() + 1;
-	}
-	return std::wstring();
+	//WCHAR devs[1 << 16];
+	//DWORD chars = ::QueryDosDevice(nullptr, devs, 1 << 16);
+
+	//for (const WCHAR* p = devs; *p;)
+	//{
+	//	std::wstring s = p;
+	//	if (s.substr(0, 3) == L"COM")
+	//		return s;
+	//	p += s.length() + 1;
+	//}
+	//return std::wstring();
 }
 
 bool Serial::Open()
@@ -41,7 +43,7 @@ bool Serial::Open()
 	std::wstring portName = _portName.empty() ? FindPortName() : _portName;
 	path += portName;
 		
-	HANDLE file = CreateFile(path.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, 0, nullptr);
+	HANDLE file = CreateFile(path.c_str(), GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr);
 	if (!file || file == INVALID_HANDLE_VALUE)
 	{
 		AfxMessageBox(L"CreateFile failed");
@@ -102,3 +104,11 @@ void Serial::Read()
 	byte buffer;
 	ReadFile(_file, &buffer, 1, &bytesRead, nullptr);
 }
+
+bool Serial::Write(const byte* data, DWORD bytes) 
+{
+	DWORD bytesRead = 0;
+	WriteFile(_file, data, bytes, &bytesRead, nullptr);
+	return bytesRead == bytes;
+}
+

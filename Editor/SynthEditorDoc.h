@@ -14,8 +14,11 @@ protected: // create from serialization only
 
 public:
 	static CSynthEditorDoc* Instance();
+	void SetPatchIndex(int index);
+	void Upload() const;
 
 private:
+	int _patchIndex = 0;
 
 // Overrides
 public:

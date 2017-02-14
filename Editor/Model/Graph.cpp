@@ -4,6 +4,8 @@
 #include "ModuleTypes.h"
 #include <set>
 
+#include "../libKernel/Serial.h"
+
 using namespace Model;
 
 Graph::Graph()
@@ -20,11 +22,31 @@ Graph::Graph()
 	FindModule(mixer)->Connect("sgnl", osc, "sgnl");
 	FindModule(target)->Connect("sgnl", mixer, "sgnl");
 
+	Test();
+}
+
+void Graph::Test()
+{
+
 	bool a = _modules[0].IsInstanced(*this);
 	bool b = _modules[1].IsInstanced(*this);
 	bool c = _modules[2].IsInstanced(*this);
 	bool d = _modules[3].IsInstanced(*this);
 	bool e = _modules[4].IsInstanced(*this);
+
+	SortModules();
+
+	for (auto& mod : _modules)
+	{
+		Kernel::Debug::Trace << mod.GetDef().GetName() << ":" << std::endl;
+		for (auto& input : mod.GetDef().GetInputs())
+		{
+			Kernel::Debug::Trace << "\t" << input.GetName() << ":" << std::endl;
+			std::vector<PinRef> outputRefs = GetValidSourcePins({mod.GetID(), input.GetID()});
+			for (auto& outputRef : outputRefs)
+				Kernel::Debug::Trace << "\t\t" << outputRef.moduleID << "/" << outputRef.type << std::endl;
+		}
+	}
 }
 
 Graph::~Graph() = default;
@@ -91,4 +113,14 @@ std::vector<PinRef> Graph::GetValidSourcePins(PinRef input)
 	}
 
 	return result;		
+}
+
+void Graph::Save(Serial::SaveNode& node) const
+{
+	node.SaveCntr("modules", _modules, Serial::ClassSaver());
+}
+
+void Graph::Load(Serial::LoadNode& node)
+{
+	node.LoadCntr("modules", _modules, Serial::ClassLoader());
 }

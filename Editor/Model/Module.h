@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Defs.h"
 #include "Tag.h"
 #include <vector>
 
@@ -18,6 +19,9 @@ namespace Model
 
 	struct Connection
 	{
+		void Save(Serial::SaveNode& node) const;
+		void Load(Serial::LoadNode& node);
+		
 		Tag type;
 		PinRef source;
 	};
@@ -25,7 +29,7 @@ namespace Model
 	class Module
 	{
 	public:
-		Module(Tag type);
+		Module(Tag type = "");
 
 		const ModuleType& GetDef() const;
 		const PinType& GetInputDef(Tag type) const;
@@ -44,6 +48,9 @@ namespace Model
 
 		void SetID(int id) { _id = id; }
 		int GetID() const { return _id; }
+
+		void Save(Serial::SaveNode& node) const;
+		void Load(Serial::LoadNode& node);
 
 	protected:
 		int _id;

@@ -31,6 +31,9 @@
     <ClInclude Include="Model\Types.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="Model\Defs.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

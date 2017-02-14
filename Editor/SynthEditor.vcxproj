@@ -99,6 +99,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Model\Defs.h" />
     <ClInclude Include="Model\Engine.h" />
     <ClInclude Include="Model\Graph.h" />
     <ClInclude Include="Model\Module.h" />

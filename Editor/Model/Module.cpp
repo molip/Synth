@@ -3,7 +3,24 @@
 #include "Graph.h"
 #include "ModuleTypes.h"
 
+#include "../libKernel/Serial.h"
+
 using namespace Model;
+
+void Connection::Save(Serial::SaveNode& node) const
+{
+	node.SaveType("type", type);
+	node.SaveType("sourceType", source.type);
+	node.SaveType("sourceModule", source.moduleID);
+}
+
+void Connection::Load(Serial::LoadNode& node)
+{
+	node.LoadType("type", type);
+	node.LoadType("sourceType", source.type);
+	node.LoadType("sourceModule", source.moduleID);
+}
+
 
 Module::Module(Tag type) : _type(type)
 {
@@ -73,4 +90,18 @@ bool Module::IsDependentOn(int modID, const Graph& graph, bool recurse) const
 				return true;
 
 	return false;
+}
+
+void Module::Load(Serial::LoadNode& node)
+{
+	node.LoadType("id", _id);
+	node.LoadType("type", _type);
+	node.LoadCntr("connections", _connections, Serial::ClassLoader());
+}
+
+void Module::Save(Serial::SaveNode& node) const
+{
+	node.SaveType("id", _id);
+	node.SaveType("type", _type);
+	node.SaveCntr("connections", _connections, Serial::ClassSaver());
 }

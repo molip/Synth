@@ -7,18 +7,16 @@
 
 using namespace Model;
 
-void Connection::Save(Serial::SaveNode& node) const
+void PinRef::Save(Serial::SaveNode& node) const
 {
-	node.SaveType("type", type);
-	node.SaveType("sourceType", source.type);
-	node.SaveType("sourceModule", source.moduleID);
+	node.SaveType("sourceType", type);
+	node.SaveType("sourceModule", moduleID);
 }
 
-void Connection::Load(Serial::LoadNode& node)
+void PinRef::Load(Serial::LoadNode& node)
 {
-	node.LoadType("type", type);
-	node.LoadType("sourceType", source.type);
-	node.LoadType("sourceModule", source.moduleID);
+	node.LoadType("sourceType", type);
+	node.LoadType("sourceModule", moduleID);
 }
 
 
@@ -41,33 +39,32 @@ const PinType& Module::GetOutputDef(Tag type) const
 	return *GetDef().GetOutput(type);
 }
 
-const Module& Module::GetSourceModule(const Connection& conn, const Graph& graph) const
+const Module& Module::GetSourceModule(const PinRef& pin, const Graph& graph) const
 {
-	return *graph.FindModule(conn.source.moduleID);
+	return *graph.FindModule(pin.moduleID);
 }
 
-const PinType& Module::GetSourceOutputDef(const Connection& conn, const Graph& graph) const
+const PinType& Module::GetSourceOutputDef(const PinRef& pin, const Graph& graph) const
 {
-	return GetSourceModule(conn, graph).GetOutputDef(conn.source.type);
+	return GetSourceModule(pin, graph).GetOutputDef(pin.type);
 }
 
 void Module::Connect(Tag inputType, int modID, Tag outputType)
 {
-	// TODO: Replace.
-	_connections.push_back(Connection{inputType, PinRef{modID, outputType}});
+	_connections[inputType] = PinRef{modID, outputType};
 }
 
 
 bool Module::IsInstanced(const Graph& graph) const
 {
-	for (auto& conn : _connections)
+	for (auto& pair : _connections)
 	{
-		if (!GetInputDef(conn.type).IsPoly())
+		if (!GetInputDef(pair.first).IsPoly())
 		{
-			if (GetSourceOutputDef(conn, graph).IsPoly())
+			if (GetSourceOutputDef(pair.second, graph).IsPoly())
 				return true;
 
-			if (GetSourceModule(conn, graph).IsInstanced(graph))
+			if (GetSourceModule(pair.second, graph).IsInstanced(graph))
 				return true;
 		}
 	}
@@ -80,13 +77,13 @@ bool Module::IsDependentOn(int modID, const Graph& graph, bool recurse) const
 	if (modID == _id)
 		return false;
 
-	for (auto& conn: _connections)
-		if (conn.source.moduleID == modID)
+	for (auto& pair: _connections)
+		if (pair.second.moduleID == modID)
 			return true;
 
 	if (recurse)
-		for (auto& conn: _connections)
-			if (GetSourceModule(conn, graph).IsDependentOn(modID, graph, true))
+		for (auto& pair: _connections)
+			if (GetSourceModule(pair.second, graph).IsDependentOn(modID, graph, true))
 				return true;
 
 	return false;
@@ -96,12 +93,12 @@ void Module::Load(Serial::LoadNode& node)
 {
 	node.LoadType("id", _id);
 	node.LoadType("type", _type);
-	node.LoadCntr("connections", _connections, Serial::ClassLoader());
+	node.LoadMap("connections", _connections, Serial::TypeLoader(), Serial::ClassLoader());
 }
 
 void Module::Save(Serial::SaveNode& node) const
 {
 	node.SaveType("id", _id);
 	node.SaveType("type", _type);
-	node.SaveCntr("connections", _connections, Serial::ClassSaver());
+	node.SaveMap("connections", _connections, Serial::TypeSaver(), Serial::ClassSaver());
 }

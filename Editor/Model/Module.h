@@ -3,6 +3,7 @@
 #include "Defs.h"
 #include "Tag.h"
 #include <vector>
+#include <map>
 
 namespace Model
 {
@@ -13,31 +14,27 @@ namespace Model
 
 	struct PinRef
 	{
-		int moduleID;
-		Tag type;
-	};
-
-	struct Connection
-	{
 		void Save(Serial::SaveNode& node) const;
 		void Load(Serial::LoadNode& node);
-		
+
+		int moduleID;
 		Tag type;
-		PinRef source;
 	};
 
 	class Module
 	{
 	public:
+		using ConnectionMap = std::map<Tag, PinRef>;
+
 		Module(Tag type = "");
 
 		const ModuleType& GetDef() const;
 		const PinType& GetInputDef(Tag type) const;
 		const PinType& GetOutputDef(Tag type) const;
-		const Module& GetSourceModule(const Connection& conn, const Graph& graph) const;
-		const PinType& GetSourceOutputDef(const Connection& conn, const Graph& graph) const;
+		const Module& GetSourceModule(const PinRef& pin, const Graph& graph) const;
+		const PinType& GetSourceOutputDef(const PinRef& pin, const Graph& graph) const;
 
-		const std::vector<Connection>& GetConnections() const { return _connections; }
+		const ConnectionMap& GetConnections() const { return _connections; }
 		void Connect(Tag inputType, int modID, Tag outputType);
 
 		//void AddInput(const std::string& name, Pin::ConnectionType connType, Pin::DataType dataType, int id, int engineID);
@@ -55,6 +52,6 @@ namespace Model
 	protected:
 		int _id;
 		Tag _type;
-		std::vector<Connection> _connections;
+		ConnectionMap _connections;
 	};
 }

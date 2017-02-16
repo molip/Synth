@@ -74,8 +74,8 @@ void Graph::SortModules()
 
 	auto WantDefer = [&](const Module& mod)
 	{
-		for (auto& conn : mod.GetConnections())
-			if (done.count(conn.source.moduleID) == 0) // Source not done yet. 
+		for (auto& pair : mod.GetConnections())
+			if (done.count(pair.second.moduleID) == 0) // Source not done yet. 
 				return true;
 		return false;
 	};

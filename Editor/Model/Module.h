@@ -25,6 +25,7 @@ namespace Model
 	{
 	public:
 		using ConnectionMap = std::map<Tag, PinRef>;
+		using ValueMap = std::map<Tag, int>;
 
 		Module(Tag type = "");
 
@@ -36,6 +37,9 @@ namespace Model
 
 		const ConnectionMap& GetConnections() const { return _connections; }
 		void Connect(Tag inputType, int modID, Tag outputType);
+
+		const ValueMap& GetValues() const { return _values; }
+		void SetValue(Tag inputType, int value);
 
 		//void AddInput(const std::string& name, Pin::ConnectionType connType, Pin::DataType dataType, int id, int engineID);
 		//void AddOutput(const std::string& name, Pin::ConnectionType connType, Pin::DataType dataType, int id, int engineID);
@@ -53,5 +57,6 @@ namespace Model
 		int _id;
 		Tag _type;
 		ConnectionMap _connections;
+		ValueMap _values; 
 	};
 }

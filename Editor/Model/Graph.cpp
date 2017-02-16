@@ -22,6 +22,11 @@ Graph::Graph()
 	FindModule(mixer)->Connect("sgnl", osc, "sgnl");
 	FindModule(target)->Connect("sgnl", mixer, "sgnl");
 
+	FindModule(env)->SetValue("atck", 500);
+	FindModule(env)->SetValue("decy", 500);
+	FindModule(env)->SetValue("sust", 0x8000);
+	FindModule(env)->SetValue("rels", 1000);
+
 	Test();
 }
 

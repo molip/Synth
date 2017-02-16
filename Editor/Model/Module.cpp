@@ -54,6 +54,10 @@ void Module::Connect(Tag inputType, int modID, Tag outputType)
 	_connections[inputType] = PinRef{modID, outputType};
 }
 
+void Module::SetValue(Tag inputType, int value)
+{
+	_values[inputType] = value;
+}
 
 bool Module::IsInstanced(const Graph& graph) const
 {
@@ -94,6 +98,7 @@ void Module::Load(Serial::LoadNode& node)
 	node.LoadType("id", _id);
 	node.LoadType("type", _type);
 	node.LoadMap("connections", _connections, Serial::TypeLoader(), Serial::ClassLoader());
+	node.LoadMap("values", _values, Serial::TypeLoader(), Serial::TypeLoader());
 }
 
 void Module::Save(Serial::SaveNode& node) const
@@ -101,4 +106,5 @@ void Module::Save(Serial::SaveNode& node) const
 	node.SaveType("id", _id);
 	node.SaveType("type", _type);
 	node.SaveMap("connections", _connections, Serial::TypeSaver(), Serial::ClassSaver());
+	node.SaveMap("values", _values, Serial::TypeSaver(), Serial::TypeSaver());
 }

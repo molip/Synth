@@ -108,13 +108,19 @@ void setup()
 
 	MIDISERIAL.begin(31250);
 
-	TestInput();
+	//TestInput();
 }
 
 
 void loop()
 {
     Graph* graph = Graph::GetActive();
+
+    if (Serial.available() > 0) 
+    {
+        byte data = Serial.read();
+        Input::Process(data);
+    }
 
 	if (MIDISERIAL.available() > 0) 
 	{

@@ -101,6 +101,7 @@
   <ItemGroup>
     <ClInclude Include="Model\Defs.h" />
     <ClInclude Include="Model\Engine.h" />
+    <ClInclude Include="Model\Exporter.h" />
     <ClInclude Include="Model\Graph.h" />
     <ClInclude Include="Model\Module.h" />
     <ClInclude Include="Model\ModuleTypes.h" />
@@ -109,6 +110,9 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileView.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Model\Exporter.cpp" />
     <ClCompile Include="Model\Graph.cpp" />
     <ClCompile Include="Model\Module.cpp" />
     <ClCompile Include="Model\ModuleTypes.cpp" />

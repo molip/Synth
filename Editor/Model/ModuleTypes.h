@@ -18,11 +18,13 @@ namespace Model
 		PinType(Tag id, const std::string& name, ConnectionType connType, DataType dataType, int engineID) : _id(id), _name(name), _connType(connType), _dataType(dataType), _engineID(engineID) {}
 
 		bool IsMulti() const { return _connType == ConnectionType::Multi; }
+		bool IsSigned() const { return _dataType == DataType::Signed; }
 
 		Tag GetID() const { return _id; }
 		const std::string& GetName() const { return _name; }
 		ConnectionType GetConnectionType() const { return _connType; }
 		DataType GetDataType() const { return _dataType; }
+		int GetEngineID() const { return _engineID; }
 	
 	private:
 		Tag _id;

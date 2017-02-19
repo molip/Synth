@@ -34,6 +34,9 @@
     <ClInclude Include="Model\Defs.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="Model\Exporter.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -46,6 +49,9 @@
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="Model\ModuleTypes.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Exporter.cpp">
       <Filter>Model</Filter>
     </ClCompile>
   </ItemGroup>

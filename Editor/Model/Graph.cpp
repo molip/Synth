@@ -120,6 +120,12 @@ std::vector<PinRef> Graph::GetValidSourcePins(PinRef input)
 	return result;		
 }
 
+Exporter::Buffer Graph::Export() const
+{
+	Exporter exporter;
+	return exporter.Export(*this);
+}
+
 void Graph::Save(Serial::SaveNode& node) const
 {
 	node.SaveCntr("modules", _modules, Serial::ClassSaver());

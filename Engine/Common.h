@@ -6,7 +6,7 @@ namespace Pin
 {
 	namespace MIDI
 	{
-		namespace UnsignedPolyOutput { enum Type { Gate, Pitch, _Count }; }
+		namespace UnsignedMultiOutput { enum Type { Gate, Pitch, _Count }; }
 	}
 	namespace Envelope 
 	{
@@ -20,7 +20,7 @@ namespace Pin
 	}
 	namespace PolyMixer 
 	{
-		namespace SignedPolyInput { enum Type { Signal, _Count }; }
+		namespace SignedMultiInput { enum Type { Signal, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace Target

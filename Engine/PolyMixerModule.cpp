@@ -2,17 +2,17 @@
 
 PolyMixerModule::PolyMixerModule()
 {
-	_signedPolyInputs.SetSize(Pin::PolyMixer::SignedPolyInput::_Count);
+	_signedMultiInputs.SetSize(Pin::PolyMixer::SignedMultiInput::_Count);
 	_signedOutputs.SetSize(Pin::PolyMixer::SignedOutput::_Count);
 }
 
 void PolyMixerModule::Update()
 {
-	SignedPolyInput& polyInput = _signedPolyInputs[Pin::PolyMixer::SignedPolyInput::Signal];
+	SignedMultiInput& multiInput = _signedMultiInputs[Pin::PolyMixer::SignedMultiInput::Signal];
 	uint32_t total = 0;
-	int count = polyInput.GetSize();
+	int count = multiInput.GetSize();
 	for (int i = 0; i < count; ++i)
-		total += polyInput[i].GetValue();
+		total += multiInput[i].GetValue();
 
 	_signedOutputs[Pin::PolyMixer::SignedOutput::Signal].SetValue(total / count);
 }

@@ -36,13 +36,13 @@ private:
 
 using SignedOutput = OutputT<int16_t>;
 using UnsignedOutput = OutputT<uint16_t>;
-using SignedPolyOutput = Array<OutputT<int16_t>>;
-using UnsignedPolyOutput = Array<OutputT<uint16_t>>;
+using SignedMultiOutput = Array<OutputT<int16_t>>;
+using UnsignedMultiOutput = Array<OutputT<uint16_t>>;
 
 using SignedInput = InputT<int16_t>;
 using UnsignedInput = InputT<uint16_t>;
-using SignedPolyInput = Array<InputT<int16_t>>;
-using UnsignedPolyInput = Array<InputT<uint16_t>>;
+using SignedMultiInput = Array<InputT<int16_t>>;
+using UnsignedMultiInput = Array<InputT<uint16_t>>;
 
 class Module
 {
@@ -58,18 +58,18 @@ public:
 	void SetPolyphony(int polyphony);
 
 	template<typename T> Array<T>& GetPins();
-	template<typename T> Array<Array<T>>& GetPolyPins();
+	template<typename T> Array<Array<T>>& GetMultiPins();
 
 protected:
 	Array<SignedOutput> _signedOutputs;
 	Array<UnsignedOutput> _unsignedOutputs;
-	Array<SignedPolyOutput> _signedPolyOutputs;
-	Array<UnsignedPolyOutput> _unsignedPolyOutputs;
+	Array<SignedMultiOutput> _signedMultiOutputs;
+	Array<UnsignedMultiOutput> _unsignedMultiOutputs;
 
 	Array<SignedInput> _signedInputs;
 	Array<UnsignedInput> _unsignedInputs;
-	Array<SignedPolyInput> _signedPolyInputs;
-	Array<UnsignedPolyInput> _unsignedPolyInputs;
+	Array<SignedMultiInput> _signedMultiInputs;
+	Array<UnsignedMultiInput> _unsignedMultiInputs;
 };
 
 class UnsignedValueModule : public Module

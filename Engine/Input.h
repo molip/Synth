@@ -77,7 +77,7 @@ namespace Input
 			template <typename T> T& GetPolyPin(Graph& graph, int i) const 
 			{
 				if (_modType == InstanceType::Mono) // Poly pin. 
-					return graph.GetMonoModule(_modIndex)->GetPolyPins<T>()[_pinIndex][i];
+					return graph.GetMonoModule(_modIndex)->GetMultiPins<T>()[_pinIndex][i];
 				else // Poly module. 
 					return graph.GetPolyModule(_modIndex, i)->GetPins<T>()[_pinIndex];
 			}

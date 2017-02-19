@@ -12,12 +12,12 @@ namespace Model
 	class PinType
 	{
 	public:
-		enum class ConnectionType { Mono, Poly };
+		enum class ConnectionType { Single, Multi };
 		enum class DataType { Signed, Unsigned };
 
 		PinType(Tag id, const std::string& name, ConnectionType connType, DataType dataType, int engineID) : _id(id), _name(name), _connType(connType), _dataType(dataType), _engineID(engineID) {}
 
-		bool IsPoly() const { return _connType == ConnectionType::Poly; }
+		bool IsMulti() const { return _connType == ConnectionType::Multi; }
 
 		Tag GetID() const { return _id; }
 		const std::string& GetName() const { return _name; }
@@ -42,6 +42,7 @@ namespace Model
 
 		Tag GetID() const { return _id; }
 		const std::string& GetName() const { return _name; }
+		Engine::ModuleType GetEngineID() const { return _engineID; }
 
 		const PinType* GetInput(Tag id) const 
 		{

@@ -63,9 +63,9 @@ bool Module::IsInstanced(const Graph& graph) const
 {
 	for (auto& pair : _connections)
 	{
-		if (!GetInputDef(pair.first).IsPoly())
+		if (!GetInputDef(pair.first).IsMulti())
 		{
-			if (GetSourceOutputDef(pair.second, graph).IsPoly())
+			if (GetSourceOutputDef(pair.second, graph).IsMulti())
 				return true;
 
 			if (GetSourceModule(pair.second, graph).IsInstanced(graph))

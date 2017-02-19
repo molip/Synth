@@ -36,49 +36,49 @@ void TestInput()
 	byte inputData[] = 
 	{
 		(byte)CommandType::StartGraph,
-		(byte)CommandType::InitGraph, 3, 6, 16, 
+		(byte)CommandType::InitGraph, 7, 2, 16, 
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::MIDI, // 0			
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 0 (attack)
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 1 (decay)
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 2 (sustain)
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::UnsignedValue,	// 3 (release)
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::Envelope,		// 4
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::Oscillator,		// 5
+		(byte)CommandType::AddPolyModule, (byte)ModuleType::Envelope,		// 0
+		(byte)CommandType::AddPolyModule, (byte)ModuleType::Oscillator,		// 1
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::Mixer,	// 1
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
+		(byte)CommandType::AddMonoModule, (byte)ModuleType::UnsignedValue,	// 3 (attack)
+		(byte)CommandType::AddMonoModule, (byte)ModuleType::UnsignedValue,	// 4 (decay)
+		(byte)CommandType::AddMonoModule, (byte)ModuleType::UnsignedValue,	// 5 (sustain)
+		(byte)CommandType::AddMonoModule, (byte)ModuleType::UnsignedValue,	// 6 (release)
 
-		(byte)CommandType::SetPolyUnsignedValue, 0, 100 & 0xff, 100 >> 8, 
-		(byte)CommandType::SetPolyUnsignedValue, 1, 1000 & 0xff, 1000 >> 8, 
-		(byte)CommandType::SetPolyUnsignedValue, 2, 0x8000 & 0xff, 0x8000 >> 8, 
-		(byte)CommandType::SetPolyUnsignedValue, 3, 1000 & 0xff, 1000 >> 8, 
+		(byte)CommandType::SetMonoUnsignedValue, 3, 100 & 0xff, 100 >> 8, 
+		(byte)CommandType::SetMonoUnsignedValue, 4, 1000 & 0xff, 1000 >> 8, 
+		(byte)CommandType::SetMonoUnsignedValue, 5, 0x8000 & 0xff, 0x8000 >> 8, 
+		(byte)CommandType::SetMonoUnsignedValue, 6, 1000 & 0xff, 1000 >> 8, 
 
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Attack,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, 0,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Decay,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, 0,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Sustain,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 2, 0,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Release,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 3, 0,
+		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedInput::Attack,
+			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 3, 0,
+		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedInput::Decay,
+			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 4, 0,
+		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedInput::Sustain,
+			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 5, 0,
+		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedInput::Release,
+			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 6, 0,
 
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Level,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedOutput::Level,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 4, Pin::Envelope::UnsignedInput::Gate,
+		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, Pin::Oscillator::UnsignedInput::Level,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedOutput::Level,
+		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedInput::Gate,
 			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedMultiOutput::Gate,
-		(byte)CommandType::AddConnection, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 5, Pin::Oscillator::UnsignedInput::Pitch,
+		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, Pin::Oscillator::UnsignedInput::Pitch,
 			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedMultiOutput::Pitch,
 
-		(byte)CommandType::AddConnection, 
+		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
 			(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedMultiInput::Signal,
-			(byte)InstanceType::Poly, (byte)PinType::Signed, 5, Pin::Oscillator::SignedOutput::Signal,
-		(byte)CommandType::AddConnection, 
+			(byte)InstanceType::Poly, (byte)PinType::Signed, 1, Pin::Oscillator::SignedOutput::Signal,
+		(byte)CommandType::AddConnection,  (byte)ConnectionType::Single,  
 			(byte)InstanceType::Mono, (byte)PinType::Signed, 2, Pin::Target::SignedInput::Signal,
 			(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedOutput::Signal,
 

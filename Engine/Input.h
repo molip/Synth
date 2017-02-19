@@ -74,23 +74,28 @@ namespace Input
 				return graph.GetMonoModule(_modIndex)->GetPins<T>()[_pinIndex];
 			}
 
+			template <typename T> T& GetMultiPin(Graph& graph, int i) const 
+			{
+				return graph.GetMonoModule(_modIndex)->GetMultiPins<T>()[_pinIndex][i];
+			}
+
 			template <typename T> T& GetPolyPin(Graph& graph, int i) const 
 			{
-				if (_modType == InstanceType::Mono) // Poly pin. 
-					return graph.GetMonoModule(_modIndex)->GetMultiPins<T>()[_pinIndex][i];
-				else // Poly module. 
-					return graph.GetPolyModule(_modIndex, i)->GetPins<T>()[_pinIndex];
+				return graph.GetPolyModule(_modIndex, i)->GetPins<T>()[_pinIndex];
 			}
 
-			template <typename TVal> void ConnectToOutputMono(Graph& graph, const Connection& output) const 
+			template <typename T> T& GetPin(Graph& graph, int i, bool multi) const 
 			{
-				GetMonoPin<InputT<TVal>>(graph).Connect(output.GetMonoPin<OutputT<TVal>>(graph));
+				return IsMono() ? multi ? GetMultiPin<T>(graph, i) : GetMonoPin<T>(graph) : GetPolyPin<T>(graph, i);
 			}
 
-			template <typename TVal> void ConnectToOutputPoly(Graph& graph, const Connection& output) const 
+			template <typename TVal> void ConnectToOutput(Graph& graph, const Connection& output, bool multi) const 
 			{
-				for (int i = 0; i < graph.GetPolyphony(); ++i)
-					GetPolyPin<InputT<TVal>>(graph, i).Connect(output.GetPolyPin<OutputT<TVal>>(graph, i));
+				if (IsMono() && output.IsMono())
+					GetMonoPin<InputT<TVal>>(graph).Connect(output.GetMonoPin<OutputT<TVal>>(graph));
+				else 
+					for (int i = 0; i < graph.GetPolyphony(); ++i)
+						GetPin<InputT<TVal>>(graph, i, multi).Connect(output.GetPin<OutputT<TVal>>(graph, i, multi));
 			}
 
 			InstanceType _modType = InstanceType::None;
@@ -101,6 +106,7 @@ namespace Input
 		};
 
 	private:
+		ConnectionType _connType = ConnectionType::None;
 		Connection _input, _output;
 	};
 

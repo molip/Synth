@@ -149,7 +149,9 @@ void AddConnectionCommand::Connection::AddData(byte data)
 
 Error AddConnectionCommand::AddData(byte data) 
 {
-	if (!_input._done) 
+	if (_connType == ConnectionType::None)
+		_connType = (ConnectionType)data;
+	else if (!_input._done) 
 		_input.AddData(data);
 	else if (!_output._done) 
 		_output.AddData(data);
@@ -171,21 +173,10 @@ bool AddConnectionCommand::Execute(Graph& graph) const
 	if (!_output._done) 
 		return false;
 
-
-	if (_input.IsMono() && _output.IsMono())
-	{
-		if (_input.IsSigned())
-			_input.ConnectToOutputMono<Module::signed_t>(*_graph, _output);
-		else
-			_input.ConnectToOutputMono<Module::unsigned_t>(*_graph, _output);
-	}
+	if (_input.IsSigned())
+		_input.ConnectToOutput<Module::signed_t>(*_graph, _output, _connType == ConnectionType::Multi);
 	else
-	{
-		if (_input.IsSigned())
-			_input.ConnectToOutputPoly<Module::signed_t>(*_graph, _output);
-		else
-			_input.ConnectToOutputPoly<Module::unsigned_t>(*_graph, _output);
-	}
+		_input.ConnectToOutput<Module::unsigned_t>(*_graph, _output, _connType == ConnectionType::Multi);
 
 	return true;
 }

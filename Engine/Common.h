@@ -32,6 +32,7 @@ namespace Pin
 enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetMonoUnsignedValue, SetPolyUnsignedValue };
 enum class Error { None, UnknownCommandType, InvalidParameter, TooManyParameters, PinTypeMismatch, GraphAlreadyStarted };
 
+enum class ConnectionType { None, Single, Multi, _Count };
 enum class InstanceType { None, Mono, Poly, _Count };
 enum class PinType { None, Signed, Unsigned, _Count };
 

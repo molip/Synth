@@ -53,6 +53,54 @@ BOOL CSynthEditorDoc::OnNewDocument()
 
 	m_graph = std::make_unique<Model::Graph>();
 
+	Model::CommandStack stack;
+
+	stack.Do(std::make_unique<Model::AddModuleCommand>("midi", *m_graph));
+	stack.Do(std::make_unique<Model::AddModuleCommand>("envl", *m_graph));
+	stack.Do(std::make_unique<Model::AddModuleCommand>("oscl", *m_graph));
+	stack.Do(std::make_unique<Model::AddModuleCommand>("pmix", *m_graph));
+	stack.Do(std::make_unique<Model::AddModuleCommand>("trgt", *m_graph));
+
+	int midi = 1;
+	int env = 2;
+	int osc = 3;
+	int mixer = 4;
+	int target = 5;
+
+	stack.Do(std::make_unique<Model::AddConnectionCommand>(Model::PinRef(env, "gate"), Model::PinRef(midi, "gate"), *m_graph));
+	stack.Do(std::make_unique<Model::AddConnectionCommand>(Model::PinRef(osc, "ptch"), Model::PinRef(midi, "ptch"), *m_graph));
+	stack.Do(std::make_unique<Model::AddConnectionCommand>(Model::PinRef(osc, "levl"), Model::PinRef(env, "levl"), *m_graph));
+	stack.Do(std::make_unique<Model::AddConnectionCommand>(Model::PinRef(mixer, "sgnl"), Model::PinRef(osc, "sgnl"), *m_graph));
+	stack.Do(std::make_unique<Model::AddConnectionCommand>(Model::PinRef(target, "sgnl"), Model::PinRef(mixer, "sgnl"), *m_graph));
+
+	for (int i = 0; i < 10; ++i)
+		stack.Undo();
+	for (int i = 0; i < 10; ++i)
+		stack.Redo();
+
+	stack.Do(std::make_unique<Model::RemoveConnectionCommand>(Model::PinRef(env, "gate"), *m_graph));
+	stack.Do(std::make_unique<Model::RemoveConnectionCommand>(Model::PinRef(osc, "ptch"), *m_graph));
+	stack.Do(std::make_unique<Model::RemoveConnectionCommand>(Model::PinRef(osc, "levl"), *m_graph));
+	stack.Do(std::make_unique<Model::RemoveConnectionCommand>(Model::PinRef(mixer, "sgnl"), *m_graph));
+	stack.Do(std::make_unique<Model::RemoveConnectionCommand>(Model::PinRef(target, "sgnl"), *m_graph));
+
+	for (int i = 0; i < 5; ++i)
+		stack.Undo();
+
+	//m_graph->FindModule(env)->AddConnection("gate", Model::PinRef(midi, "gate"));
+	//m_graph->FindModule(osc)->AddConnection("ptch", Model::PinRef(midi, "ptch"));
+	//m_graph->FindModule(osc)->AddConnection("levl", Model::PinRef(env, "levl"));
+	//m_graph->FindModule(mixer)->AddConnection("sgnl", Model::PinRef(osc, "sgnl"));
+	//m_graph->FindModule(target)->AddConnection("sgnl", Model::PinRef(mixer, "sgnl"));
+
+	m_graph->FindModule(env)->SetValue("atck", 500);
+	m_graph->FindModule(env)->SetValue("decy", 500);
+	m_graph->FindModule(env)->SetValue("sust", 0x8000);
+	m_graph->FindModule(env)->SetValue("rels", 1000);
+
+	//Kernel::Serial::LoadClass("C:\\Users\\jxxwh\\test.synth", *m_graph);
+	m_graph->Test();
+
 	return TRUE;
 }
 

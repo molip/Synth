@@ -16,6 +16,8 @@ namespace Model
 		Graph();
 		~Graph();
 
+		void Test();
+
 		Module* FindModule(int modID);
 		const Module* FindModule(int modID) const { return const_cast<Graph*>(this)->FindModule(modID); }
 		const std::vector<Module>& GetSorted() const { return _sorted; }

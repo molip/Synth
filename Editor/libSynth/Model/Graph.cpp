@@ -13,6 +13,24 @@ Graph::Graph()
 {
 }
 
+void Graph::Test()
+{
+	for (auto& mod : _sorted)
+	{
+		Kernel::Debug::Trace << mod.GetDef().GetName() << "(" << mod.GetID() << "):" << std::endl;
+		//for (auto& input : mod.GetDef().GetInputs())
+		//{
+		//	Kernel::Debug::Trace << "\t" << input.GetName() << ":" << std::endl;
+		//	std::vector<PinRef> outputRefs = GetValidSourcePins({mod.GetID(), input.GetID()});
+		//	for (auto& outputRef : outputRefs)
+		//		Kernel::Debug::Trace << "\t\t" << outputRef.moduleID << "/" << outputRef.type << std::endl;
+		//}
+		
+		for (auto& pair: mod.GetConnections())
+			Kernel::Debug::Trace << "\t\t" << pair.first << "->" << pair.second.moduleID <<  "/" << pair.second.type << std::endl;
+	}
+}
+
 Graph::~Graph() = default;
 
 Module* Graph::FindModule(int modID)

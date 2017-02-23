@@ -49,11 +49,6 @@ const PinType& Module::GetSourceOutputDef(const PinRef& pin, const Graph& graph)
 	return GetSourceModule(pin, graph).GetOutputDef(pin.type);
 }
 
-void Module::Connect(Tag inputType, int modID, Tag outputType)
-{
-	_connections[inputType] = PinRef{modID, outputType};
-}
-
 void Module::SetValue(Tag inputType, int value)
 {
 	_values[inputType] = value;
@@ -107,4 +102,48 @@ void Module::Save(Serial::SaveNode& node) const
 	node.SaveType("type", _type);
 	node.SaveMap("connections", _connections, Serial::TypeSaver(), Serial::ClassSaver());
 	node.SaveMap("values", _values, Serial::TypeSaver(), Serial::TypeSaver());
+}
+
+Module::ConnectionUndo Module::AddConnection(Tag inputType, PinRef outputPin)
+{
+	ConnectionUndo undo;
+	auto& source = _connections[inputType];
+	undo.inputType = inputType;
+	undo.source = source;
+	source = outputPin;
+	return undo;
+}
+
+Module::ConnectionUndo Module::RemoveConnection(Tag inputType)
+{
+	ConnectionUndo undo;
+	undo.source = _connections[inputType];
+	undo.inputType = inputType;
+	_connections.erase(undo.inputType);
+	return undo;
+}
+
+std::vector<Module::ConnectionUndo> Module::RemoveConnectionsToSource(int moduleID)
+{
+	std::vector<Module::ConnectionUndo> undos;
+
+	for (auto& it = _connections.begin(); it != _connections.end(); )
+	{
+		if (it->second.moduleID == moduleID)
+		{
+			undos.push_back(ConnectionUndo{it->first, it->second});
+			it = _connections.erase(it);
+		}
+		else
+			++it;
+	}
+	return undos;
+}
+
+void Module::ApplyUndo(const ConnectionUndo& undo)
+{
+	if (undo.source.moduleID)
+		_connections[undo.inputType] = undo.source;
+	else
+		_connections.erase(undo.inputType);
 }

@@ -14,7 +14,7 @@ const Exporter::Buffer& Exporter::Export(const Graph& graph)
 	
 	byte monoModCount = 0, polyModCount = 0, valueCount = 0;
 	std::map<int, byte> modIndices; // id -> index;
-	for (auto& mod : graph.GetModules())
+	for (auto& mod : graph.GetSorted())
 	{
 		byte& index = mod.IsInstanced(graph) ? polyModCount : monoModCount;
 		modIndices.insert(std::make_pair(mod.GetID(), index++));
@@ -28,7 +28,7 @@ const Exporter::Buffer& Exporter::Export(const Graph& graph)
 	Add(polyModCount);
 	Add(polyphony);
 
-	for (auto& mod : graph.GetModules())
+	for (auto& mod : graph.GetSorted())
 	{
 		Add(mod.IsInstanced(graph) ? Engine::CommandType::AddPolyModule : Engine::CommandType::AddMonoModule);
 		Add(mod.GetDef().GetEngineID());
@@ -42,7 +42,7 @@ const Exporter::Buffer& Exporter::Export(const Graph& graph)
 		Add(pinDef.GetEngineID());
 	};
 
-	for (auto& mod : graph.GetModules())
+	for (auto& mod : graph.GetSorted())
 	{
 		for (auto& conn : mod.GetConnections())
 		{

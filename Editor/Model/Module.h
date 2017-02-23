@@ -14,6 +14,8 @@ namespace Model
 
 	struct PinRef
 	{
+		PinRef() : moduleID(0) {}
+		PinRef(int _moduleID, Tag _type) : moduleID(_moduleID), type(_type) {}
 		void Save(Serial::SaveNode& node) const;
 		void Load(Serial::LoadNode& node);
 
@@ -27,6 +29,9 @@ namespace Model
 		using ConnectionMap = std::map<Tag, PinRef>;
 		using ValueMap = std::map<Tag, int>;
 
+		using ConnectionPair = std::pair<Tag, PinRef>;
+		using ValuePair = std::pair<Tag, int>;
+
 		Module(Tag type = "");
 
 		const ModuleType& GetDef() const;
@@ -36,8 +41,7 @@ namespace Model
 		const PinType& GetSourceOutputDef(const PinRef& pin, const Graph& graph) const;
 
 		const ConnectionMap& GetConnections() const { return _connections; }
-		void Connect(Tag inputType, int modID, Tag outputType);
-
+		
 		const ValueMap& GetValues() const { return _values; }
 		void SetValue(Tag inputType, int value);
 
@@ -52,6 +56,16 @@ namespace Model
 
 		void Save(Serial::SaveNode& node) const;
 		void Load(Serial::LoadNode& node);
+
+		struct ConnectionUndo
+		{
+			Tag inputType;
+			PinRef source;
+		};
+		ConnectionUndo AddConnection(Tag inputType, PinRef outputPin);
+		ConnectionUndo RemoveConnection(Tag inputType);
+		std::vector<ConnectionUndo> RemoveConnectionsToSource(int moduleID);
+		void ApplyUndo(const ConnectionUndo& undo);
 
 	protected:
 		int _id;

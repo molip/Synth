@@ -99,6 +99,8 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Model\Command.h" />
+    <ClInclude Include="Model\CommandStack.h" />
     <ClInclude Include="Model\Defs.h" />
     <ClInclude Include="Model\Engine.h" />
     <ClInclude Include="Model\Exporter.h" />
@@ -112,6 +114,8 @@
   <ItemGroup>
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Model\Command.cpp" />
+    <ClCompile Include="Model\CommandStack.cpp" />
     <ClCompile Include="Model\Exporter.cpp" />
     <ClCompile Include="Model\Graph.cpp" />
     <ClCompile Include="Model\Module.cpp" />

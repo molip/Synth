@@ -2,6 +2,7 @@
 #include "Graph.h"
 #include "Module.h"
 #include "ModuleTypes.h"
+#include <algorithm>
 #include <set>
 
 #include "../libKernel/Serial.h"
@@ -10,59 +11,9 @@ using namespace Model;
 
 Graph::Graph()
 {
-	int midi = AddModule("midi");
-	int env = AddModule("envl");
-	int osc = AddModule("oscl");
-	int mixer = AddModule("pmix");
-	int target = AddModule("trgt");
-
-	FindModule(env)->Connect("gate", midi, "gate");
-	FindModule(osc)->Connect("ptch", midi, "ptch");
-	FindModule(osc)->Connect("levl", env, "levl");
-	FindModule(mixer)->Connect("sgnl", osc, "sgnl");
-	FindModule(target)->Connect("sgnl", mixer, "sgnl");
-
-	FindModule(env)->SetValue("atck", 500);
-	FindModule(env)->SetValue("decy", 500);
-	FindModule(env)->SetValue("sust", 0x8000);
-	FindModule(env)->SetValue("rels", 1000);
-
-	Test();
-}
-
-void Graph::Test()
-{
-
-	bool a = _modules[0].IsInstanced(*this);
-	bool b = _modules[1].IsInstanced(*this);
-	bool c = _modules[2].IsInstanced(*this);
-	bool d = _modules[3].IsInstanced(*this);
-	bool e = _modules[4].IsInstanced(*this);
-
-	SortModules();
-
-	for (auto& mod : _modules)
-	{
-		Kernel::Debug::Trace << mod.GetDef().GetName() << ":" << std::endl;
-		for (auto& input : mod.GetDef().GetInputs())
-		{
-			Kernel::Debug::Trace << "\t" << input.GetName() << ":" << std::endl;
-			std::vector<PinRef> outputRefs = GetValidSourcePins({mod.GetID(), input.GetID()});
-			for (auto& outputRef : outputRefs)
-				Kernel::Debug::Trace << "\t\t" << outputRef.moduleID << "/" << outputRef.type << std::endl;
-		}
-	}
 }
 
 Graph::~Graph() = default;
-
-
-int Graph::AddModule(Tag type)
-{
-	_modules.push_back(Module(type));
-    _modules.back().SetID(_nextModuleID);
-    return _nextModuleID++;
-}
 
 Module* Graph::FindModule(int modID)
 {
@@ -75,7 +26,7 @@ Module* Graph::FindModule(int modID)
 void Graph::SortModules()
 {
 	std::set<int> done;
-	std::vector<Module> sorted;
+	_sorted.clear();
 
 	auto WantDefer = [&](const Module& mod)
 	{
@@ -89,11 +40,9 @@ void Graph::SortModules()
 		for (auto& mod : _modules)
 			if (done.count(mod.GetID()) == 0 && !WantDefer(mod))
 			{
-				sorted.push_back(mod);
+				_sorted.push_back(mod);
 				done.insert(mod.GetID());
 			}
-				
-	_modules = sorted;
 }
 	
 // Assumes sorted.
@@ -104,7 +53,7 @@ std::vector<PinRef> Graph::GetValidSourcePins(PinRef input)
 	std::vector<PinRef> result;
 		
 	// Find earliest non-dependent module.
-	for (auto& mod : _modules)
+	for (auto& mod : _sorted)
 	{
 		if (mod.GetID() != input.moduleID)
 		{
@@ -113,7 +62,7 @@ std::vector<PinRef> Graph::GetValidSourcePins(PinRef input)
 
 			for (auto& outputDef : mod.GetDef().GetOutputs())
 				if (outputDef.GetDataType() == inputDef.GetDataType())
-					result.push_back(PinRef {mod.GetID(), outputDef.GetID()});
+					result.push_back(PinRef(mod.GetID(), outputDef.GetID()));
 		}
 	}
 
@@ -134,4 +83,80 @@ void Graph::Save(Serial::SaveNode& node) const
 void Graph::Load(Serial::LoadNode& node)
 {
 	node.LoadCntr("modules", _modules, Serial::ClassLoader());
+	SortModules();
+}
+
+Graph::AddModuleUndo Graph::AddModule(Tag type)
+{
+	_modules.push_back(Module(type));
+    _modules.back().SetID(_nextModuleID);
+	SortModules();
+	AddModuleUndo undo;
+	undo.moduleID = _nextModuleID++;
+	return undo;
+}
+
+void Graph::ApplyUndo(const AddModuleUndo& undo)
+{
+	_modules.pop_back();
+	--_nextModuleID;
+	SortModules();
+}
+
+Graph::RemoveModuleUndo Graph::RemoveModule(int moduleID)
+{
+	RemoveModuleUndo undo;
+
+	for (auto& mod : _modules)
+	{
+		std::vector<Module::ConnectionUndo> undos = mod.RemoveConnectionsToSource(moduleID);
+		if (!undos.empty())
+			undo.connections[mod.GetID()] = undos;
+	}
+
+	auto it = std::find_if(_modules.begin(), _modules.end(), [&](auto& mod) { return mod.GetID() == moduleID; });
+	undo.module = *it;
+	undo.position = int(it - _modules.begin());
+	_modules.erase(it);
+	SortModules();
+	return undo;
+}
+
+void Graph::ApplyUndo(const RemoveModuleUndo& undo)
+{
+	_modules.insert(_modules.begin() + undo.position, undo.module);
+	for (auto& pair : undo.connections)
+	{
+		Module* mod = FindModule(pair.first);
+		for (auto& connUndo : pair.second)
+			mod->ApplyUndo(connUndo);
+	}
+	SortModules();
+}
+
+Graph::ConnectionUndo Graph::AddConnection(PinRef inputPin, PinRef outputPin)
+{
+	Module* mod = FindModule(inputPin.moduleID);
+	ConnectionUndo undo;
+	undo.undo = mod->AddConnection(inputPin.type, outputPin);
+	undo.moduleID = inputPin.moduleID;
+	SortModules();
+	return undo;
+}
+
+Graph::ConnectionUndo Graph::RemoveConnection(PinRef inputPin)
+{
+	Module* mod = FindModule(inputPin.moduleID);
+	ConnectionUndo undo;
+	undo.undo = mod->RemoveConnection(inputPin.type);
+	undo.moduleID = inputPin.moduleID;
+	SortModules();
+	return undo;
+}
+
+void Graph::ApplyUndo(const ConnectionUndo& undo)
+{
+	Module* mod = FindModule(undo.moduleID);
+	mod->ApplyUndo(undo.undo);
+	SortModules();
 }

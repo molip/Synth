@@ -43,6 +43,9 @@
     <ClInclude Include="Model\CommandStack.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="Model\Geometry.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -64,6 +67,9 @@
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="Model\CommandStack.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Geometry.cpp">
       <Filter>Model</Filter>
     </ClCompile>
   </ItemGroup>

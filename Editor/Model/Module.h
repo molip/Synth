@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Defs.h"
+#include "Geometry.h"
 #include "Tag.h"
+
 #include <vector>
 #include <map>
 
@@ -67,10 +69,14 @@ namespace Model
 		std::vector<ConnectionUndo> RemoveConnectionsToSource(int moduleID);
 		void ApplyUndo(const ConnectionUndo& undo);
 
+		void SetPosition(const Point& pos) { _position = pos; }
+		const Point& GetPosition() const { return _position; }
+
 	protected:
 		int _id;
 		Tag _type;
 		ConnectionMap _connections;
 		ValueMap _values; 
+		Point _position;
 	};
 }

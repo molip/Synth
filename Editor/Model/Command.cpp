@@ -47,3 +47,18 @@ void RemoveConnectionCommand::Undo()
 {
 	_graph.ApplyUndo(_undo);
 }
+
+
+
+void SetPositionCommand::Do() 
+{
+	Module* mod = _graph.FindModule(_modID);
+	_oldPos = mod->GetPosition();
+	mod->SetPosition(_pos);
+}
+
+void SetPositionCommand::Undo() 
+{
+	Module* mod = _graph.FindModule(_modID);
+	mod->SetPosition(_oldPos);
+}

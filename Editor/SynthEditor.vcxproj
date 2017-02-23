@@ -104,6 +104,7 @@
     <ClInclude Include="Model\Defs.h" />
     <ClInclude Include="Model\Engine.h" />
     <ClInclude Include="Model\Exporter.h" />
+    <ClInclude Include="Model\Geometry.h" />
     <ClInclude Include="Model\Graph.h" />
     <ClInclude Include="Model\Module.h" />
     <ClInclude Include="Model\ModuleTypes.h" />
@@ -117,6 +118,7 @@
     <ClCompile Include="Model\Command.cpp" />
     <ClCompile Include="Model\CommandStack.cpp" />
     <ClCompile Include="Model\Exporter.cpp" />
+    <ClCompile Include="Model\Geometry.cpp" />
     <ClCompile Include="Model\Graph.cpp" />
     <ClCompile Include="Model\Module.cpp" />
     <ClCompile Include="Model\ModuleTypes.cpp" />

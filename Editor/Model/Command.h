@@ -79,4 +79,17 @@ namespace Model
 		PinRef _inputPin;
 		Graph::ConnectionUndo _undo;
 	};
+
+	class SetPositionCommand : public GraphCommand
+	{
+	public:
+		SetPositionCommand(int modID, const Point& pos, Graph& graph) : GraphCommand(graph), _modID(modID), _pos(pos) {}
+
+		virtual void Do();
+		virtual void Undo();
+	
+	protected:
+		int _modID;
+		Point _pos, _oldPos;
+	};
 }

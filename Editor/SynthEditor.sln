@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libKernel", "libKernel\libK
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libSynth", "libSynth\libSynth.vcxproj", "{4F3D3367-90DC-4AA7-BC64-1A873C5D0BB9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SynthEditor", "SynthEditor.vcxproj", "{D446FA8C-83A2-43FF-8771-EC2AEFE19490}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{4F3D3367-90DC-4AA7-BC64-1A873C5D0BB9}.Debug|x64.Build.0 = Debug|x64
 		{4F3D3367-90DC-4AA7-BC64-1A873C5D0BB9}.Release|x64.ActiveCfg = Release|x64
 		{4F3D3367-90DC-4AA7-BC64-1A873C5D0BB9}.Release|x64.Build.0 = Release|x64
+		{D446FA8C-83A2-43FF-8771-EC2AEFE19490}.Debug|x64.ActiveCfg = Debug|x64
+		{D446FA8C-83A2-43FF-8771-EC2AEFE19490}.Debug|x64.Build.0 = Debug|x64
+		{D446FA8C-83A2-43FF-8771-EC2AEFE19490}.Release|x64.ActiveCfg = Release|x64
+		{D446FA8C-83A2-43FF-8771-EC2AEFE19490}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

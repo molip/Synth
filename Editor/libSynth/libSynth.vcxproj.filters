@@ -2,20 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Model">
-      <UniqueIdentifier>{4f173e1f-3228-460e-986b-0019c4501f2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Windows">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <UniqueIdentifier>{C479FF71-FAA8-4A74-B409-9D82CCD72F8C}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Windows</Filter>
-    </ClInclude>
     <ClInclude Include="Model\Module.h">
       <Filter>Model</Filter>
     </ClInclude>
@@ -46,11 +36,9 @@
     <ClInclude Include="Model\Geometry.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Windows</Filter>
-    </ClCompile>
     <ClCompile Include="Model\Module.cpp">
       <Filter>Model</Filter>
     </ClCompile>
@@ -72,5 +60,6 @@
     <ClCompile Include="Model\Geometry.cpp">
       <Filter>Model</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
 </Project>

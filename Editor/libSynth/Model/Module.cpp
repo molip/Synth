@@ -3,7 +3,7 @@
 #include "Graph.h"
 #include "ModuleTypes.h"
 
-#include "../libKernel/Serial.h"
+#include "../../libKernel/Serial.h"
 
 using namespace Model;
 

@@ -99,6 +99,7 @@
   <ItemGroup>
     <ClInclude Include="Model\Command.h" />
     <ClInclude Include="Model\CommandStack.h" />
+    <ClInclude Include="Model\Controller.h" />
     <ClInclude Include="Model\Defs.h" />
     <ClInclude Include="Model\Engine.h" />
     <ClInclude Include="Model\Exporter.h" />
@@ -111,6 +112,7 @@
   <ItemGroup>
     <ClCompile Include="Model\Command.cpp" />
     <ClCompile Include="Model\CommandStack.cpp" />
+    <ClCompile Include="Model\Controller.cpp" />
     <ClCompile Include="Model\Exporter.cpp" />
     <ClCompile Include="Model\Geometry.cpp" />
     <ClCompile Include="Model\Graph.cpp" />

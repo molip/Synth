@@ -28,6 +28,9 @@
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Model\Controller.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
     <ClInclude Include="Model\Command.h" />
     <ClInclude Include="Model\CommandStack.h" />
     <ClInclude Include="Model\Exporter.h" />
@@ -46,6 +49,9 @@
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Model\Controller.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
     <ClCompile Include="Model\Command.cpp" />
     <ClCompile Include="Model\CommandStack.cpp" />
     <ClCompile Include="Model\Exporter.cpp" />

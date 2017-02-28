@@ -7,7 +7,7 @@
 
 #include "../../libKernel/Serial.h"
 
-using namespace Model;
+using namespace Synth::Model;
 
 Graph::Graph()
 {

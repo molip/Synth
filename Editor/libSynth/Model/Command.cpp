@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "Command.h"
 
-using namespace Model;
+using namespace Synth;
+using namespace Synth::Model;
 
 void AddModuleCommand::Do() 
 {

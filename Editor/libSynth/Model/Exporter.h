@@ -4,6 +4,8 @@
 
 #include <vector>
 
+namespace Synth
+{
 namespace Model
 {
 	class Graph;
@@ -26,4 +28,5 @@ namespace Model
 		Buffer _buffer;
 	};
 
+}
 }

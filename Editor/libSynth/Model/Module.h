@@ -7,6 +7,8 @@
 #include <vector>
 #include <map>
 
+namespace Synth
+{
 namespace Model
 {
 	class Graph;
@@ -79,4 +81,5 @@ namespace Model
 		ValueMap _values; 
 		Point _position;
 	};
+}
 }

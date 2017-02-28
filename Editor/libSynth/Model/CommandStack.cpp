@@ -2,7 +2,7 @@
 #include "CommandStack.h"
 #include "Command.h"
 
-using namespace Model;
+using namespace Synth;
 
 void CommandStack::Do(CommandPtr cmd, bool preview)
 {

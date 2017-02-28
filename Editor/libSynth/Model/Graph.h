@@ -8,6 +8,8 @@
 #include <memory>
 #include <vector>
 
+namespace Synth
+{
 namespace Model
 {
 	class Graph
@@ -58,4 +60,5 @@ namespace Model
 		std::vector<Module*> _sorted;
 		int _nextModuleID = 1;
 	};
+}
 }

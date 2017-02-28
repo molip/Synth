@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-namespace Model
+namespace Synth
 {
 	class Command;
 	using CommandPtr = std::unique_ptr<Command>;

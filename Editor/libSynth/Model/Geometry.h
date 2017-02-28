@@ -3,6 +3,8 @@
 #include <ostream>
 #include <istream>
 
+namespace Synth
+{
 namespace Model
 {
 	class Point
@@ -53,4 +55,5 @@ namespace Model
 
 	std::ostream& operator<<(std::ostream& stream, const Rect& val);
 	std::istream& operator>>(std::istream& stream, Rect& val);
+}
 }

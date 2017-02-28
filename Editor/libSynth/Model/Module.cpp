@@ -5,7 +5,7 @@
 
 #include "../../libKernel/Serial.h"
 
-using namespace Model;
+using namespace Synth::Model;
 
 void PinRef::Save(Serial::SaveNode& node) const
 {

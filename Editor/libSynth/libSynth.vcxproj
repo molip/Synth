@@ -106,7 +106,6 @@
     <ClInclude Include="Model\Graph.h" />
     <ClInclude Include="Model\Module.h" />
     <ClInclude Include="Model\ModuleTypes.h" />
-    <ClInclude Include="Model\Types.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,16 +1,16 @@
 #include "stdafx.h"
 #include "Geometry.h"
 
-using namespace Model;
+using namespace Synth::Model;
 
-std::ostream& Model::operator<<(std::ostream& stream, const Point& val)
+std::ostream& Synth::Model::operator<<(std::ostream& stream, const Point& val)
 {
 	stream << "(" << val.x << "," << val.y << ")";
 
 	return stream;
 }
 
-std::istream& Model::operator>>(std::istream& stream, Point& val)
+std::istream& Synth::Model::operator>>(std::istream& stream, Point& val)
 {
 	char lparen, comma, rparen;
 	int x, y;
@@ -63,14 +63,14 @@ void Rect::Inflate(int x, int y)
 	_p1.y += y * 2;
 }
 
-std::ostream& Model::operator<<(std::ostream& stream, const Rect& val)
+std::ostream& Synth::Model::operator<<(std::ostream& stream, const Rect& val)
 {
 	stream << val._p0 << " - " << val._p1;
 
 	return stream;
 }
 
-std::istream& Model::operator>>(std::istream& stream, Rect& val)
+std::istream& Synth::Model::operator>>(std::istream& stream, Rect& val)
 {
 	char hyphen;
 	Point p0, p1;

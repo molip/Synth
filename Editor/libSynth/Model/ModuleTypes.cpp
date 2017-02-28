@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ModuleTypes.h"
 
-using namespace Model;
+using namespace Synth::Model;
 
 const ModuleTypes& ModuleTypes::Instance()
 {

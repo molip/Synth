@@ -4,6 +4,9 @@
     <Filter Include="Model">
       <UniqueIdentifier>{C479FF71-FAA8-4A74-B409-9D82CCD72F8C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Controller">
+      <UniqueIdentifier>{007d976c-46a6-4e82-8a4f-26f01f4e352b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\Module.h">
@@ -18,25 +21,16 @@
     <ClInclude Include="Model\ModuleTypes.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="Model\Types.h">
-      <Filter>Model</Filter>
-    </ClInclude>
     <ClInclude Include="Model\Defs.h">
-      <Filter>Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Model\Exporter.h">
-      <Filter>Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Model\Command.h">
-      <Filter>Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Model\CommandStack.h">
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="Model\Geometry.h">
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Model\Command.h" />
+    <ClInclude Include="Model\CommandStack.h" />
+    <ClInclude Include="Model\Exporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">
@@ -48,18 +42,12 @@
     <ClCompile Include="Model\ModuleTypes.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="Model\Exporter.cpp">
-      <Filter>Model</Filter>
-    </ClCompile>
-    <ClCompile Include="Model\Command.cpp">
-      <Filter>Model</Filter>
-    </ClCompile>
-    <ClCompile Include="Model\CommandStack.cpp">
-      <Filter>Model</Filter>
-    </ClCompile>
     <ClCompile Include="Model\Geometry.cpp">
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Model\Command.cpp" />
+    <ClCompile Include="Model\CommandStack.cpp" />
+    <ClCompile Include="Model\Exporter.cpp" />
   </ItemGroup>
 </Project>

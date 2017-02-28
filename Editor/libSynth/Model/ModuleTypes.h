@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+namespace Synth
+{
 namespace Model
 {
 	class PinType
@@ -82,4 +84,5 @@ namespace Model
 		static const ModuleTypes& Instance();
 		std::vector<ModuleType> _types;
 	};
+}
 }

@@ -4,7 +4,7 @@
 #include "Module.h"
 #include "ModuleTypes.h"
 
-using namespace Model;
+using namespace Synth::Model;
 
 const Exporter::Buffer& Exporter::Export(const Graph& graph)
 {

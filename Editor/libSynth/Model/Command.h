@@ -83,7 +83,7 @@ namespace Model
 	class SetPositionCommand : public GraphCommand
 	{
 	public:
-		SetPositionCommand(int modID, const Point& pos, Graph& graph) : GraphCommand(graph), _modID(modID), _pos(pos) {}
+		SetPositionCommand(int modID, const Point& pos, bool relative, Graph& graph) : GraphCommand(graph), _modID(modID), _pos(pos), _relative(relative) {}
 
 		virtual void Do();
 		virtual void Undo();
@@ -91,5 +91,6 @@ namespace Model
 	protected:
 		int _modID;
 		Point _pos, _oldPos;
+		bool _relative;
 	};
 }

@@ -17,6 +17,11 @@ namespace Model
 			return x == rhs.x && y == rhs.y;
 		}
 
+		Point operator +(const Point& rhs) const
+		{
+			return Point(x + rhs.x, y + rhs.y);
+		}
+
 		int x, y;
 	};
 

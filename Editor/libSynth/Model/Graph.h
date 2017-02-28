@@ -18,7 +18,7 @@ namespace Model
 
 		Module* FindModule(int modID);
 		const Module* FindModule(int modID) const { return const_cast<Graph*>(this)->FindModule(modID); }
-		const std::vector<Module>& GetSorted() const { return _sorted; }
+		const std::vector<Module*>& GetSorted() const { return _sorted; }
 		void SortModules();
 		void Save(Serial::SaveNode& node) const;
 		void Load(Serial::LoadNode& node);
@@ -54,7 +54,8 @@ namespace Model
 		void ApplyUndo(const ConnectionUndo& undo);
 
 	private:
-		std::vector<Module> _modules, _sorted;
+		std::vector<Module> _modules;
+		std::vector<Module*> _sorted;
 		int _nextModuleID = 1;
 	};
 }

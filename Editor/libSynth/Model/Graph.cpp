@@ -40,7 +40,7 @@ void Graph::SortModules()
 		for (auto& mod : _modules)
 			if (done.count(mod.GetID()) == 0 && !WantDefer(mod))
 			{
-				_sorted.push_back(mod);
+				_sorted.push_back(&mod);
 				done.insert(mod.GetID());
 			}
 }
@@ -55,14 +55,14 @@ std::vector<PinRef> Graph::GetValidSourcePins(PinRef input)
 	// Find earliest non-dependent module.
 	for (auto& mod : _sorted)
 	{
-		if (mod.GetID() != input.moduleID)
+		if (mod->GetID() != input.moduleID)
 		{
-			if (mod.IsDependentOn(input.moduleID, *this, false))
+			if (mod->IsDependentOn(input.moduleID, *this, false))
 				break;
 
-			for (auto& outputDef : mod.GetDef().GetOutputs())
+			for (auto& outputDef : mod->GetDef().GetOutputs())
 				if (outputDef.GetDataType() == inputDef.GetDataType())
-					result.push_back(PinRef(mod.GetID(), outputDef.GetID()));
+					result.push_back(PinRef(mod->GetID(), outputDef.GetID()));
 		}
 	}
 

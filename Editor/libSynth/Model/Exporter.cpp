@@ -16,9 +16,9 @@ const Exporter::Buffer& Exporter::Export(const Graph& graph)
 	std::map<int, byte> modIndices; // id -> index;
 	for (auto& mod : graph.GetSorted())
 	{
-		byte& index = mod.IsInstanced(graph) ? polyModCount : monoModCount;
-		modIndices.insert(std::make_pair(mod.GetID(), index++));
-		valueCount += (byte)mod.GetValues().size();
+		byte& index = mod->IsInstanced(graph) ? polyModCount : monoModCount;
+		modIndices.insert(std::make_pair(mod->GetID(), index++));
+		valueCount += (byte)mod->GetValues().size();
 	}
 
 	Add(Engine::CommandType::StartGraph);
@@ -30,8 +30,8 @@ const Exporter::Buffer& Exporter::Export(const Graph& graph)
 
 	for (auto& mod : graph.GetSorted())
 	{
-		Add(mod.IsInstanced(graph) ? Engine::CommandType::AddPolyModule : Engine::CommandType::AddMonoModule);
-		Add(mod.GetDef().GetEngineID());
+		Add(mod->IsInstanced(graph) ? Engine::CommandType::AddPolyModule : Engine::CommandType::AddMonoModule);
+		Add(mod->GetDef().GetEngineID());
 	}
 
 	auto AddPin = [&](const Module& mod, const PinType& pinDef)
@@ -44,20 +44,20 @@ const Exporter::Buffer& Exporter::Export(const Graph& graph)
 
 	for (auto& mod : graph.GetSorted())
 	{
-		for (auto& conn : mod.GetConnections())
+		for (auto& conn : mod->GetConnections())
 		{
-			const PinType& inputDef = mod.GetInputDef(conn.first);
-			const PinType& outputDef = mod.GetSourceOutputDef(conn.second, graph);
-			const Module& sourceMod = mod.GetSourceModule(conn.second, graph);
+			const PinType& inputDef = mod->GetInputDef(conn.first);
+			const PinType& outputDef = mod->GetSourceOutputDef(conn.second, graph);
+			const Module& sourceMod = mod->GetSourceModule(conn.second, graph);
 
 			Add(Engine::CommandType::AddConnection);
 			Add((inputDef.IsMulti() || outputDef.IsMulti()) ? Engine::ConnectionType::Multi : Engine::ConnectionType::Single);
 
-			AddPin(mod, inputDef);
+			AddPin(*mod, inputDef);
 			AddPin(sourceMod, outputDef);
 		}
 
-		for (auto val : mod.GetValues())
+		for (auto val : mod->GetValues())
 		{
 			Add(Engine::CommandType::AddMonoModule);
 			Add(Engine::ModuleType::UnsignedValue);
@@ -66,7 +66,7 @@ const Exporter::Buffer& Exporter::Export(const Graph& graph)
 			Add(Engine::ConnectionType::Single);
 
 			// Input.
-			AddPin(mod, mod.GetInputDef(val.first));
+			AddPin(*mod, mod->GetInputDef(val.first));
 
 			// Output.
 			Add(Engine::InstanceType::Mono);

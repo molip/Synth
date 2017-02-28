@@ -4,11 +4,30 @@
 
 using namespace Model;
 
-void CommandStack::Do(CommandPtr cmd)
+void CommandStack::Do(CommandPtr cmd, bool preview)
 {
+	ClearPreview();
+
 	cmd->Do();
-	_commands.resize(_doneCount++);
-	_commands.push_back(std::move(cmd));
+
+	if (preview)
+	{
+		_preview = std::move(cmd);
+	}
+	else
+	{
+		_commands.resize(_doneCount++);
+		_commands.push_back(std::move(cmd));
+	}
+}
+
+void CommandStack::ClearPreview()
+{
+	if (_preview)
+	{
+		_preview->Undo();
+		_preview.reset();
+	}
 }
 
 void CommandStack::Undo()

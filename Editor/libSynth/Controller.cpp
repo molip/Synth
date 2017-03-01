@@ -35,13 +35,15 @@ void Controller::Redo()
 	_commandStack->Redo();
 }
 
-void Controller::OnMouseMove(Model::Point point)
+bool Controller::OnMouseMove(Model::Point point)
 {
 	if (_mouseDownPoint)
 	{
 		Model::Point delta(point.x - _mouseDownPoint->x, point.y - _mouseDownPoint->y);
 		_commandStack->Do(std::make_unique<SetPositionCommand>(1, delta, true, *_graph), true);
+		return true;
 	}
+	return false;
 }
 
 void Controller::OnLButtonDown(Model::Point point)
@@ -52,9 +54,12 @@ void Controller::OnLButtonDown(Model::Point point)
 
 void Controller::OnLButtonUp(Model::Point point)
 {
-	Model::Point delta(point.x - _mouseDownPoint->x, point.y - _mouseDownPoint->y);
-	_commandStack->Do(std::make_unique<SetPositionCommand>(1, delta, true, *_graph), false);
-	_mouseDownPoint.reset();
+	if (_mouseDownPoint)
+	{
+		Model::Point delta(point.x - _mouseDownPoint->x, point.y - _mouseDownPoint->y);
+		_commandStack->Do(std::make_unique<SetPositionCommand>(1, delta, true, *_graph), false);
+		_mouseDownPoint.reset();
+	}
 }
 
 const std::vector<Model::Module*>& Synth::Controller::GetSorted() const

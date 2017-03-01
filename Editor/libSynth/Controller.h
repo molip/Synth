@@ -24,7 +24,7 @@ namespace Synth
 		void Undo();
 		void Redo();
 
-		void OnMouseMove(Model::Point point);
+		bool OnMouseMove(Model::Point point);
 		void OnLButtonDown(Model::Point point);
 		void OnLButtonUp(Model::Point point);
 

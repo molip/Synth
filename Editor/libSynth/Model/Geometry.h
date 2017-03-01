@@ -42,6 +42,10 @@ namespace Model
 
 		int Width() const { return _p1.x - _p0.x; }
 		int Height() const { return _p1.y - _p0.y; }
+		int Left() const { return _p0.x; }
+		int Right() const { return _p1.x; }
+		int Top() const { return _p0.y; }
+		int Bottom() const { return _p1.y; }
 		Point GetCentre() const { return Point(_p0.x + (_p1.x - _p0.x) / 2, _p0.y + (_p1.y - _p0.y) / 2); }
 		bool Contains(const Point& point) const;
 		bool IsEmpty() const { return _p0 == _p1; }

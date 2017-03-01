@@ -28,12 +28,12 @@
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Model\Controller.h">
+    <ClInclude Include="Exporter.h" />
+    <ClInclude Include="Command.h" />
+    <ClInclude Include="CommandStack.h" />
+    <ClInclude Include="Controller.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="Model\Command.h" />
-    <ClInclude Include="Model\CommandStack.h" />
-    <ClInclude Include="Model\Exporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">
@@ -49,11 +49,11 @@
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Model\Controller.cpp">
+    <ClCompile Include="Exporter.cpp" />
+    <ClCompile Include="Command.cpp" />
+    <ClCompile Include="CommandStack.cpp" />
+    <ClCompile Include="Controller.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="Model\Command.cpp" />
-    <ClCompile Include="Model\CommandStack.cpp" />
-    <ClCompile Include="Model\Exporter.cpp" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Tag.h"
-#include "Graph.h"
+#include "Model/Tag.h"
+#include "Model/Graph.h"
 
 #include <memory>
 

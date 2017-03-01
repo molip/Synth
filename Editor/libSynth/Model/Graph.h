@@ -3,7 +3,6 @@
 #include "Module.h"
 #include "Tag.h"
 #include "Defs.h"
-#include "Exporter.h"
 
 #include <memory>
 #include <vector>
@@ -27,8 +26,6 @@ namespace Model
 
 		std::vector<PinRef> GetValidSourcePins(PinRef input);
 	
-		Exporter::Buffer Export() const;
-
 		struct AddModuleUndo
 		{
 			int moduleID = 0;

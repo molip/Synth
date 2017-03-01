@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Exporter.h"
-#include "Graph.h"
-#include "Module.h"
-#include "ModuleTypes.h"
+#include "Model/Graph.h"
+#include "Model/Module.h"
+#include "Model/ModuleTypes.h"
 
 using namespace Synth::Model;
 

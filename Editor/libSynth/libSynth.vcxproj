@@ -97,12 +97,12 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Model\Command.h" />
-    <ClInclude Include="Model\CommandStack.h" />
-    <ClInclude Include="Model\Controller.h" />
+    <ClInclude Include="Command.h" />
+    <ClInclude Include="CommandStack.h" />
+    <ClInclude Include="Controller.h" />
+    <ClInclude Include="Exporter.h" />
     <ClInclude Include="Model\Defs.h" />
     <ClInclude Include="Model\Engine.h" />
-    <ClInclude Include="Model\Exporter.h" />
     <ClInclude Include="Model\Geometry.h" />
     <ClInclude Include="Model\Graph.h" />
     <ClInclude Include="Model\Module.h" />
@@ -110,10 +110,10 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Model\Command.cpp" />
-    <ClCompile Include="Model\CommandStack.cpp" />
-    <ClCompile Include="Model\Controller.cpp" />
-    <ClCompile Include="Model\Exporter.cpp" />
+    <ClCompile Include="Command.cpp" />
+    <ClCompile Include="CommandStack.cpp" />
+    <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="Exporter.cpp" />
     <ClCompile Include="Model\Geometry.cpp" />
     <ClCompile Include="Model\Graph.cpp" />
     <ClCompile Include="Model\Module.cpp" />

@@ -107,6 +107,7 @@
     <ClInclude Include="Model\Graph.h" />
     <ClInclude Include="Model\Module.h" />
     <ClInclude Include="Model\ModuleTypes.h" />
+    <ClInclude Include="ModuleIkon.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +119,7 @@
     <ClCompile Include="Model\Graph.cpp" />
     <ClCompile Include="Model\Module.cpp" />
     <ClCompile Include="Model\ModuleTypes.cpp" />
+    <ClCompile Include="ModuleIkon.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

@@ -4,7 +4,7 @@
     <Filter Include="Model">
       <UniqueIdentifier>{C479FF71-FAA8-4A74-B409-9D82CCD72F8C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Controller">
+    <Filter Include="UI">
       <UniqueIdentifier>{007d976c-46a6-4e82-8a4f-26f01f4e352b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -32,7 +32,10 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandStack.h" />
     <ClInclude Include="Controller.h">
-      <Filter>Controller</Filter>
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleIkon.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -53,7 +56,10 @@
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandStack.cpp" />
     <ClCompile Include="Controller.cpp">
-      <Filter>Controller</Filter>
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleIkon.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

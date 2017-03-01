@@ -4,6 +4,7 @@
 #include "CommandStack.h"
 
 using namespace Synth;
+using namespace Synth::UI;
 
 Controller::Controller()
 {
@@ -11,6 +12,13 @@ Controller::Controller()
 	_commandStack = std::make_unique<CommandStack>();
 	
 	_commandStack ->Do(std::make_unique<AddModuleCommand>("midi", *_graph));
+	_commandStack->Do(std::make_unique<SetPositionCommand>(1, Model::Point(100, 200), true, *_graph), false);
+
+	_commandStack ->Do(std::make_unique<AddModuleCommand>("envl", *_graph));
+	_commandStack->Do(std::make_unique<SetPositionCommand>(2, Model::Point(600, 200), true, *_graph), false);
+
+	_commandStack ->Do(std::make_unique<AddModuleCommand>("oscl", *_graph));
+	_commandStack->Do(std::make_unique<SetPositionCommand>(3, Model::Point(1100, 200), true, *_graph), false);
 }
 
 Controller::~Controller() = default;
@@ -40,7 +48,7 @@ bool Controller::OnMouseMove(Model::Point point)
 	if (_mouseDownPoint)
 	{
 		Model::Point delta(point.x - _mouseDownPoint->x, point.y - _mouseDownPoint->y);
-		_commandStack->Do(std::make_unique<SetPositionCommand>(1, delta, true, *_graph), true);
+		_commandStack->Do(std::make_unique<SetPositionCommand>(_selectedModuleID, delta, true, *_graph), true);
 		return true;
 	}
 	return false;
@@ -48,7 +56,7 @@ bool Controller::OnMouseMove(Model::Point point)
 
 void Controller::OnLButtonDown(Model::Point point)
 {
-	if (_selectedModule = HitTest(point))
+	if (_selectedModuleID = HitTest(point))
 		_mouseDownPoint = std::make_unique<Model::Point>(point);
 }
 
@@ -57,27 +65,26 @@ void Controller::OnLButtonUp(Model::Point point)
 	if (_mouseDownPoint)
 	{
 		Model::Point delta(point.x - _mouseDownPoint->x, point.y - _mouseDownPoint->y);
-		_commandStack->Do(std::make_unique<SetPositionCommand>(1, delta, true, *_graph), false);
+		_commandStack->Do(std::make_unique<SetPositionCommand>(_selectedModuleID, delta, true, *_graph), false);
 		_mouseDownPoint.reset();
 	}
 }
 
-const std::vector<Model::Module*>& Synth::Controller::GetSorted() const
+int Controller::HitTest(Model::Point point) const
 {
-	return _graph->GetSorted();
+	for (auto& ikon : GetModuleIkons())
+		if (ikon.GetRect().Contains(point))
+			return ikon.GetModuleID();
+
+	return 0;
 }
 
-Model::Rect Synth::Controller::GetModuleRect(const Model::Module& mod) const
+ModuleIkon Controller::GetModuleIkon(size_t index) const
 {
-	Model::Point pos = mod.GetPosition();
-	return Model::Rect(pos, pos + Model::Point(300, 200));
+	return ModuleIkon(*_graph->GetSorted()[index]);
 }
 
-Model::Module* Controller::HitTest(Model::Point point) const
+size_t Controller::GetModuleCount() const
 {
-	for (auto& mod : _graph->GetSorted())
-		if (GetModuleRect(*mod).Contains(point))
-			return mod;
-
-	return nullptr;
+	return _graph->GetSorted().size();
 }

@@ -36,6 +36,10 @@ Rect::Rect(const Point& p0, const Point& p1) : _p0(p0), _p1(p1)
 {
 }
 
+Rect::Rect(int left, int top, int right, int bottom) : _p0(left, top), _p1(right, bottom)
+{
+}
+
 Rect::~Rect()
 {
 }

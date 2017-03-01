@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Model/Geometry.h"
+#include "ModuleIkon.h"
+
+#include "../libKernel/IndexRange.h"
 
 #include <memory>
 #include <vector>
@@ -14,6 +17,8 @@ namespace Synth
 	}
 	class CommandStack;
 
+	namespace UI
+	{
 	class Controller
 	{
 	public:
@@ -28,16 +33,19 @@ namespace Synth
 		void OnLButtonDown(Model::Point point);
 		void OnLButtonUp(Model::Point point);
 
-		const std::vector<Model::Module*>& GetSorted() const; // TODO: Change this.
-		Model::Rect GetModuleRect(const Model::Module& mod) const;
+		ModuleIkon GetModuleIkon(size_t index) const; 
+		size_t GetModuleCount() const; 
+		KERNEL_DEFINE_INDEXRANGE(ModuleIkonRange, Controller, ModuleIkon, GetModuleIkon, GetModuleCount)
+		ModuleIkonRange GetModuleIkons() const { return ModuleIkonRange(*this); }
 
 	private:
-		Model::Module* HitTest(Model::Point point) const;
+		int HitTest(Model::Point point) const;
 
 		std::unique_ptr<Model::Graph> _graph;
 		std::unique_ptr<CommandStack> _commandStack;
 
-	    std::unique_ptr<Model::Point> _mouseDownPoint;
-		Model::Module* _selectedModule;
+		std::unique_ptr<Model::Point> _mouseDownPoint;
+		int _selectedModuleID = 0;
 	};
+	}
 }

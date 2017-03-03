@@ -4,6 +4,6 @@ namespace Synth
 {
 namespace Engine
 {
-#include "../../../Engine/Common.h"
+#include "../../Engine/Common.h"
 }
 }

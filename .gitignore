@@ -1,4 +1,2 @@
-Editor/Debug/
-Editor/Release/
-Editor/x64/
-Editor/libSynth/x64/
+libSynth/x64/
+x64/

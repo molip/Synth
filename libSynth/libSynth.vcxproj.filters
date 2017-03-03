@@ -37,6 +37,9 @@
     <ClInclude Include="ModuleIkon.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="Enums.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">

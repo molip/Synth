@@ -36,6 +36,11 @@ const std::string& ModuleIkon::GetName() const
 	return _module.GetDef().GetName();
 }
 
+Colour ModuleIkon::GetColour() const
+{
+	return _module.IsInstanced(_graph) ? Colour::Red : Colour::Blue;
+}
+
 std::vector<ModuleIkon::Pin> ModuleIkon::GetPins(bool outputs) const
 {
 	std::vector<ModuleIkon::Pin> pins;
@@ -52,7 +57,7 @@ std::vector<ModuleIkon::Pin> ModuleIkon::GetPins(bool outputs) const
 		for (auto& pin : pinDefs)
 		{
 			rect.Bottom() = rect.Top() + PinHeight;
-			pins.push_back(Pin{pin.GetName(), rect});
+			pins.push_back(Pin{pin.GetName(), rect, pin.IsMulti() ? Colour::Red : Colour::Blue });
 			rect.Top() += PinHeight + PinGap;
 		}
 	}

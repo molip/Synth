@@ -81,7 +81,7 @@ int Controller::HitTest(Model::Point point) const
 
 ModuleIkon Controller::GetModuleIkon(size_t index) const
 {
-	return ModuleIkon(*_graph->GetSorted()[index]);
+	return ModuleIkon(*_graph->GetSorted()[index], *_graph);
 }
 
 size_t Controller::GetModuleCount() const

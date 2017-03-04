@@ -30,20 +30,34 @@ namespace Synth
 		void Redo();
 
 		bool OnMouseMove(Model::Point point);
-		void OnLButtonDown(Model::Point point);
+		bool OnLButtonDown(Model::Point point);
 		void OnLButtonUp(Model::Point point);
 
 		using ModuleIkonRange = Kernel::IndexRange<ModuleIkon>;
 		ModuleIkonRange GetModuleIkons() const;
 
+		using Connection = std::pair<Model::Point, Model::Point>;
+		const Connection* GetLiveConnection() const { return _liveConnection.get(); }
+		std::vector<Connection> GetConnections() const;
+
+		class Selection
+		{
+		public:
+			int moduleID = 0;
+			Model::Tag pinID;
+			bool isOutput = false;
+		};
+
 	private:
-		int HitTest(Model::Point point) const;
+		Selection HitTest(Model::Point point) const;
 
 		std::unique_ptr<Model::Graph> _graph;
 		std::unique_ptr<CommandStack> _commandStack;
 
 		std::unique_ptr<Model::Point> _mouseDownPoint;
-		int _selectedModuleID = 0;
+		Selection _selection;
+
+		std::unique_ptr<Connection> _liveConnection;
 	};
 	}
 }

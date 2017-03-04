@@ -3,6 +3,7 @@
 #include "Enums.h"
 
 #include "Model/Geometry.h"
+#include "Model/Tag.h"
 
 #include <vector>
 
@@ -20,7 +21,7 @@ namespace Synth
 	class ModuleIkon
 	{
 	public:
-		ModuleIkon(const Model::Module& module, const Model::Graph& graph) : _module(module), _graph(graph) {}
+		ModuleIkon(const Model::Module& module, const Model::Graph& graph);
 
 		int GetModuleID() const;
 
@@ -32,15 +33,21 @@ namespace Synth
 		{
 			std::string name;
 			Model::Rect rect;
+			Model::Point connectionPoint;
 			Colour colour;
+			Model::Tag id;
 		};
 
-		std::vector<Pin> GetInputPins() const { return GetPins(false); }
-		std::vector<Pin> GetOutputPins() const { return GetPins(true); }
+		const ModuleIkon::Pin* FindPin(Model::Tag id, bool output);
+
+		const std::vector<Pin>& GetInputPins() const { return GetPins(false); }
+		const std::vector<Pin>& GetOutputPins() const { return GetPins(true); }
+		const std::vector<Pin>& GetPins(bool outputs) const;
 
 	private:
-		std::vector<ModuleIkon::Pin> GetPins(bool outputs) const;
-
+		void CreatePins(bool outputs) const;
+		
+		mutable std::vector<Pin> _inputs, _outputs;
 		const Model::Module& _module;
 		const Model::Graph& _graph;
 	};

@@ -19,7 +19,8 @@ namespace Model
 
 		Module* FindModule(int modID);
 		const Module* FindModule(int modID) const { return const_cast<Graph*>(this)->FindModule(modID); }
-		const std::vector<Module*>& GetSorted() const { return _sorted; } // TODO: Constness.
+		std::vector<Module*>& GetSorted() { return _sorted; } 
+		const std::vector<const Module*>& GetSorted() const { return reinterpret_cast<const std::vector<const Module*>&>(_sorted); } 
 		void SortModules();
 		void Save(Serial::SaveNode& node) const;
 		void Load(Serial::LoadNode& node);

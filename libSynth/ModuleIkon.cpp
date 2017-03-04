@@ -17,6 +17,10 @@ namespace
 	const int Width = 150;
 }
 
+ModuleIkon::ModuleIkon(const Model::Module& module, const Model::Graph& graph) : _module(module), _graph(graph) 
+{
+}
+
 int ModuleIkon::GetModuleID() const 
 {
 	return _module.GetID();
@@ -41,11 +45,31 @@ Colour ModuleIkon::GetColour() const
 	return _module.IsInstanced(_graph) ? Colour::Red : Colour::Blue;
 }
 
-std::vector<ModuleIkon::Pin> ModuleIkon::GetPins(bool outputs) const
+const ModuleIkon::Pin* ModuleIkon::FindPin(Model::Tag id, bool output)
 {
-	std::vector<ModuleIkon::Pin> pins;
+	for (auto& pin : GetPins(output))
+		if (pin.id == id)
+			return &pin;
 
-	auto& pinDefs = outputs ? _module.GetDef().GetOutputs() : _module.GetDef().GetInputs();
+	return nullptr;
+}
+
+const std::vector<ModuleIkon::Pin>& ModuleIkon::GetPins(bool outputs) const
+{
+	CreatePins(outputs);
+	return outputs ? _outputs : _inputs;
+}
+
+void ModuleIkon::CreatePins(bool outputs) const
+{
+	const auto& pinDefs = outputs ? _module.GetDef().GetOutputs() : _module.GetDef().GetInputs();
+	if (pinDefs.empty())
+		return;
+	
+	auto& pins = outputs ? _outputs : _inputs;
+	if (!pins.empty())
+		return;
+
 	auto modRect = GetRect();
 
 	if (!pinDefs.empty())
@@ -57,10 +81,9 @@ std::vector<ModuleIkon::Pin> ModuleIkon::GetPins(bool outputs) const
 		for (auto& pin : pinDefs)
 		{
 			rect.Bottom() = rect.Top() + PinHeight;
-			pins.push_back(Pin{pin.GetName(), rect, pin.IsMulti() ? Colour::Red : Colour::Blue });
+			Model::Point connectionPoint(outputs ? rect.Right() : rect.Left(), rect.GetCentre().y);
+			pins.push_back(Pin{pin.GetName(), rect, connectionPoint, pin.IsMulti() ? Colour::Red : Colour::Blue, pin.GetID() });
 			rect.Top() += PinHeight + PinGap;
 		}
 	}
-
-	return pins;
 }

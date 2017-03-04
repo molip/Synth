@@ -20,6 +20,8 @@ namespace Model
 	{
 		PinRef() : moduleID(0) {}
 		PinRef(int _moduleID, Tag _type) : moduleID(_moduleID), type(_type) {}
+		bool operator ==(const PinRef& rhs) const { return moduleID == rhs.moduleID && type == rhs.type; }
+
 		void Save(Serial::SaveNode& node) const;
 		void Load(Serial::LoadNode& node);
 

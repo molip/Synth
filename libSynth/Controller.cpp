@@ -79,12 +79,8 @@ int Controller::HitTest(Model::Point point) const
 	return 0;
 }
 
-ModuleIkon Controller::GetModuleIkon(size_t index) const
+Controller::ModuleIkonRange Controller::GetModuleIkons() const
 {
-	return ModuleIkon(*_graph->GetSorted()[index], *_graph);
-}
-
-size_t Controller::GetModuleCount() const
-{
-	return _graph->GetSorted().size();
+	auto get = [&](size_t i) { return ModuleIkon(*_graph->GetSorted()[i], *_graph); };
+	return ModuleIkonRange(get, _graph->GetSorted().size());
 }

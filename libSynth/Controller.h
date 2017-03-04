@@ -33,10 +33,8 @@ namespace Synth
 		void OnLButtonDown(Model::Point point);
 		void OnLButtonUp(Model::Point point);
 
-		ModuleIkon GetModuleIkon(size_t index) const; 
-		size_t GetModuleCount() const; 
-		KERNEL_DEFINE_INDEXRANGE(ModuleIkonRange, Controller, ModuleIkon, GetModuleIkon, GetModuleCount)
-		ModuleIkonRange GetModuleIkons() const { return ModuleIkonRange(*this); }
+		using ModuleIkonRange = Kernel::IndexRange<ModuleIkon>;
+		ModuleIkonRange GetModuleIkons() const;
 
 	private:
 		int HitTest(Model::Point point) const;

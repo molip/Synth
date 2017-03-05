@@ -41,6 +41,8 @@ namespace Synth
 		std::vector<Connection> GetConnections() const;
 
 		std::vector<unsigned char> Export() const;
+		bool Save(const std::wstring& path) const;
+		bool Load(const std::wstring& path);
 
 		class Selection
 		{

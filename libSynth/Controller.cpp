@@ -5,6 +5,7 @@
 #include "Exporter.h"
 
 #include "../libKernel/Debug.h"
+#include "../libKernel/Serial.h"
 
 using namespace Synth;
 using namespace Synth::UI;
@@ -184,4 +185,14 @@ std::vector<unsigned char> Controller::Export() const
 {
 	Model::Exporter exporter;
 	return exporter.Export(*_graph);
+}
+
+bool Controller::Save(const std::wstring& path) const
+{
+	return Kernel::Serial::SaveClass(path, *_graph);
+}
+
+bool Controller::Load(const std::wstring& path)
+{
+	return Kernel::Serial::LoadClass(path, *_graph);
 }

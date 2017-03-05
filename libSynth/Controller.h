@@ -40,6 +40,8 @@ namespace Synth
 		const Connection* GetLiveConnection() const { return _liveConnection.get(); }
 		std::vector<Connection> GetConnections() const;
 
+		std::vector<unsigned char> Export() const;
+
 		class Selection
 		{
 		public:

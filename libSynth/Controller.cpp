@@ -2,6 +2,7 @@
 #include "Controller.h"
 #include "Command.h"
 #include "CommandStack.h"
+#include "Exporter.h"
 
 #include "../libKernel/Debug.h"
 
@@ -171,10 +172,16 @@ std::vector<Controller::Connection> Controller::GetConnections() const
 
 			auto* srcPin = srcIkon.FindPin(conn.second.type, true); 
 			auto* dstPin = dstIkon.FindPin(conn.first, false); 
-			if (KERNEL_VERIFY(srcPin && dstPin))
+			KERNEL_VERIFY(srcPin && dstPin);
 				connections.emplace_back(srcPin->connectionPoint, dstPin->connectionPoint);
 		}
 	}
 
 	return connections;
+}
+
+std::vector<unsigned char> Controller::Export() const
+{
+	Model::Exporter exporter;
+	return exporter.Export(*_graph);
 }

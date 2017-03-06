@@ -203,7 +203,7 @@ std::vector<Controller::Connection> Controller::GetConnections() const
 			auto* srcPin = srcIkon.FindPin(conn.second.type, true); 
 			auto* dstPin = dstIkon.FindPin(conn.first, false); 
 			KERNEL_VERIFY(srcPin && dstPin);
-				connections.emplace_back(srcPin->connectionPoint, dstPin->connectionPoint);
+			connections.emplace_back(dstPin->connectionPoint, srcPin->connectionPoint);
 		}
 	}
 

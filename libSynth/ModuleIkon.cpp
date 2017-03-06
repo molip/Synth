@@ -17,7 +17,7 @@ namespace
 	const int Width = 150;
 }
 
-ModuleIkon::ModuleIkon(const Model::Module& module, const Model::Graph& graph) : _module(module), _graph(graph) 
+ModuleIkon::ModuleIkon(const Model::Module& module, bool selected, const Model::Graph& graph) : _module(module), _selected(selected), _graph(graph) 
 {
 }
 

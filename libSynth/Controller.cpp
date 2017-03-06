@@ -15,14 +15,23 @@ Controller::Controller()
 	_graph = std::make_unique<Model::Graph>();
 	_commandStack = std::make_unique<CommandStack>();
 	
-	_commandStack->Do(std::make_unique<AddModuleCommand>("midi", *_graph));
-	_commandStack->Do(std::make_unique<SetPositionCommand>(1, Model::Point(100, 200), true, *_graph), false);
+	//_commandStack->Do(std::make_unique<AddModuleCommand>("midi", *_graph));
+	//_commandStack->Do(std::make_unique<SetPositionCommand>(1, Model::Point(100, 100), true, *_graph), false);
 
-	_commandStack->Do(std::make_unique<AddModuleCommand>("envl", *_graph));
-	_commandStack->Do(std::make_unique<SetPositionCommand>(2, Model::Point(600, 200), true, *_graph), false);
+	//_commandStack->Do(std::make_unique<AddModuleCommand>("envl", *_graph));
+	//_commandStack->Do(std::make_unique<SetPositionCommand>(2, Model::Point(500, 100), true, *_graph), false);
 
-	_commandStack->Do(std::make_unique<AddModuleCommand>("oscl", *_graph));
-	_commandStack->Do(std::make_unique<SetPositionCommand>(3, Model::Point(1100, 200), true, *_graph), false);
+	//_commandStack->Do(std::make_unique<AddModuleCommand>("oscl", *_graph));
+	//_commandStack->Do(std::make_unique<SetPositionCommand>(3, Model::Point(900, 100), true, *_graph), false);
+
+	//_commandStack->Do(std::make_unique<AddModuleCommand>("pmix", *_graph));
+	//_commandStack->Do(std::make_unique<SetPositionCommand>(4, Model::Point(300, 400), true, *_graph), false);
+
+	//_commandStack->Do(std::make_unique<AddModuleCommand>("trgt", *_graph));
+	//_commandStack->Do(std::make_unique<SetPositionCommand>(5, Model::Point(700, 400), true, *_graph), false);
+
+	//_graph->FindModule(2)->SetValue("sust", 0xffff);
+	//_graph->FindModule(2)->SetValue("rels", 1000);
 }
 
 Controller::~Controller() = default;
@@ -45,6 +54,22 @@ void Controller::Undo()
 void Controller::Redo()
 {
 	_commandStack->Redo();
+}
+
+void Controller::InsertModule(const std::string& type)
+{
+	_commandStack->Do(std::make_unique<AddModuleCommand>(type, *_graph));
+}
+
+void Controller::DeleteModule()
+{
+	_commandStack->Do(std::make_unique<RemoveModuleCommand>(_selection.moduleID, *_graph));
+	_selection = Selection(); // TODO: What about undo? Need notifications! 
+}
+
+bool Controller::CanDeleteModule() const
+{
+	return _selection.moduleID && _graph->FindModule(_selection.moduleID); 
 }
 
 bool Controller::OnMouseMove(Model::Point point)
@@ -77,7 +102,7 @@ bool Controller::OnLButtonDown(Model::Point point)
 		if (_selection.isOutput)
 			return false;
 
-		auto connectionPoint = ModuleIkon(*_graph->FindModule(_selection.moduleID), *_graph).FindPin(_selection.pinID, false)->connectionPoint;
+		auto connectionPoint = ModuleIkon(*_graph->FindModule(_selection.moduleID), false, *_graph).FindPin(_selection.pinID, false)->connectionPoint;
 		_liveConnection = std::make_unique<Connection>(connectionPoint, point);
 	}
 
@@ -154,7 +179,11 @@ Controller::Selection Controller::HitTest(Model::Point point) const
 
 Controller::ModuleIkonRange Controller::GetModuleIkons() const
 {
-	auto get = [&](size_t i) { return ModuleIkon(*_graph->GetSorted()[i], *_graph); };
+	auto get = [&](size_t i) 
+	{
+		const Model::Module& mod = *_graph->GetSorted()[i];
+		return ModuleIkon(mod, mod.GetID() == _selection.moduleID, *_graph);
+	};
 	return ModuleIkonRange(get, _graph->GetSorted().size());
 }
 
@@ -168,8 +197,8 @@ std::vector<Controller::Connection> Controller::GetConnections() const
 		{
 			auto& srcMod = module->GetSourceModule(conn.second, *_graph);
 
-			ModuleIkon srcIkon(srcMod, *_graph);
-			ModuleIkon dstIkon(*module, *_graph);
+			ModuleIkon srcIkon(srcMod, false, *_graph);
+			ModuleIkon dstIkon(*module, false, *_graph);
 
 			auto* srcPin = srcIkon.FindPin(conn.second.type, true); 
 			auto* dstPin = dstIkon.FindPin(conn.first, false); 

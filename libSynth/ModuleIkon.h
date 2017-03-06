@@ -21,13 +21,14 @@ namespace Synth
 	class ModuleIkon
 	{
 	public:
-		ModuleIkon(const Model::Module& module, const Model::Graph& graph);
+		ModuleIkon(const Model::Module& module, bool selected, const Model::Graph& graph);
 
 		int GetModuleID() const;
 
 		Model::Rect GetRect() const;
 		const std::string& GetName() const;
 		Colour GetColour() const;
+		bool IsSelected() const { return _selected; }
 
 		struct Pin
 		{
@@ -50,6 +51,7 @@ namespace Synth
 		mutable std::vector<Pin> _inputs, _outputs;
 		const Model::Module& _module;
 		const Model::Graph& _graph;
+		const bool _selected;
 	};
 	}
 }

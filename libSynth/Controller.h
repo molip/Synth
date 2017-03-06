@@ -29,6 +29,10 @@ namespace Synth
 		void Undo();
 		void Redo();
 
+		void InsertModule(const std::string& type);
+		void DeleteModule();
+		bool CanDeleteModule() const;
+
 		bool OnMouseMove(Model::Point point);
 		bool OnLButtonDown(Model::Point point);
 		void OnLButtonUp(Model::Point point);

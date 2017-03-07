@@ -102,7 +102,7 @@ bool Controller::OnLButtonDown(Model::Point point)
 		if (_selection.isOutput)
 			return false;
 
-		auto connectionPoint = ModuleIkon(*_graph->FindModule(_selection.moduleID), false, *_graph).FindPin(_selection.pinID, false)->connectionPoint;
+		auto connectionPoint = ModuleIkon(*_graph->FindModule(_selection.moduleID), false, *_graph).FindPin(_selection.pinID, false)->GetConnectionPoint();
 		_liveConnection = std::make_unique<Connection>(connectionPoint, point);
 	}
 
@@ -157,7 +157,7 @@ Controller::Selection Controller::HitTest(Model::Point point) const
 		auto HitTestPins = [&] (bool output)
 		{
 			for (auto& pin : output ? ikon.GetOutputPins() : ikon.GetInputPins())
-				if (pin.rect.Contains(point))
+				if (pin.connectionRect.Contains(point))
 				{
 					sel.pinID = pin.id;
 					sel.isOutput = output;
@@ -203,7 +203,7 @@ std::vector<Controller::Connection> Controller::GetConnections() const
 			auto* srcPin = srcIkon.FindPin(conn.second.type, true); 
 			auto* dstPin = dstIkon.FindPin(conn.first, false); 
 			KERNEL_VERIFY(srcPin && dstPin);
-			connections.emplace_back(dstPin->connectionPoint, srcPin->connectionPoint);
+			connections.emplace_back(dstPin->GetConnectionPoint(), srcPin->GetConnectionPoint());
 		}
 	}
 

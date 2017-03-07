@@ -10,11 +10,14 @@ using namespace Synth::UI;
 
 namespace
 {
-	const int PinWidth = 50;
 	const int PinHeight = 20;
 	const int PinGap = 10;
+	const int ConnectionWidth = 20;
+	const int LabelWidth = 80;
+	const int ValueWidth = 30;
 	const int MinHeight = 50;
-	const int Width = 150;
+	const int Width = 200;
+	const int LabelHeight = 30;
 }
 
 ModuleIkon::ModuleIkon(const Model::Module& module, bool selected, const Model::Graph& graph) : _module(module), _selected(selected), _graph(graph) 
@@ -26,13 +29,18 @@ int ModuleIkon::GetModuleID() const
 	return _module.GetID();
 }
 
-Model::Rect ModuleIkon::GetRect() const
+Model::Rect ModuleIkon::GetLabelRect() const
 {
 	const Model::Point pos = _module.GetPosition();
-	const int pinCount = (int)std::max(_module.GetDef().GetOutputs().size(), _module.GetDef().GetInputs().size());
-	const int height = std::max(MinHeight, pinCount * (PinHeight + PinGap));
+	return Model::Rect(pos, pos + Model::Point(Width, LabelHeight));
+}
 
-	return Model::Rect(pos, pos + Model::Point(Width, height));
+Model::Rect ModuleIkon::GetRect() const
+{
+	Model::Rect rect = GetLabelRect();
+	const int pinCount = (int)std::max(_module.GetDef().GetOutputs().size(), _module.GetDef().GetInputs().size());
+	rect.Bottom() += pinCount * (PinHeight + PinGap) - PinGap;
+	return rect;
 }
 
 const std::string& ModuleIkon::GetName() const
@@ -70,20 +78,29 @@ void ModuleIkon::CreatePins(bool outputs) const
 	if (!pins.empty())
 		return;
 
-	auto modRect = GetRect();
+	auto modRect = GetLabelRect();
 
 	if (!pinDefs.empty())
 	{
-		const int left = outputs ? modRect.Right() - 1 : modRect.Left() + 1 - PinWidth;
-		const int top = modRect.Top() + (modRect.Height() - ((int)pinDefs.size() * (PinHeight + PinGap) - PinGap)) / 2;
+		const int top = modRect.Bottom();
 
-		Model::Rect rect(left, top, left + PinWidth, 0);
+		Model::Rect connectionRect(modRect.Left() + 1 - ConnectionWidth, top, modRect.Left(), top + PinHeight);
+		Model::Rect labelRect(modRect.Left(), top, modRect.Left() + LabelWidth, top + PinHeight);
+		Model::Rect valueRect(labelRect.Right(), top, labelRect.Right() + ValueWidth, top + PinHeight);
+		
+		if (outputs)
+		{
+			connectionRect.MirrorX(modRect.GetCentre().x);
+			labelRect.MirrorX(modRect.GetCentre().x);
+			valueRect = Model::Rect();
+		}
+		
 		for (auto& pin : pinDefs)
 		{
-			rect.Bottom() = rect.Top() + PinHeight;
-			Model::Point connectionPoint(outputs ? rect.Right() : rect.Left(), rect.GetCentre().y);
-			pins.push_back(Pin{pin.GetName(), rect, connectionPoint, pin.IsMulti() ? Colour::Red : Colour::Blue, pin.GetID() });
-			rect.Top() += PinHeight + PinGap;
+			pins.push_back(Pin{pin.GetName(), labelRect, connectionRect, valueRect, outputs, pin.IsMulti() ? Colour::Red : Colour::Blue, pin.GetID() });
+			connectionRect.Offset(0, PinHeight + PinGap);
+			labelRect.Offset(0, PinHeight + PinGap);
+			valueRect.Offset(0, PinHeight + PinGap);
 		}
 	}
 }

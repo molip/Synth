@@ -24,6 +24,16 @@ namespace Model
 			return Point(x + rhs.x, y + rhs.y);
 		}
 
+		void MirrorX(int xMirror)
+		{
+			x += (xMirror - x) * 2;
+		}
+
+		void MirrorY(int yMirror)
+		{
+			y += (yMirror - y) * 2;
+		}
+
 		int x, y;
 	};
 
@@ -57,6 +67,9 @@ namespace Model
 
 		void Normalise();
 		void Inflate(int x, int y);
+		void Offset(int x, int y);
+		void MirrorX(int x);
+		void MirrorY(int y);
 	
 	private:
 		Point _p0, _p1;

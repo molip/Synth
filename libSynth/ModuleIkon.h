@@ -25,6 +25,7 @@ namespace Synth
 
 		int GetModuleID() const;
 
+		Model::Rect GetLabelRect() const;
 		Model::Rect GetRect() const;
 		const std::string& GetName() const;
 		Colour GetColour() const;
@@ -32,9 +33,11 @@ namespace Synth
 
 		struct Pin
 		{
+			Model::Point GetConnectionPoint() const { return Model::Point(isOutput ? connectionRect.Right() : connectionRect.Left(), connectionRect.GetCentre().y); }
+
 			std::string name;
-			Model::Rect rect;
-			Model::Point connectionPoint;
+			Model::Rect labelRect, connectionRect, valueRect;
+			bool isOutput;
 			Colour colour;
 			Model::Tag id;
 		};

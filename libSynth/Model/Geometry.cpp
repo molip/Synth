@@ -67,6 +67,28 @@ void Rect::Inflate(int x, int y)
 	_p1.y += y * 2;
 }
 
+void Rect::Offset(int x, int y)
+{
+	_p0.x += x;
+	_p0.y += y;
+	_p1.x += x;
+	_p1.y += y;
+}
+
+void Rect::MirrorX(int x)
+{
+	_p0.MirrorX(x);
+	_p1.MirrorX(x);
+	std::swap(_p0.x, _p1.x);
+}
+
+void Rect::MirrorY(int y)
+{
+	_p0.MirrorY(y);
+	_p1.MirrorY(y);
+	std::swap(_p0.y, _p1.y);
+}
+
 std::ostream& Synth::Model::operator<<(std::ostream& stream, const Rect& val)
 {
 	stream << val._p0 << " - " << val._p1;

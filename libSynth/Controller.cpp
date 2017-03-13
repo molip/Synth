@@ -3,6 +3,7 @@
 #include "Command.h"
 #include "CommandStack.h"
 #include "Exporter.h"
+#include "MIDIExporter.h"
 
 #include "../libKernel/Debug.h"
 #include "../libKernel/Serial.h"
@@ -210,10 +211,16 @@ std::vector<Controller::Connection> Controller::GetConnections() const
 	return connections;
 }
 
-std::vector<unsigned char> Controller::Export() const
+BufferPtr Controller::Export() const
 {
 	Model::Exporter exporter;
 	return exporter.Export(*_graph);
+}
+
+BufferPtr Controller::ExportMIDIFile(const std::wstring& path) const
+{
+	MIDIExporter exporter;
+	return exporter.Export(path);
 }
 
 bool Controller::Save(const std::wstring& path) const

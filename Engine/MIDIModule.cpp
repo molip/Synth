@@ -70,6 +70,19 @@ void MIDIModule::ProcessMIDI(int8_t midiByte)
 	}
 }
 
+void MIDIModule::ResetMIDI()
+{
+	_midiCommand = _midiNote = 0;
+
+	for (int i = 0; i < _notes.GetSize(); ++i)
+	{
+		_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Gate][i].SetValue(0, true);
+		_notes[i].midiNote = -1;
+		_notes[i].order = 0;
+		_startCount = _endCount = 0;
+	}
+}
+
 void MIDIModule::StartNote(int8_t midiNote)
 {
 	int index = FindNote(midiNote); // The controller shouldn't start a note twice, but we should handle it anyway. 

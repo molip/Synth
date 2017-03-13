@@ -11,6 +11,19 @@ class Module;
 namespace Input
 {
 	void Process(byte data);
+	extern char* _error;
+
+	template <typename T>
+	class Value
+	{
+	public:
+		void AddData(byte data) { _value = _value << 8 | data; ++_read; }
+		bool IsFinished() const { return _read >= sizeof(T); }
+		operator T() const { return _value; }
+	private:
+		int _size = 0, _read = 0;
+		T _value = 0;
+	};
 
 	class Command
 	{
@@ -120,8 +133,7 @@ namespace Input
 	protected:
 		bool _poly;
 		int _modIndex = -1;
-		Module::unsigned_t _val = 0;
-		int _valBytes = 0;
+		Value<Module::unsigned_t> _val;
 	};
 
 	class SetMonoUnsignedValueCommand : public SetUnsignedValueCommand 
@@ -135,4 +147,20 @@ namespace Input
 	public:
 		SetPolyUnsignedValueCommand() : SetUnsignedValueCommand(true) {}
 	};
+
+	class SetMIDIDataCommand : public Command
+	{
+	public:
+		SetMIDIDataCommand() {}
+		virtual Error AddData(byte data) override;
+		virtual bool Execute(Graph& graph) const override;
+
+	protected:
+		Value<int16_t> _division;
+		Value<uint32_t> _dataSize;
+		byte* _data = nullptr;
+		uint32_t _dataRead = 0;
+		bool _gotError = false;
+	};
+
 }

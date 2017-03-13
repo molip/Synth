@@ -40,6 +40,8 @@
     <ClInclude Include="Enums.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="MIDIExporter.h" />
+    <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">
@@ -64,5 +66,6 @@
     <ClCompile Include="ModuleIkon.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="MIDIExporter.cpp" />
   </ItemGroup>
 </Project>

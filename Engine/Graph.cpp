@@ -24,6 +24,12 @@ void Graph::ProcessMIDI(byte data)
 		_midiModule->ProcessMIDI(data);
 }
 
+void Graph::ResetMIDI()
+{
+	if (_midiModule)
+		_midiModule->ResetMIDI();
+}
+
 void Graph::Update()
 {
 	for (int i = 0; i < _updateModules.GetSize(); ++i)

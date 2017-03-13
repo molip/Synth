@@ -1,4 +1,5 @@
 #include "Input.h"
+#include "MIDIData.h"
 
 namespace Input 
 {
@@ -37,6 +38,7 @@ void Process(byte data)
 		case CommandType::AddConnection: _command = new AddConnectionCommand; break;
 		case CommandType::SetMonoUnsignedValue: _command = new SetMonoUnsignedValueCommand; break;
 		case CommandType::SetPolyUnsignedValue: _command = new SetPolyUnsignedValueCommand; break;
+		case CommandType::SetMIDIData: _command = new SetMIDIDataCommand; break;
 		case CommandType::StartGraph: 
 		{
 			if (_graph)
@@ -191,23 +193,17 @@ Error SetUnsignedValueCommand::AddData(byte data)
 		//if (dynamic_cast<UnsignedValueModule*>(mod) == nullptr)
 		//	return Error::InvalidParameter;
 	}
+	else if (!_val.IsFinished())
+		_val.AddData(data);
 	else
-	{
-		switch (_valBytes)
-		{
-		case 0: _val = data; break;
-		case 1: _val |= Module::unsigned_t(data) << 8; break;
-		default:
-			return Error::TooManyParameters;
-		}
-		++_valBytes;
-	}
+		return Error::TooManyParameters;
+
 	return Error::None;
 }
 
 bool SetUnsignedValueCommand::Execute(Graph& graph) const
 {
-	if (_valBytes < 2)
+	if (!_val.IsFinished())
 		return false;
 
 	if (_poly)
@@ -217,6 +213,40 @@ bool SetUnsignedValueCommand::Execute(Graph& graph) const
 	}
 	else
 		static_cast<UnsignedValueModule*>(_graph->GetMonoModule(_modIndex))->SetValue(_val);
+
+	return true;
+}
+
+
+
+Error SetMIDIDataCommand::AddData(byte data)
+{
+	if (!_division.IsFinished())
+		_division.AddData(data);
+	else if (!_dataSize.IsFinished())
+		_dataSize.AddData(data);
+	else
+	{
+		if (_dataRead == _dataSize)
+			return Error::TooManyParameters;
+
+		if (!_data)
+			_data = new byte[_dataSize];
+
+		_data[_dataRead++] = data;
+	}
+		
+	return Error::None;
+}
+
+bool SetMIDIDataCommand::Execute(Graph& graph) const
+{
+	if (!_dataSize.IsFinished() || _dataRead < _dataSize)
+		return false;
+
+	MIDIData::Instance().SetData(_data, _dataSize, _division); // MIDIData now owns _data.
+	if (Graph* graph = Graph::GetActive())
+		graph->ResetMIDI();
 
 	return true;
 }

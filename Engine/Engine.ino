@@ -9,6 +9,7 @@
 #include "Config.h"
 #include "Graph.h"
 #include "Input.h"
+#include "MIDIData.h"
 
 #ifdef __AVR_ATmega328P__
 	//SoftwareSerial mySerial(2, 3); // RX, TX
@@ -114,23 +115,34 @@ void setup()
 
 void loop()
 {
-    Graph* graph = Graph::GetActive();
+	Graph* graph = Graph::GetActive();
 
-    if (Serial.available() > 0) 
-    {
-        byte data = Serial.read();
-        Input::Process(data);
-    }
-
-	if (MIDISERIAL.available() > 0) 
+	if (Serial.available() > 0)
 	{
-        byte data = MIDISERIAL.read();
-        if (graph)
-            graph->ProcessMIDI(data);
+		byte data = Serial.read();
+		Input::Process(data);
+	}
+
+	MIDIData& midiData = MIDIData::Instance();
+
+	if (midiData.HasData()) 
+	{
+		// Wait until we have a graph so it can get the start.
+		byte data = 0;
+		if (graph && midiData.GetData(data))
+			graph->ProcessMIDI(data);
+	}
+	else if (MIDISERIAL.available() > 0) 
+	{
+	    byte data = MIDISERIAL.read();
+	    if (graph)
+	        graph->ProcessMIDI(data);
 	}
 
 	if (gotTick)
 	{
+		midiData.DoTick();
+
 		gotTick = false;
 		unsigned long start = micros();
 		DoTick();

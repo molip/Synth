@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Model/Geometry.h"
+#include "Types.h"
 #include "ModuleIkon.h"
 
 #include "../libKernel/IndexRange.h"
@@ -44,7 +45,8 @@ namespace Synth
 		const Connection* GetLiveConnection() const { return _liveConnection.get(); }
 		std::vector<Connection> GetConnections() const;
 
-		std::vector<unsigned char> Export() const;
+		BufferPtr Export() const;
+		BufferPtr ExportMIDIFile(const std::wstring& path) const;
 		bool Save(const std::wstring& path) const;
 		bool Load(const std::wstring& path);
 

@@ -9,6 +9,7 @@ public:
 	void ResetChanged();
 
 	void ProcessMIDI(int8_t midiByte);
+	void ResetMIDI();
 
 	class Note 
 	{

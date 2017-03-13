@@ -21,6 +21,7 @@ public:
 	int GetPolyphony() const { return _polyphony; }
 
 	void ProcessMIDI(byte data);
+	void ResetMIDI();
 	void Update();
 
 	static Graph* GetActive() { return _active; }

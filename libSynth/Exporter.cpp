@@ -4,11 +4,12 @@
 #include "Model/Module.h"
 #include "Model/ModuleTypes.h"
 
+using namespace Synth;
 using namespace Synth::Model;
 
-const Exporter::Buffer& Exporter::Export(const Graph& graph)
+BufferPtr Exporter::Export(const Graph& graph)
 {
-	_buffer.clear();
+	_buffer = std::make_unique<Buffer>();
 
 	const byte polyphony = 8;
 	
@@ -77,8 +78,8 @@ const Exporter::Buffer& Exporter::Export(const Graph& graph)
 			// Set value.
 			Add(Engine::CommandType::SetMonoUnsignedValue);
 			Add(monoModCount);
-			Add(val.second & 0xff);
 			Add(val.second >> 8);
+			Add(val.second & 0xff);
 
 			++monoModCount;
 		}
@@ -86,5 +87,5 @@ const Exporter::Buffer& Exporter::Export(const Graph& graph)
 
 	Add(Engine::CommandType::EndGraph);
 
-	return _buffer;
+	return std::move(_buffer);
 }

@@ -61,8 +61,8 @@ std::vector<PinRef> Graph::GetValidSourcePins(PinRef input)
 				break;
 
 			for (auto& outputDef : mod->GetDef().GetOutputs())
-				if (outputDef.GetDataType() == inputDef.GetDataType())
-					result.push_back(PinRef(mod->GetID(), outputDef.GetID()));
+				if (outputDef->GetDataType() == inputDef.GetDataType())
+					result.push_back(PinRef(mod->GetID(), outputDef->GetID()));
 		}
 	}
 
@@ -77,6 +77,12 @@ void Graph::Save(Serial::SaveNode& node) const
 void Graph::Load(Serial::LoadNode& node)
 {
 	node.LoadCntr("modules", _modules, Serial::ClassLoader());
+
+	_nextModuleID = 0;
+	for (auto& mod : _modules)
+		_nextModuleID = std::max(_nextModuleID, mod.GetID());
+
+	++_nextModuleID;
 	SortModules();
 }
 

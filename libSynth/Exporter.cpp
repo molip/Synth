@@ -19,7 +19,10 @@ BufferPtr Exporter::Export(const Graph& graph)
 	{
 		byte& index = mod->IsInstanced(graph) ? polyModCount : monoModCount;
 		modIndices.insert(std::make_pair(mod->GetID(), index++));
-		valueCount += (byte)mod->GetValues().size();
+		
+		for (auto& input : mod->GetDef().GetInputs())
+			if (input->GetValueType())
+				++valueCount;
 	}
 
 	Add(Engine::CommandType::StartGraph);
@@ -58,31 +61,34 @@ BufferPtr Exporter::Export(const Graph& graph)
 			AddPin(sourceMod, outputDef);
 		}
 
-		for (auto val : mod->GetValues())
-		{
-			Add(Engine::CommandType::AddMonoModule);
-			Add(Engine::ModuleType::UnsignedValue);
+		for (auto& input : mod->GetDef().GetInputs())
+			if (input->GetValueType())
+			{
+				int val = *mod->FindValue(input->GetID());
 
-			Add(Engine::CommandType::AddConnection);
-			Add(Engine::ConnectionType::Single);
+				Add(Engine::CommandType::AddMonoModule);
+				Add(Engine::ModuleType::UnsignedValue);
 
-			// Input.
-			AddPin(*mod, mod->GetInputDef(val.first));
+				Add(Engine::CommandType::AddConnection);
+				Add(Engine::ConnectionType::Single);
 
-			// Output.
-			Add(Engine::InstanceType::Mono);
-			Add(Engine::PinType::Unsigned);
-			Add(monoModCount);
-			Add(0);
+				// Input.
+				AddPin(*mod, *input);
 
-			// Set value.
-			Add(Engine::CommandType::SetMonoUnsignedValue);
-			Add(monoModCount);
-			Add(val.second >> 8);
-			Add(val.second & 0xff);
+				// Output.
+				Add(Engine::InstanceType::Mono);
+				Add(Engine::PinType::Unsigned);
+				Add(monoModCount);
+				Add(0);
 
-			++monoModCount;
-		}
+				// Set value.
+				Add(Engine::CommandType::SetMonoUnsignedValue);
+				Add(monoModCount);
+				Add(val >> 8);
+				Add(val & 0xff);
+
+				++monoModCount;
+			}
 	}
 
 	Add(Engine::CommandType::EndGraph);

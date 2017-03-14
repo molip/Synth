@@ -47,9 +47,10 @@ namespace Model
 		const PinType& GetSourceOutputDef(const PinRef& pin, const Graph& graph) const;
 
 		const ConnectionMap& GetConnections() const { return _connections; }
+		const PinRef* FindConnection(Tag type) const;
 		
-		const ValueMap& GetValues() const { return _values; }
 		void SetValue(Tag inputType, int value);
+		const int* FindValue(Tag type) const;
 
 		//void AddInput(const std::string& name, Pin::ConnectionType connType, Pin::DataType dataType, int id, int engineID);
 		//void AddOutput(const std::string& name, Pin::ConnectionType connType, Pin::DataType dataType, int id, int engineID);

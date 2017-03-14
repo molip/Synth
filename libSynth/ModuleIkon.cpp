@@ -11,10 +11,10 @@ using namespace Synth::UI;
 namespace
 {
 	const int PinHeight = 20;
-	const int PinGap = 10;
+	const int PinGap = 2;
 	const int ConnectionWidth = 20;
-	const int LabelWidth = 80;
-	const int ValueWidth = 30;
+	const int LabelWidth = 50;
+	const int ValueWidth = 50;
 	const int MinHeight = 50;
 	const int Width = 200;
 	const int LabelHeight = 30;
@@ -39,7 +39,7 @@ Model::Rect ModuleIkon::GetRect() const
 {
 	Model::Rect rect = GetLabelRect();
 	const int pinCount = (int)std::max(_module.GetDef().GetOutputs().size(), _module.GetDef().GetInputs().size());
-	rect.Bottom() += pinCount * (PinHeight + PinGap) - PinGap;
+	rect.Bottom() += pinCount * (PinHeight + PinGap) + PinGap;
 	return rect;
 }
 
@@ -95,9 +95,18 @@ void ModuleIkon::CreatePins(bool outputs) const
 			valueRect = Model::Rect();
 		}
 		
-		for (auto& pin : pinDefs)
+		for (auto& pinDef : pinDefs)
 		{
-			pins.push_back(Pin{pin.GetName(), labelRect, connectionRect, valueRect, outputs, pin.IsMulti() ? Colour::Red : Colour::Blue, pin.GetID() });
+			Pin pin{ pinDef->GetName(), labelRect, connectionRect, valueRect, outputs, pinDef->IsMulti() ? Colour::Red : Colour::Blue, pinDef->GetID() };
+			
+			if (!outputs && !_module.FindConnection(pin.id))
+				if (const auto* valType = pinDef->GetValueType())
+				{
+					pin.value = valType->ToString(*_module.FindValue(pin.id));
+					pin.showValue = true;
+				}
+
+			pins.push_back(pin);
 			connectionRect.Offset(0, PinHeight + PinGap);
 			labelRect.Offset(0, PinHeight + PinGap);
 			valueRect.Offset(0, PinHeight + PinGap);

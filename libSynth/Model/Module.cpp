@@ -49,9 +49,31 @@ const PinType& Module::GetSourceOutputDef(const PinRef& pin, const Graph& graph)
 	return GetSourceModule(pin, graph).GetOutputDef(pin.type);
 }
 
+const PinRef* Module::FindConnection(Tag type) const
+{
+	auto it = _connections.find(type);
+	return it == _connections.end() ? nullptr : &it->second;
+}
+
 void Module::SetValue(Tag inputType, int value)
 {
-	_values[inputType] = value;
+	auto* valDef = GetInputDef(inputType).GetValueType();
+	KERNEL_VERIFY(valDef);
+
+	if (valDef->GetDefault() == value)
+		_values.erase(inputType);
+	else
+		_values[inputType] = value;
+}
+
+const int* Module::FindValue(Tag type) const
+{
+	auto it = _values.find(type);
+	if (it != _values.end())
+		return &it->second;
+
+	auto* valDef = GetInputDef(type).GetValueType();
+	return valDef ? &valDef->GetDefault() : nullptr;
 }
 
 bool Module::IsInstanced(const Graph& graph) const

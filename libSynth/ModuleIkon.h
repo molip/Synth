@@ -37,9 +37,12 @@ namespace Synth
 
 			std::string name;
 			Model::Rect labelRect, connectionRect, valueRect;
-			bool isOutput;
-			Colour colour;
+			bool isOutput = false;
+			Colour colour {};
 			Model::Tag id;
+			
+			bool showValue = false;
+			std::string value;
 		};
 
 		const ModuleIkon::Pin* FindPin(Model::Tag id, bool output);

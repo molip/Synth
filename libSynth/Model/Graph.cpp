@@ -52,19 +52,12 @@ std::vector<PinRef> Graph::GetValidSourcePins(PinRef input)
 
 	std::vector<PinRef> result;
 		
-	// Find earliest non-dependent module.
 	for (auto& mod : _sorted)
-	{
-		if (mod->GetID() != input.moduleID)
-		{
-			if (mod->IsDependentOn(input.moduleID, *this, false))
-				break;
-
-			for (auto& outputDef : mod->GetDef().GetOutputs())
-				if (outputDef->GetDataType() == inputDef.GetDataType())
-					result.push_back(PinRef(mod->GetID(), outputDef->GetID()));
-		}
-	}
+		if (mod->GetID() != input.moduleID) // Ignore this one. 
+			if (!mod->IsDependentOn(input.moduleID, *this, false)) // Found a candidate...
+				for (auto& outputDef : mod->GetDef().GetOutputs()) // So add its outputs. 
+					if (outputDef->GetDataType() == inputDef.GetDataType())
+						result.push_back(PinRef(mod->GetID(), outputDef->GetID()));
 
 	return result;		
 }

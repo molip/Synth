@@ -4,6 +4,7 @@
 #include "CommandStack.h"
 #include "Exporter.h"
 #include "MIDIExporter.h"
+#include "View.h"
 
 #include "../libKernel/Debug.h"
 #include "../libKernel/Serial.h"
@@ -50,22 +51,26 @@ bool Controller::CanRedo() const
 void Controller::Undo()
 {
 	_commandStack->Undo();
+	_view->InvalidateAll();
 }
 
 void Controller::Redo()
 {
 	_commandStack->Redo();
+	_view->InvalidateAll();
 }
 
 void Controller::InsertModule(const std::string& type)
 {
 	_commandStack->Do(std::make_unique<AddModuleCommand>(type, *_graph));
+	_view->InvalidateAll();
 }
 
 void Controller::DeleteModule()
 {
 	_commandStack->Do(std::make_unique<RemoveModuleCommand>(_selection.moduleID, *_graph));
 	_selection = Selection(); // TODO: What about undo? Need notifications! 
+	_view->InvalidateAll();
 }
 
 bool Controller::CanDeleteModule() const
@@ -73,7 +78,7 @@ bool Controller::CanDeleteModule() const
 	return _selection.moduleID && _graph->FindModule(_selection.moduleID); 
 }
 
-bool Controller::OnMouseMove(Model::Point point)
+void Controller::OnMouseMove(Model::Point point)
 {
 	if (_mouseDownPoint)
 	{
@@ -86,29 +91,30 @@ bool Controller::OnMouseMove(Model::Point point)
 			Model::Point delta(point.x - _mouseDownPoint->x, point.y - _mouseDownPoint->y);
 			_commandStack->Do(std::make_unique<SetPositionCommand>(_selection.moduleID, delta, true, *_graph), true);
 		}
-		return true;
+		_view->InvalidateAll();
 	}
-	return false;
 }
 
-bool Controller::OnLButtonDown(Model::Point point)
+void Controller::OnLButtonDown(Model::Point point)
 {
 	_selection = HitTest(point);
 
+	_view->InvalidateAll();
+
 	if (_selection.moduleID == 0)
-		return false;
+		return;
 
 	if (!_selection.pinID.empty())
 	{
 		if (_selection.isOutput)
-			return false;
+			return;
 
 		auto connectionPoint = ModuleIkon(*_graph->FindModule(_selection.moduleID), false, *_graph).FindPin(_selection.pinID, false)->GetConnectionPoint();
 		_liveConnection = std::make_unique<Connection>(connectionPoint, point);
 	}
 
 	_mouseDownPoint = std::make_unique<Model::Point>(point);
-	return true;
+	_view->SetCapture(true);
 }
 
 void Controller::OnLButtonUp(Model::Point point)
@@ -142,6 +148,8 @@ void Controller::OnLButtonUp(Model::Point point)
 		}
 		_mouseDownPoint.reset();
 	}
+	_view->InvalidateAll();
+	_view->SetCapture(false);
 }
 
 Controller::Selection Controller::HitTest(Model::Point point) const

@@ -45,6 +45,9 @@
     <ClInclude Include="Model\ValueTypes.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="View.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">

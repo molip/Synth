@@ -20,11 +20,16 @@ namespace Synth
 
 	namespace UI
 	{
+	class View;
 	class Controller
 	{
 	public:
 		Controller();
 		~Controller();
+
+		void SetView(View* view) { _view = view; }
+		View* GetView() { return _view; }
+
 		bool CanUndo() const;
 		bool CanRedo() const;
 		void Undo();
@@ -34,8 +39,8 @@ namespace Synth
 		void DeleteModule();
 		bool CanDeleteModule() const;
 
-		bool OnMouseMove(Model::Point point);
-		bool OnLButtonDown(Model::Point point);
+		void OnMouseMove(Model::Point point);
+		void OnLButtonDown(Model::Point point);
 		void OnLButtonUp(Model::Point point);
 
 		using ModuleIkonRange = Kernel::IndexRange<ModuleIkon>;
@@ -60,6 +65,8 @@ namespace Synth
 
 	private:
 		Selection HitTest(Model::Point point) const;
+
+		View* _view = nullptr;
 
 		std::unique_ptr<Model::Graph> _graph;
 		std::unique_ptr<CommandStack> _commandStack;

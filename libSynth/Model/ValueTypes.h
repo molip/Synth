@@ -21,6 +21,9 @@ namespace Model
 	
 		const int& GetDefault() const { return _default; }
 
+	protected:
+		int Clamp(int value) const;
+
 	private:
 		int _default = 0;
 	};

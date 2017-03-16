@@ -5,6 +5,12 @@
 
 using namespace Synth::Model;
 
+int Synth::Model::ValueType::Clamp(int value) const
+{
+	return std::max(std::min(value, 0xffff), 0);
+}
+
+
 std::string TimeValueType::ToString(int val) const
 {
 	std::ostringstream oss;
@@ -17,7 +23,7 @@ int TimeValueType::FromString(const std::string& str) const
 	std::istringstream iss(str);
 	int val = 0;
 	iss >> val;
-	return val;
+	return Clamp(val);
 }
 
 
@@ -34,5 +40,5 @@ int PercentValueType::FromString(const std::string& str) const
 	double val = 0;
 	iss >> val;
 
-	return int(0xffff * std::min(1.0, val / 100.0));
+	return Clamp(int(0xffff * val / 100.0));
 }

@@ -43,6 +43,8 @@ namespace Synth
 		void OnLButtonDown(Model::Point point);
 		void OnLButtonUp(Model::Point point);
 
+		void CommitValueEdit(const std::string& text);
+
 		using ModuleIkonRange = Kernel::IndexRange<ModuleIkon>;
 		ModuleIkonRange GetModuleIkons() const;
 
@@ -64,7 +66,7 @@ namespace Synth
 		};
 
 	private:
-		Selection HitTest(Model::Point point) const;
+		Selection HitTest(Model::Point point, Model::Rect* elementRect = nullptr) const;
 
 		View* _view = nullptr;
 

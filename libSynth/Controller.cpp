@@ -6,6 +6,9 @@
 #include "MIDIExporter.h"
 #include "View.h"
 
+#include "Model/Module.h"
+#include "Model/ModuleTypes.h"
+
 #include "../libKernel/Debug.h"
 #include "../libKernel/Serial.h"
 
@@ -97,7 +100,8 @@ void Controller::OnMouseMove(Model::Point point)
 
 void Controller::OnLButtonDown(Model::Point point)
 {
-	_selection = HitTest(point);
+	Model::Rect elementRect;
+	_selection = HitTest(point, &elementRect);
 
 	_view->InvalidateAll();
 
@@ -106,14 +110,20 @@ void Controller::OnLButtonDown(Model::Point point)
 
 	if (!_selection.pinID.empty())
 	{
+		const auto& module = *_graph->FindModule(_selection.moduleID);
+
 		if (_selection.element == Selection::Element::Input)
 		{
-			auto connectionPoint = ModuleIkon(*_graph->FindModule(_selection.moduleID), false, *_graph).FindPin(_selection.pinID, false)->GetConnectionPoint();
+			auto connectionPoint = ModuleIkon(module, false, *_graph).FindPin(_selection.pinID, false)->GetConnectionPoint();
 			_liveConnection = std::make_unique<Connection>(connectionPoint, point);
 		}
 		else
 		{
 			KERNEL_ASSERT(_selection.element == Selection::Element::Value);
+			
+			std::string str = module.GetInputDef(_selection.pinID).GetValueType()->ToString(*module.FindValue(_selection.pinID));
+			_view->StartValueEdit(elementRect, str);
+
 			return;
 		}
 	}
@@ -157,7 +167,19 @@ void Controller::OnLButtonUp(Model::Point point)
 	_view->SetCapture(false);
 }
 
-Controller::Selection Controller::HitTest(Model::Point point) const
+void Synth::UI::Controller::CommitValueEdit(const std::string& text)
+{
+	KERNEL_ASSERT(_selection.element == Selection::Element::Value);
+	auto& module = *_graph->FindModule(_selection.moduleID);
+
+	int val = module.GetInputDef(_selection.pinID).GetValueType()->FromString(text);
+	if (val != *module.FindValue(_selection.pinID)) // TODO: Command::IsNull.
+		_commandStack->Do(std::make_unique<SetValueCommand>(_selection.moduleID, _selection.pinID, val, *_graph));
+
+	_view->InvalidateAll();
+}
+
+Controller::Selection Controller::HitTest(Model::Point point, Model::Rect* elementRect) const
 {
 	Selection sel;
 	for (auto& ikon : GetModuleIkons())
@@ -171,6 +193,8 @@ Controller::Selection Controller::HitTest(Model::Point point) const
 					sel.pinID = pin.id;
 					sel.element = output ? Selection::Element::Output : Selection::Element::Input;
 					sel.moduleID = ikon.GetModuleID();
+					if (elementRect)
+						*elementRect = pin.connectionRect;
 					return true;
 				}
 
@@ -179,6 +203,8 @@ Controller::Selection Controller::HitTest(Model::Point point) const
 					sel.pinID = pin.id;
 					sel.element = Selection::Element::Value;
 					sel.moduleID = ikon.GetModuleID();
+					if (elementRect)
+						*elementRect = pin.valueRect;
 					return true;
 				}
 			}

@@ -96,4 +96,19 @@ namespace Synth
 		Model::Point _pos, _oldPos;
 		bool _relative;
 	};
+	
+	class SetValueCommand : public GraphCommand
+	{
+	public:
+		SetValueCommand(int modID, Model::Tag pinID, int value, Model::Graph& graph) : GraphCommand(graph), _modID(modID), _pinID(pinID), _value(value) {}
+
+		virtual void Do();
+		virtual void Undo();
+	
+	protected:
+		int _modID;
+		Model::Tag _pinID;
+		int _value;
+		int _oldValue = 0;
+	};
 }

@@ -63,3 +63,17 @@ void SetPositionCommand::Undo()
 	Module* mod = _graph.FindModule(_modID);
 	mod->SetPosition(_oldPos);
 }
+
+
+void SetValueCommand::Do()
+{
+	Module* mod = _graph.FindModule(_modID);
+	_oldValue = *mod->FindValue(_pinID);
+	mod->SetValue(_pinID, _value);
+}
+
+void SetValueCommand::Undo()
+{
+	Module* mod = _graph.FindModule(_modID);
+	mod->SetValue(_pinID, _oldValue);
+}

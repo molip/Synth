@@ -101,16 +101,21 @@ void Controller::OnLButtonDown(Model::Point point)
 
 	_view->InvalidateAll();
 
-	if (_selection.moduleID == 0)
+	if (_selection.moduleID == 0 || _selection.element == Selection::Element::Output)
 		return;
 
 	if (!_selection.pinID.empty())
 	{
-		if (_selection.isOutput)
+		if (_selection.element == Selection::Element::Input)
+		{
+			auto connectionPoint = ModuleIkon(*_graph->FindModule(_selection.moduleID), false, *_graph).FindPin(_selection.pinID, false)->GetConnectionPoint();
+			_liveConnection = std::make_unique<Connection>(connectionPoint, point);
+		}
+		else
+		{
+			KERNEL_ASSERT(_selection.element == Selection::Element::Value);
 			return;
-
-		auto connectionPoint = ModuleIkon(*_graph->FindModule(_selection.moduleID), false, *_graph).FindPin(_selection.pinID, false)->GetConnectionPoint();
-		_liveConnection = std::make_unique<Connection>(connectionPoint, point);
+		}
 	}
 
 	_mouseDownPoint = std::make_unique<Model::Point>(point);
@@ -130,7 +135,7 @@ void Controller::OnLButtonUp(Model::Point point)
 			const Model::PinRef output(sel.moduleID, sel.pinID);
 
 			bool connect = false;
-			if (!sel.pinID.empty() && sel.isOutput)
+			if (!sel.pinID.empty() && _selection.element == Selection::Element::Output)
 			{
 				const auto& valid = _graph->GetValidSourcePins(input);
 				connect = std::find(valid.begin(), valid.end(), output) != valid.end();
@@ -157,30 +162,40 @@ Controller::Selection Controller::HitTest(Model::Point point) const
 	Selection sel;
 	for (auto& ikon : GetModuleIkons())
 	{
-		if (ikon.GetRect().Contains(point))
-		{
-			sel.moduleID = ikon.GetModuleID();
-			break;
-		}
-
 		auto HitTestPins = [&] (bool output)
 		{
 			for (auto& pin : output ? ikon.GetOutputPins() : ikon.GetInputPins())
+			{
 				if (pin.connectionRect.Contains(point))
 				{
 					sel.pinID = pin.id;
-					sel.isOutput = output;
+					sel.element = output ? Selection::Element::Output : Selection::Element::Input;
 					sel.moduleID = ikon.GetModuleID();
 					return true;
 				}
+
+				if (!output && pin.showValue && pin.valueRect.Contains(point))
+				{
+					sel.pinID = pin.id;
+					sel.element = Selection::Element::Value;
+					sel.moduleID = ikon.GetModuleID();
+					return true;
+				}
+			}
 			return false;
 		};
 
 		if (HitTestPins(false))
 			break;
-
+		
 		if (HitTestPins(true))
 			break;
+
+		if (ikon.GetRect().Contains(point))
+		{
+			sel.moduleID = ikon.GetModuleID();
+			break;
+		}
 	}
 		
 	return sel;

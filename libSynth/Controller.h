@@ -60,7 +60,7 @@ namespace Synth
 		public:
 			int moduleID = 0;
 			Model::Tag pinID;
-			bool isOutput = false;
+			enum class Element { None, Input, Output, Value } element {};
 		};
 
 	private:

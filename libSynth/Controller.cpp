@@ -145,7 +145,7 @@ void Controller::OnLButtonUp(Model::Point point)
 			const Model::PinRef output(sel.moduleID, sel.pinID);
 
 			bool connect = false;
-			if (!sel.pinID.empty() && _selection.element == Selection::Element::Output)
+			if (!sel.pinID.empty() && sel.element == Selection::Element::Output)
 			{
 				const auto& valid = _graph->GetValidSourcePins(input);
 				connect = std::find(valid.begin(), valid.end(), output) != valid.end();

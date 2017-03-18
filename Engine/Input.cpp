@@ -187,12 +187,9 @@ bool AddConnectionCommand::Execute(Graph& graph) const
 Error SetUnsignedValueCommand::AddData(byte data) 
 {
 	if (_modIndex < 0)
-	{
 		_modIndex = data;
-		//Module* mod = _poly ? _graph->GetPolyModule(_modIndex, 0) : _graph->GetMonoModule(_modIndex);
-		//if (dynamic_cast<UnsignedValueModule*>(mod) == nullptr)
-		//	return Error::InvalidParameter;
-	}
+	else if (_pinIndex < 0)
+		_pinIndex = data;
 	else if (!_val.IsFinished())
 		_val.AddData(data);
 	else
@@ -209,10 +206,10 @@ bool SetUnsignedValueCommand::Execute(Graph& graph) const
 	if (_poly)
 	{
 		for (int i = 0; i < _graph->GetPolyphony(); ++i)
-			static_cast<UnsignedValueModule*>(_graph->GetPolyModule(_modIndex, i))->SetValue(_val);
+			_graph->GetPolyModule(_modIndex, i)->GetPins<UnsignedInput>()[_pinIndex].SetValue(_val);
 	}
 	else
-		static_cast<UnsignedValueModule*>(_graph->GetMonoModule(_modIndex))->SetValue(_val);
+		_graph->GetMonoModule(_modIndex)->GetPins<UnsignedInput>()[_pinIndex].SetValue(_val);
 
 	return true;
 }

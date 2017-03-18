@@ -43,28 +43,11 @@ void TestInput()
 		(byte)CommandType::AddPolyModule, (byte)ModuleType::Oscillator,		// 1
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::Mixer,	// 1
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::UnsignedValue,	// 3 (attack)
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::UnsignedValue,	// 4 (decay)
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::UnsignedValue,	// 5 (sustain)
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::UnsignedValue,	// 6 (release)
 
-		(byte)CommandType::SetMonoUnsignedValue, 3, 100 & 0xff, 100 >> 8, 
-		(byte)CommandType::SetMonoUnsignedValue, 4, 1000 & 0xff, 1000 >> 8, 
-		(byte)CommandType::SetMonoUnsignedValue, 5, 0x8000 & 0xff, 0x8000 >> 8, 
-		(byte)CommandType::SetMonoUnsignedValue, 6, 1000 & 0xff, 1000 >> 8, 
-
-		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedInput::Attack,
-			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 3, 0,
-		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedInput::Decay,
-			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 4, 0,
-		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedInput::Sustain,
-			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 5, 0,
-		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedInput::Release,
-			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 6, 0,
+		(byte)CommandType::SetPolyUnsignedValue, 0, Pin::Envelope::UnsignedInput::Attack, 100 >> 8, 100 & 0xff, 
+		(byte)CommandType::SetPolyUnsignedValue, 0, Pin::Envelope::UnsignedInput::Decay, 1000 >> 8, 1000 & 0xff,
+		(byte)CommandType::SetPolyUnsignedValue, 0, Pin::Envelope::UnsignedInput::Sustain, 0x8000 >> 8, 0x8000 & 0xff,
+		(byte)CommandType::SetPolyUnsignedValue, 0, Pin::Envelope::UnsignedInput::Release, 1000 >> 8, 1000 & 0xff, 
 
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
 			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, Pin::Oscillator::UnsignedInput::Level,

@@ -55,7 +55,6 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::Oscillator: mod = new OscillatorModule; break;
 	case ModuleType::Mixer: mod = new PolyMixerModule; break;
 	case ModuleType::Target: mod = new OutputModule; break;
-	case ModuleType::UnsignedValue: mod = new UnsignedValueModule; break;
 	default: return;
 	}
 

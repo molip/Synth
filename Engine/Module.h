@@ -92,10 +92,3 @@ protected:
 	Array<SignedMultiInput> _signedMultiInputs;
 	Array<UnsignedMultiInput> _unsignedMultiInputs;
 };
-
-class UnsignedValueModule : public Module
-{
-public:
-	UnsignedValueModule();
-	void SetValue(unsigned_t val);
-};

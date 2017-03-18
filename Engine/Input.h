@@ -133,6 +133,7 @@ namespace Input
 	protected:
 		bool _poly;
 		int _modIndex = -1;
+		int _pinIndex = -1;
 		Value<Module::unsigned_t> _val;
 	};
 

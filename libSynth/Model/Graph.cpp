@@ -25,6 +25,8 @@ Module* Graph::FindModule(int modID)
 
 void Graph::SortModules()
 {
+	SendEvent(Event::StructureChanged);
+
 	std::set<int> done;
 	_sorted.clear();
 
@@ -152,4 +154,10 @@ void Graph::ApplyUndo(const ConnectionUndo& undo)
 	Module* mod = FindModule(undo.moduleID);
 	mod->ApplyUndo(undo.undo);
 	SortModules();
+}
+
+void Graph::SendEvent(Event event) const
+{
+	for (auto& observer : _observers)
+		observer->OnGraphEvent(event);
 }

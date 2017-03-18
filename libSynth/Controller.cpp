@@ -20,6 +20,7 @@ Controller::Controller()
 	_graph = std::make_unique<Model::Graph>();
 	_commandStack = std::make_unique<CommandStack>();
 	
+	_graph->AddObserver(*this);
 	//_commandStack->Do(std::make_unique<AddModuleCommand>("midi", *_graph));
 	//_commandStack->Do(std::make_unique<SetPositionCommand>(1, Model::Point(100, 100), true, *_graph), false);
 
@@ -39,7 +40,10 @@ Controller::Controller()
 	//_graph->FindModule(2)->SetValue("rels", 1000);
 }
 
-Controller::~Controller() = default;
+Controller::~Controller()
+{
+	_graph->RemoveObserver(*this);
+}
 
 bool Controller::CanUndo() const 
 {
@@ -280,4 +284,10 @@ bool Controller::Save(const std::wstring& path) const
 bool Controller::Load(const std::wstring& path)
 {
 	return Kernel::Serial::LoadClass(path, *_graph);
+}
+
+
+void Controller::OnGraphEvent(Model::Graph::Event event)
+{
+
 }

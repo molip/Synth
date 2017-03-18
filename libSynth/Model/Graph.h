@@ -5,17 +5,25 @@
 #include "Defs.h"
 
 #include <memory>
+#include <set>
 #include <vector>
 
 namespace Synth
 {
 namespace Model
 {
+	class GraphObserver;
+
 	class Graph
 	{
 	public:
 		Graph();
 		~Graph();
+
+		enum class Event { StructureChanged };
+
+		void AddObserver(GraphObserver& observer) { _observers.insert(&observer); }
+		void RemoveObserver(GraphObserver& observer) { _observers.erase(&observer); }
 
 		Module* FindModule(int modID);
 		const Module* FindModule(int modID) const { return const_cast<Graph*>(this)->FindModule(modID); }
@@ -54,9 +62,19 @@ namespace Model
 		void ApplyUndo(const ConnectionUndo& undo);
 
 	private:
+		void SendEvent(Event event) const;
+
 		std::vector<Module> _modules;
 		std::vector<Module*> _sorted;
 		int _nextModuleID = 1;
+
+		std::set<GraphObserver*> _observers;
+	};
+
+	class GraphObserver
+	{
+	public:
+		virtual void OnGraphEvent(Graph::Event event) = 0;
 	};
 }
 }

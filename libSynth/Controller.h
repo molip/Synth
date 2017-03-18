@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Model/Geometry.h"
+#include "Model/Graph.h"
 #include "Types.h"
 #include "ModuleIkon.h"
 
@@ -21,7 +22,7 @@ namespace Synth
 	namespace UI
 	{
 	class View;
-	class Controller
+	class Controller : private Model::GraphObserver
 	{
 	public:
 		Controller();
@@ -64,6 +65,9 @@ namespace Synth
 			Model::Tag pinID;
 			enum class Element { None, Input, Output, Value } element {};
 		};
+
+		// GraphObserver 
+		virtual void OnGraphEvent(Model::Graph::Event event) override;
 
 	private:
 		Selection HitTest(Model::Point point, Model::Rect* elementRect = nullptr) const;

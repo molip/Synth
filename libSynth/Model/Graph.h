@@ -13,14 +13,13 @@ namespace Synth
 namespace Model
 {
 	class GraphObserver;
+	class Notification;
 
 	class Graph
 	{
 	public:
 		Graph();
 		~Graph();
-
-		enum class Event { StructureChanged };
 
 		void AddObserver(GraphObserver& observer) { _observers.insert(&observer); }
 		void RemoveObserver(GraphObserver& observer) { _observers.erase(&observer); }
@@ -62,7 +61,7 @@ namespace Model
 		void ApplyUndo(const ConnectionUndo& undo);
 
 	private:
-		void SendEvent(Event event) const;
+		void SendNotification(const Notification& notification) const;
 
 		std::vector<Module> _modules;
 		std::vector<Module*> _sorted;
@@ -74,7 +73,7 @@ namespace Model
 	class GraphObserver
 	{
 	public:
-		virtual void OnGraphEvent(Graph::Event event) = 0;
+		virtual void OnGraphNotification(const Notification& notification) = 0;
 	};
 }
 }

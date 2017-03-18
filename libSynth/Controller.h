@@ -67,7 +67,7 @@ namespace Synth
 		};
 
 		// GraphObserver 
-		virtual void OnGraphEvent(Model::Graph::Event event) override;
+		virtual void OnGraphNotification(const Model::Notification& notification) override;
 
 	private:
 		Selection HitTest(Model::Point point, Model::Rect* elementRect = nullptr) const;

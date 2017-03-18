@@ -2,6 +2,7 @@
 #include "Graph.h"
 #include "Module.h"
 #include "ModuleTypes.h"
+#include "Notification.h"
 #include <algorithm>
 #include <set>
 
@@ -25,7 +26,7 @@ Module* Graph::FindModule(int modID)
 
 void Graph::SortModules()
 {
-	SendEvent(Event::StructureChanged);
+	SendNotification(StructureChangedNotification());
 
 	std::set<int> done;
 	_sorted.clear();
@@ -156,8 +157,8 @@ void Graph::ApplyUndo(const ConnectionUndo& undo)
 	SortModules();
 }
 
-void Graph::SendEvent(Event event) const
+void Graph::SendNotification(const Notification& notification) const
 {
 	for (auto& observer : _observers)
-		observer->OnGraphEvent(event);
+		observer->OnGraphNotification(notification);
 }

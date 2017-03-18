@@ -48,6 +48,9 @@
     <ClInclude Include="View.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="Model\Notification.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">

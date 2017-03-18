@@ -8,6 +8,7 @@
 
 #include "Model/Module.h"
 #include "Model/ModuleTypes.h"
+#include "Model/Notification.h"
 
 #include "../libKernel/Debug.h"
 #include "../libKernel/Serial.h"
@@ -298,12 +299,10 @@ bool Controller::Load(const std::wstring& path)
 	return Kernel::Serial::LoadClass(path, *_graph);
 }
 
-void Controller::OnGraphEvent(Model::Graph::Event event)
+void Controller::OnGraphNotification(const Model::Notification& notification) 
 {
-	switch (event)
+	if (dynamic_cast<const Model::StructureChangedNotification*>(&notification))
 	{
-	case Model::Graph::Event::StructureChanged:
 		_exported = false;
-		break;
 	}
 }

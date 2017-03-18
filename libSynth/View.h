@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Types.h"
+
 #include <string>
 
 namespace Synth
@@ -19,7 +21,8 @@ namespace Synth
 
 		virtual void InvalidateAll() = 0;
 		virtual void SetCapture(bool capture) = 0;
-		virtual void StartValueEdit(const Synth::Model::Rect& rect, const std::string& str) = 0;
+		virtual void StartValueEdit(const Model::Rect& rect, const std::string& str) = 0;
+		virtual bool UploadData(const Buffer& buffer) = 0;
 	};
 	}
 }

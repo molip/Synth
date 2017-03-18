@@ -264,16 +264,28 @@ std::vector<Controller::Connection> Controller::GetConnections() const
 	return connections;
 }
 
-BufferPtr Controller::Export() const
+bool Controller::Export() const
 {
 	Model::Exporter exporter;
-	return exporter.Export(*_graph);
+	if (BufferPtr buffer = exporter.Export(*_graph))
+	{
+		if (_view->UploadData(*buffer))
+		{
+			_exported = true;
+			return true;
+		}
+	}
+	
+	return false;
 }
 
-BufferPtr Controller::ExportMIDIFile(const std::wstring& path) const
+bool Controller::ExportMIDIFile(const std::wstring& path) const
 {
 	MIDIExporter exporter;
-	return exporter.Export(path);
+	if (BufferPtr buffer = exporter.Export(path))
+		return _view->UploadData(*buffer);
+	
+	return false;
 }
 
 bool Controller::Save(const std::wstring& path) const
@@ -286,8 +298,12 @@ bool Controller::Load(const std::wstring& path)
 	return Kernel::Serial::LoadClass(path, *_graph);
 }
 
-
 void Controller::OnGraphEvent(Model::Graph::Event event)
 {
-
+	switch (event)
+	{
+	case Model::Graph::Event::StructureChanged:
+		_exported = false;
+		break;
+	}
 }

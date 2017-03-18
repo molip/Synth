@@ -53,8 +53,8 @@ namespace Synth
 		const Connection* GetLiveConnection() const { return _liveConnection.get(); }
 		std::vector<Connection> GetConnections() const;
 
-		BufferPtr Export() const;
-		BufferPtr ExportMIDIFile(const std::wstring& path) const;
+		bool Export() const;
+		bool ExportMIDIFile(const std::wstring& path) const;
 		bool Save(const std::wstring& path) const;
 		bool Load(const std::wstring& path);
 
@@ -81,6 +81,8 @@ namespace Synth
 		Selection _selection;
 
 		std::unique_ptr<Connection> _liveConnection;
+
+		mutable bool _exported = false;
 	};
 	}
 }

@@ -34,9 +34,6 @@ void Graph::Update()
 {
 	for (int i = 0; i < _updateModules.GetSize(); ++i)
 		_updateModules[i]->Update();
-
-	if (_midiModule)
-		_midiModule->ResetChanged();
 }
 
 void Graph::Activate()

@@ -10,10 +10,12 @@ EnvelopeModule::EnvelopeModule()
 
 void EnvelopeModule::Update()
 {
-	const UnsignedInput& gateInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Gate];
+	UnsignedInput& gateInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Gate];
 
 	if (gateInput.HasChanged())
 	{
+		gateInput.ResetChanged();
+
 		if (gateInput.GetValue() != 0) // Gate on.
 		{
 			const UnsignedInput& attackInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Attack];

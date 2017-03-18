@@ -39,8 +39,6 @@ MIDIData::~MIDIData()
 void MIDIData::SetTempo(uint32_t tempo) // microseconds per beat.
 {
 	_ticksPerMidiTick = Config::sampleRateMS * tempo / (_division * 1000); 
-	Serial.print("Tempo: ");
-	Serial.println(tempo);
 }
 
 void MIDIData::DoTick()

@@ -6,7 +6,6 @@ class MIDIModule : public Module
 {
 public:
 	MIDIModule(int polyphony);
-	void ResetChanged();
 
 	void ProcessMIDI(int8_t midiByte);
 	void ResetMIDI();

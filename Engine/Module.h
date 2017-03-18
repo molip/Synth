@@ -6,32 +6,53 @@
 
 #include <arduino.h>
 
+template <typename T> class InputT;
+
 template <typename T>
 class OutputT
 {
 public:
+	OutputT()
+	{
+		_dests.Reserve(10); //TODO: Upload actual size.
+	}
+
+	void AddDest(InputT<T>& input) { _dests.Push(&input); }
+
 	void SetValue(T val, bool forceChanged = false)
 	{
-		_changed = forceChanged || val != _value;
-		_value = val;
+		if (forceChanged || val != _value)
+		{
+			for (size_t i = 0; i < _dests.GetSize(); ++i)
+				_dests[i]->SetValue(val);
+			
+			_value = val;
+		}
 	}
-	T GetValue() const { return _value; }
-	void ResetChanged() { _changed = false; }
-	bool HasChanged() const { return _changed; }
+
 private:
 	T _value = 0;
-	bool _changed = true;
+	Array<InputT<T>*> _dests;
 };
 
 template <typename T>
 class InputT
 {
 public:
-	T GetValue() const { return _source->GetValue(); }
-	bool HasChanged() const { return _source->HasChanged(); }
-	void Connect(OutputT<T>& output) { _source = &output; }
+	void SetValue(T val)
+	{
+		_value = val;
+		_changed = true; // It's up to the output to only call this when necessary. 
+	}
+
+	T GetValue() const { return _value; }
+	bool HasChanged() const { return _changed; }
+	void Connect(OutputT<T>& output) { output.AddDest(*this); }
+	void ResetChanged() { _changed = false; }
+
 private:
-	OutputT<T>* _source = nullptr; 
+	bool _changed = false;
+	T _value = 0;
 };
 
 using SignedOutput = OutputT<int16_t>;

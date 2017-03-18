@@ -23,8 +23,8 @@ uint16_t OscillatorModule::PitchToPhaseDelta(unsigned_t pitch)
 
 void OscillatorModule::Update()
 {
-	const UnsignedInput& levelInput = _unsignedInputs[Pin::Oscillator::UnsignedInput::Level];
-	const UnsignedInput& pitchInput = _unsignedInputs[Pin::Oscillator::UnsignedInput::Pitch];
+	UnsignedInput& levelInput = _unsignedInputs[Pin::Oscillator::UnsignedInput::Level];
+	UnsignedInput& pitchInput = _unsignedInputs[Pin::Oscillator::UnsignedInput::Pitch];
 	SignedOutput& signalOutput = _signedOutputs[Pin::Oscillator::SignedOutput::Signal];
 
 	unsigned_t level = levelInput.GetValue();
@@ -37,6 +37,7 @@ void OscillatorModule::Update()
 
 	if (pitchInput.HasChanged())
 	{
+		pitchInput.ResetChanged();
 		_phaseDelta = PitchToPhaseDelta(pitchInput.GetValue());
 	}
 

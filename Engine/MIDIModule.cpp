@@ -11,16 +11,6 @@ MIDIModule::MIDIModule(int polyphony)
 	_unsignedMultiOutputs.SetSize(Pin::MIDI::UnsignedMultiOutput::_Count);
 }
 
-void MIDIModule::ResetChanged() 
-{
-	int count = _unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Gate].GetSize();
-	for (int i = 0; i < count; ++i)
-	{
-		_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Gate][i].ResetChanged();
-		_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Pitch][i].ResetChanged();
-	}
-}
-
 void MIDIModule::ProcessMIDI(int8_t midiByte)
 {
 	if (midiByte & 0x80)

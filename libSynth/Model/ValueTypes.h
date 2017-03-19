@@ -16,9 +16,11 @@ namespace Model
 		enum class DisplayType { Number, Select, };
 
 		ValueType(DisplayType type, int default) : _default(default) {}
+
 		virtual std::string ToString(int val) const = 0;
 		virtual int FromString(const std::string& str) const = 0;
-	
+		virtual int AddDelta(int val, int delta) const = 0;
+
 		const int& GetDefault() const { return _default; }
 
 	protected:
@@ -33,16 +35,18 @@ namespace Model
 	{
 	public:
 		TimeValueType(int default) : ValueType(DisplayType::Number, default) {}
-		virtual std::string ToString(int val) const;
-		virtual int FromString(const std::string& str) const;
+		virtual std::string ToString(int val) const override;
+		virtual int FromString(const std::string& str) const override;
+		virtual int AddDelta(int val, int delta) const override;
 	};
 
 	class PercentValueType : public ValueType
 	{
 	public:
 		PercentValueType(int default) : ValueType(DisplayType::Number, default) {}
-		virtual std::string ToString(int val) const;
-		virtual int FromString(const std::string& str) const;
+		virtual std::string ToString(int val) const override;
+		virtual int FromString(const std::string& str) const override;
+		virtual int AddDelta(int val, int delta) const override;
 	};
 }
 }

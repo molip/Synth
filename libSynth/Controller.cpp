@@ -172,6 +172,25 @@ void Controller::OnLButtonUp(Model::Point point)
 	_view->SetCapture(false);
 }
 
+void Synth::UI::Controller::OnMouseWheel(Model::Point point, bool negative, bool coarse)
+{
+	auto sel = HitTest(point);
+	if (sel.element != Selection::Element::Value)
+		return;
+
+	auto& module = *_graph->FindModule(sel.moduleID);
+	const auto& valDef = module.GetInputDef(sel.pinID).GetValueType();
+
+	const int oldVal = *module.FindValue(sel.pinID);
+	const int newVal = valDef->AddDelta(oldVal, (coarse ? 10 : 1) * (negative ? -1 : 1));
+	
+	if (newVal != oldVal) // TODO: Command::IsNull.
+	{
+		_commandStack->Do(std::make_unique<SetValueCommand>(sel.moduleID, sel.pinID, newVal, *_graph)); // TODO: Consolidate.
+		_view->InvalidateAll();
+	}
+}
+
 void Synth::UI::Controller::CommitValueEdit(const std::string& text)
 {
 	KERNEL_ASSERT(_selection.element == Selection::Element::Value);

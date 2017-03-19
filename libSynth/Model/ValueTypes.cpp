@@ -26,6 +26,11 @@ int TimeValueType::FromString(const std::string& str) const
 	return Clamp(val);
 }
 
+int Synth::Model::TimeValueType::AddDelta(int val, int delta) const
+{
+	return Clamp(val + delta * 10);
+}
+
 
 std::string PercentValueType::ToString(int val) const
 {
@@ -41,4 +46,9 @@ int PercentValueType::FromString(const std::string& str) const
 	iss >> val;
 
 	return Clamp(int(0xffff * val / 100.0));
+}
+
+int Synth::Model::PercentValueType::AddDelta(int val, int delta) const
+{
+	return Clamp(val + (int)std::round(delta * 0xffff / 100.0));
 }

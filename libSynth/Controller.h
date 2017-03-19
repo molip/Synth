@@ -43,6 +43,7 @@ namespace Synth
 		void OnMouseMove(Model::Point point);
 		void OnLButtonDown(Model::Point point);
 		void OnLButtonUp(Model::Point point);
+		void OnMouseWheel(Model::Point point, bool negative, bool coarse);
 
 		void CommitValueEdit(const std::string& text);
 

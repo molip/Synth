@@ -7,48 +7,49 @@
 using namespace Synth;
 using namespace Synth::Model;
 
-BufferPtr Exporter::Export(const Graph& graph)
+Exporter::Exporter(const Graph& graph) : _graph(graph)
 {
 	_buffer = std::make_unique<Buffer>();
 
-	const byte polyphony = 8;
-	
-	byte monoModCount = 0, polyModCount = 0;
-	std::map<int, byte> modIndices; // id -> index;
-	for (auto& mod : graph.GetSorted())
+	for (auto& mod : _graph.GetSorted())
 	{
-		byte& index = mod->IsInstanced(graph) ? polyModCount : monoModCount;
-		modIndices.insert(std::make_pair(mod->GetID(), index++));
+		byte& index = mod->IsInstanced(_graph) ? _polyModCount : _monoModCount;
+		_modIndices.insert(std::make_pair(mod->GetID(), index++));
 	}
+}
+
+BufferPtr Exporter::Export()
+{
+	const byte polyphony = 8;
 
 	Add(Engine::CommandType::StartGraph);
 
 	Add(Engine::CommandType::InitGraph);
-	Add(monoModCount);
-	Add(polyModCount);
+	Add(_monoModCount);
+	Add(_polyModCount);
 	Add(polyphony);
 
-	for (auto& mod : graph.GetSorted())
+	for (auto& mod : _graph.GetSorted())
 	{
-		Add(mod->IsInstanced(graph) ? Engine::CommandType::AddPolyModule : Engine::CommandType::AddMonoModule);
+		Add(mod->IsInstanced(_graph) ? Engine::CommandType::AddPolyModule : Engine::CommandType::AddMonoModule);
 		Add(mod->GetDef().GetEngineID());
 	}
 
 	auto AddPin = [&](const Module& mod, const PinType& pinDef)
 	{
-		Add(mod.IsInstanced(graph) ? Engine::InstanceType::Poly : Engine::InstanceType::Mono);
+		Add(mod.IsInstanced(_graph) ? Engine::InstanceType::Poly : Engine::InstanceType::Mono);
 		Add(pinDef.IsSigned() ? Engine::PinType::Signed : Engine::PinType::Unsigned);
-		Add(modIndices[mod.GetID()]);
+		Add(_modIndices[mod.GetID()]);
 		Add(pinDef.GetEngineID());
 	};
 
-	for (auto& mod : graph.GetSorted())
+	for (auto& mod : _graph.GetSorted())
 	{
 		for (auto& conn : mod->GetConnections())
 		{
 			const PinType& inputDef = mod->GetInputDef(conn.first);
-			const PinType& outputDef = mod->GetSourceOutputDef(conn.second, graph);
-			const Module& sourceMod = mod->GetSourceModule(conn.second, graph);
+			const PinType& outputDef = mod->GetSourceOutputDef(conn.second, _graph);
+			const Module& sourceMod = mod->GetSourceModule(conn.second, _graph);
 
 			Add(Engine::CommandType::AddConnection);
 			Add((inputDef.IsMulti() || outputDef.IsMulti()) ? Engine::ConnectionType::Multi : Engine::ConnectionType::Single);
@@ -57,23 +58,32 @@ BufferPtr Exporter::Export(const Graph& graph)
 			AddPin(sourceMod, outputDef);
 		}
 
-		// Set values.
 		for (auto& input : mod->GetDef().GetInputs())
-		{
-			if (input->GetValueType() && !mod->FindConnection(input->GetID()))
-			{
-				int val = *mod->FindValue(input->GetID());
-
-				Add(mod->IsInstanced(graph) ? Engine::CommandType::SetPolyUnsignedValue : Engine::CommandType::SetMonoUnsignedValue);
-				Add(modIndices[mod->GetID()]);
-				Add(input->GetEngineID());
-				Add(val >> 8);
-				Add(val & 0xff);
-			}
-		}
+			WriteValues(*mod, *input);
 	}
 
 	Add(Engine::CommandType::EndGraph);
 
 	return std::move(_buffer);
+}
+
+BufferPtr Exporter::ExportValues(int moduleID, Tag pinID)
+{
+	auto& mod = *_graph.FindModule(moduleID);
+	WriteValues(mod, mod.GetInputDef(pinID));
+	return std::move(_buffer);
+}
+
+void Exporter::WriteValues(const Module& mod, const PinType& input)
+{
+	if (input.GetValueType() && !mod.FindConnection(input.GetID()))
+	{
+		const int val = *mod.FindValue(input.GetID());
+
+		Add(mod.IsInstanced(_graph) ? Engine::CommandType::SetPolyUnsignedValue : Engine::CommandType::SetMonoUnsignedValue);
+		Add(_modIndices[mod.GetID()]);
+		Add(input.GetEngineID());
+		Add(val >> 8);
+		Add(val & 0xff);
+	}
 }

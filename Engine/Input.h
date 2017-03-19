@@ -28,16 +28,20 @@ namespace Input
 	class Command
 	{
 	public:
+		Command(Graph* graph) : _graph(graph) {}
 		virtual ~Command() = default;
 		virtual Error AddData(byte data) = 0; // Returns error code. 
-		virtual bool Execute(Graph& graph) const = 0; // Returns true if finished. 
+		virtual bool Execute() const = 0; // Returns true if finished. 
+	protected:
+		Graph* _graph;
 	};
 
 	class InitGraphCommand : public Command
 	{
 	public:
+		InitGraphCommand(Graph* graph) : Command(graph) {}
 		virtual Error AddData(byte data) override;
-		virtual bool Execute(Graph& graph) const override;
+		virtual bool Execute() const override;
 
 	private:
 		int _modCount = -1;
@@ -48,9 +52,9 @@ namespace Input
 	class AddModuleCommand : public Command
 	{
 	public:
-		AddModuleCommand(bool poly) : _poly(poly) {}
+		AddModuleCommand(Graph* graph, bool poly) : Command(graph), _poly(poly) {}
 		virtual Error AddData(byte data) override;
-		virtual bool Execute(Graph& graph) const override;
+		virtual bool Execute() const override;
 
 	protected:
 		ModuleType _moduleType = ModuleType::None;
@@ -60,20 +64,21 @@ namespace Input
 	class AddMonoModuleCommand : public AddModuleCommand 
 	{
 	public:
-		AddMonoModuleCommand() : AddModuleCommand(false) {}
+		AddMonoModuleCommand(Graph* graph) : AddModuleCommand(graph, false) {}
 	};
 
 	class AddPolyModuleCommand : public AddModuleCommand 
 	{
 	public:
-		AddPolyModuleCommand() : AddModuleCommand(true) {}
+		AddPolyModuleCommand(Graph* graph) : AddModuleCommand(graph, true) {}
 	};
 
 	class AddConnectionCommand : public Command
 	{
 	public:
+		AddConnectionCommand(Graph* graph) : Command(graph) {}
 		virtual Error AddData(byte data) override;
-		virtual bool Execute(Graph& graph) const override;
+		virtual bool Execute() const override;
 
 		class Connection
 		{
@@ -126,9 +131,9 @@ namespace Input
 	class SetUnsignedValueCommand : public Command
 	{
 	public:
-		SetUnsignedValueCommand(bool poly) : _poly(poly) {}
+		SetUnsignedValueCommand(Graph* graph, bool poly) : Command(graph), _poly(poly) {}
 		virtual Error AddData(byte data) override;
-		virtual bool Execute(Graph& graph) const override;
+		virtual bool Execute() const override;
 
 	protected:
 		bool _poly;
@@ -140,21 +145,21 @@ namespace Input
 	class SetMonoUnsignedValueCommand : public SetUnsignedValueCommand 
 	{
 	public:
-		SetMonoUnsignedValueCommand() : SetUnsignedValueCommand(false) {}
+		SetMonoUnsignedValueCommand(Graph* graph) : SetUnsignedValueCommand(graph, false) {}
 	};
 
 	class SetPolyUnsignedValueCommand : public SetUnsignedValueCommand 
 	{
 	public:
-		SetPolyUnsignedValueCommand() : SetUnsignedValueCommand(true) {}
+		SetPolyUnsignedValueCommand(Graph* graph) : SetUnsignedValueCommand(graph, true) {}
 	};
 
 	class SetMIDIDataCommand : public Command
 	{
 	public:
-		SetMIDIDataCommand() {}
+		SetMIDIDataCommand(Graph* graph) : Command(graph) {}
 		virtual Error AddData(byte data) override;
-		virtual bool Execute(Graph& graph) const override;
+		virtual bool Execute() const override;
 
 	protected:
 		Value<int16_t> _division;

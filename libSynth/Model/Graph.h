@@ -60,9 +60,9 @@ namespace Model
 		ConnectionUndo RemoveConnection(PinRef inputPin);
 		void ApplyUndo(const ConnectionUndo& undo);
 
-	private:
 		void SendNotification(const Notification& notification) const;
 
+	private:
 		std::vector<Module> _modules;
 		std::vector<Module*> _sorted;
 		int _nextModuleID = 1;

@@ -267,12 +267,12 @@ std::vector<Controller::Connection> Controller::GetConnections() const
 
 bool Controller::Export() const
 {
-	Model::Exporter exporter;
-	if (BufferPtr buffer = exporter.Export(*_graph))
+	Model::Exporter exporter(*_graph);
+	if (BufferPtr buffer = exporter.Export())
 	{
 		if (_view->UploadData(*buffer))
 		{
-			_exported = true;
+			_inSync = true;
 			return true;
 		}
 	}
@@ -303,6 +303,16 @@ void Controller::OnGraphNotification(const Model::Notification& notification)
 {
 	if (dynamic_cast<const Model::StructureChangedNotification*>(&notification))
 	{
-		_exported = false;
+		_inSync = false;
+	}
+	else if (auto* vcn = dynamic_cast<const Model::ValueChangedNotification*>(&notification))
+	{
+		if (_inSync)
+		{
+			Model::Exporter exporter(*_graph);
+			BufferPtr buffer = exporter.ExportValues(vcn->modID, vcn->pinID);
+			if (!_view->UploadData(*buffer)) // Now out of sync! 
+				_inSync = false;
+		}
 	}
 }

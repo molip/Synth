@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Command.h"
+#include "Model/Notification.h"
 
 using namespace Synth;
 using namespace Synth::Model;
@@ -70,10 +71,12 @@ void SetValueCommand::Do()
 	Module* mod = _graph.FindModule(_modID);
 	_oldValue = *mod->FindValue(_pinID);
 	mod->SetValue(_pinID, _value);
+	_graph.SendNotification(ValueChangedNotification(_modID, _pinID));
 }
 
 void SetValueCommand::Undo()
 {
 	Module* mod = _graph.FindModule(_modID);
 	mod->SetValue(_pinID, _oldValue);
+	_graph.SendNotification(ValueChangedNotification(_modID, _pinID));
 }

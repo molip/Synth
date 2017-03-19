@@ -82,7 +82,7 @@ namespace Synth
 
 		std::unique_ptr<Connection> _liveConnection;
 
-		mutable bool _exported = false;
+		mutable bool _inSync = false;
 	};
 	}
 }

@@ -7,7 +7,7 @@ namespace Input
 namespace 
 {
 	Command* _command;
-	Graph* _graph;
+	Graph* _newGraph;
 	bool _gotError;
 }
 
@@ -30,43 +30,50 @@ void Process(byte data)
 	}
 	else
 	{
+		Graph* graph = _newGraph ? _newGraph : Graph::GetActive();
+
 		switch (static_cast<CommandType>(data))
 		{
-		case CommandType::InitGraph: _command = new InitGraphCommand; break;
-		case CommandType::AddMonoModule: _command = new AddMonoModuleCommand; break;
-		case CommandType::AddPolyModule: _command = new AddPolyModuleCommand; break;
-		case CommandType::AddConnection: _command = new AddConnectionCommand; break;
-		case CommandType::SetMonoUnsignedValue: _command = new SetMonoUnsignedValueCommand; break;
-		case CommandType::SetPolyUnsignedValue: _command = new SetPolyUnsignedValueCommand; break;
-		case CommandType::SetMIDIData: _command = new SetMIDIDataCommand; break;
+		// Always _newGraph.
+		case CommandType::InitGraph: _command = new InitGraphCommand(_newGraph); break;
+		case CommandType::AddMonoModule: _command = new AddMonoModuleCommand(_newGraph); break;
+		case CommandType::AddPolyModule: _command = new AddPolyModuleCommand(_newGraph); break;
+		case CommandType::AddConnection: _command = new AddConnectionCommand(_newGraph); break;
+
+		// Always Graph::GetActive().
+		case CommandType::SetMIDIData: _command = new SetMIDIDataCommand(Graph::GetActive()); break;
+		
+		// Can be either.
+		case CommandType::SetMonoUnsignedValue: _command = new SetMonoUnsignedValueCommand(graph); break;
+		case CommandType::SetPolyUnsignedValue: _command = new SetPolyUnsignedValueCommand(graph); break;
+		
 		case CommandType::StartGraph: 
 		{
-			if (_graph)
+			if (_newGraph)
 			{
 				SendError(Error::GraphAlreadyStarted);
 				_gotError = true;
 			}
 			else 
-				_graph = new Graph;
+				_newGraph = new Graph;
 			break;
 		}
 		case CommandType::EndGraph: 
 			if (_gotError)
-				delete _graph;
+				delete _newGraph;
 			else
-				_graph->Activate(); 
+				_newGraph->Activate();
 				
 			_gotError = false;
-			_graph = nullptr;
+			_newGraph = nullptr;
 			break;
 		default:
 			SendError(Error::UnknownCommandType);
 			_gotError = true;
 		}
-
 	}
 
-	if (!_gotError && _command && _command->Execute(*_graph))
+	if (!_gotError && _command && _command->Execute())
 	{
 		delete _command;
 		_command = nullptr;
@@ -97,7 +104,7 @@ Error InitGraphCommand::AddData(byte data)
 
 	return Error::None;
 }
-bool InitGraphCommand::Execute(Graph& graph) const
+bool InitGraphCommand::Execute() const
 {
 	if (_polyphony < 0)
 		return false;
@@ -120,7 +127,7 @@ Error AddModuleCommand::AddData(byte data)
 	return Error::None;
 }
 
-bool AddModuleCommand::Execute(Graph& graph) const
+bool AddModuleCommand::Execute() const
 {
 	if (_moduleType == ModuleType::None)
 		return false;
@@ -170,7 +177,7 @@ Error AddConnectionCommand::AddData(byte data)
 	return Error::None;
 }
 
-bool AddConnectionCommand::Execute(Graph& graph) const
+bool AddConnectionCommand::Execute() const
 {
 	if (!_output._done) 
 		return false;
@@ -198,7 +205,7 @@ Error SetUnsignedValueCommand::AddData(byte data)
 	return Error::None;
 }
 
-bool SetUnsignedValueCommand::Execute(Graph& graph) const
+bool SetUnsignedValueCommand::Execute() const
 {
 	if (!_val.IsFinished())
 		return false;
@@ -236,14 +243,13 @@ Error SetMIDIDataCommand::AddData(byte data)
 	return Error::None;
 }
 
-bool SetMIDIDataCommand::Execute(Graph& graph) const
+bool SetMIDIDataCommand::Execute() const
 {
 	if (!_dataSize.IsFinished() || _dataRead < _dataSize)
 		return false;
 
 	MIDIData::Instance().SetData(_data, _dataSize, _division); // MIDIData now owns _data.
-	if (Graph* graph = Graph::GetActive())
-		graph->ResetMIDI();
+	_graph->ResetMIDI();
 
 	return true;
 }

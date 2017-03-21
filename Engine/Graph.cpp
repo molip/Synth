@@ -5,6 +5,7 @@
 #include "OscillatorModule.h"
 #include "PolyMixerModule.h"
 #include "OutputModule.h"
+#include "FilterModule.h"
 
 Graph* Graph::_active;
 
@@ -55,6 +56,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::Oscillator: mod = new OscillatorModule; break;
 	case ModuleType::Mixer: mod = new PolyMixerModule; break;
 	case ModuleType::Target: mod = new OutputModule; break;
+	case ModuleType::Filter: mod = new FilterModule; break;
 	default: return;
 	}
 

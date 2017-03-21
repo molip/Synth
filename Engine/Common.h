@@ -1,6 +1,6 @@
 #pragma once
 
-enum class ModuleType { None, MIDI, Envelope, Oscillator, Mixer, Target, _Count };
+enum class ModuleType { None, MIDI, Envelope, Oscillator, Mixer, Target, Filter, _Count };
 
 namespace Pin
 {
@@ -26,6 +26,12 @@ namespace Pin
 	namespace Target
 	{
 		namespace SignedInput { enum Type { Signal, _Count }; }
+	}
+	namespace Filter
+	{
+		namespace UnsignedInput { enum Type { Frequency, Resonance, _Count }; }
+		namespace SignedInput { enum Type { Signal, _Count }; }
+		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 }
 

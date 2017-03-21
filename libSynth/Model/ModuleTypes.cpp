@@ -37,13 +37,11 @@ ModuleTypes::ModuleTypes()
 	_types.emplace_back("trgt", "Target", Engine::ModuleType::Target);
 	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Target::SignedInput::Signal));
 
-	PercentValueType v(0);
-	std::string s1 = v.ToString(1);
-	std::string s2 = v.ToString(1000);
-
-	int n1 = v.FromString("100%");
-	int n2 = v.FromString("50");
-	int n3 = v.FromString("1");
+	_types.emplace_back("filt", "Filter", Engine::ModuleType::Filter);
+	_types.back().AddInput(std::make_unique<PinType>("freq", "Freqeuncy", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Filter::UnsignedInput::Frequency)).SetValueType(std::make_unique<PercentValueType>(0x8000));
+	_types.back().AddInput(std::make_unique<PinType>("resn", "Resonance", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Filter::UnsignedInput::Resonance)).SetValueType(std::make_unique<PercentValueType>(0x8000));
+	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Filter::SignedInput::Signal));
+	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Filter::SignedOutput::Signal));
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

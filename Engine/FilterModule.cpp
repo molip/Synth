@@ -9,10 +9,17 @@ FilterModule::FilterModule()
 
 void FilterModule::Update()
 {
-	UnsignedInput& freqInput = _unsignedInputs[Pin::Filter::UnsignedInput::Frequency];
-	UnsignedInput& resInput = _unsignedInputs[Pin::Filter::UnsignedInput::Resonance];
 	SignedInput& signalInput = _signedInputs[Pin::Filter::SignedInput::Signal];
 	SignedOutput& signalOutput = _signedOutputs[Pin::Filter::SignedOutput::Signal];
+
+	if (_unsignedInputs[Pin::Filter::UnsignedInput::Bypass].GetValue())
+	{
+		signalOutput.SetValue(signalInput.GetValue());
+		return;
+	}
+
+	UnsignedInput& freqInput = _unsignedInputs[Pin::Filter::UnsignedInput::Frequency];
+	UnsignedInput& resInput = _unsignedInputs[Pin::Filter::UnsignedInput::Resonance];
 
 	if (freqInput.HasChanged() || resInput.HasChanged())
 	{

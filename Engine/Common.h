@@ -29,7 +29,7 @@ namespace Pin
 	}
 	namespace Filter
 	{
-		namespace UnsignedInput { enum Type { Frequency, Resonance, _Count }; }
+		namespace UnsignedInput { enum Type { Frequency, Resonance, Bypass, _Count }; }
 		namespace SignedInput { enum Type { Signal, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}

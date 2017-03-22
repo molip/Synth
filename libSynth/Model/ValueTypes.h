@@ -48,5 +48,14 @@ namespace Model
 		virtual int FromString(const std::string& str) const override;
 		virtual int AddDelta(int val, int delta) const override;
 	};
+
+	class BoolValueType : public ValueType
+	{
+	public:
+		BoolValueType(bool default) : ValueType(DisplayType::Number, default) {}
+		virtual std::string ToString(int val) const override;
+		virtual int FromString(const std::string& str) const override;
+		virtual int AddDelta(int val, int delta) const override;
+	};
 }
 }

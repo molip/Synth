@@ -52,3 +52,19 @@ int Synth::Model::PercentValueType::AddDelta(int val, int delta) const
 {
 	return Clamp(val + (int)std::round(delta * 0xffff / 100.0));
 }
+
+
+std::string BoolValueType::ToString(int val) const
+{
+	return val ? "1" : "0";
+}
+
+int BoolValueType::FromString(const std::string& str) const
+{
+	return str == "1" ? 1 : 0;
+}
+
+int Synth::Model::BoolValueType::AddDelta(int val, int delta) const
+{
+	return std::min(1, std::max(0, val + delta));
+}

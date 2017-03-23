@@ -5,7 +5,7 @@
 
 using namespace Synth::Model;
 
-int Synth::Model::ValueType::Clamp(int value) const
+int ValueType::Clamp(int value) const
 {
 	return std::max(std::min(value, 0xffff), 0);
 }
@@ -26,7 +26,7 @@ int TimeValueType::FromString(const std::string& str) const
 	return Clamp(val);
 }
 
-int Synth::Model::TimeValueType::AddDelta(int val, int delta) const
+int TimeValueType::AddDelta(int val, int delta) const
 {
 	return Clamp(val + delta * 10);
 }
@@ -48,7 +48,7 @@ int PercentValueType::FromString(const std::string& str) const
 	return Clamp(int(0xffff * val / 100.0));
 }
 
-int Synth::Model::PercentValueType::AddDelta(int val, int delta) const
+int PercentValueType::AddDelta(int val, int delta) const
 {
 	return Clamp(val + (int)std::round(delta * 0xffff / 100.0));
 }
@@ -64,7 +64,7 @@ int BoolValueType::FromString(const std::string& str) const
 	return str == "1" ? 1 : 0;
 }
 
-int Synth::Model::BoolValueType::AddDelta(int val, int delta) const
+int BoolValueType::AddDelta(int val, int delta) const
 {
 	return std::min(1, std::max(0, val + delta));
 }

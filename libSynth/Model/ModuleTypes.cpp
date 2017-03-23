@@ -38,11 +38,17 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Target::SignedInput::Signal));
 
 	_types.emplace_back("filt", "Filter", Engine::ModuleType::Filter);
-	_types.back().AddInput(std::make_unique<PinType>("freq", "Freqeuncy", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Filter::UnsignedInput::Frequency)).SetValueType(std::make_unique<PercentValueType>(0x8000));
+	_types.back().AddInput(std::make_unique<PinType>("freq", "Frequency", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Filter::UnsignedInput::Frequency)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("resn", "Resonance", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Filter::UnsignedInput::Resonance)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("byps", "Bypass", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Filter::UnsignedInput::Bypass)).SetValueType(std::make_unique<BoolValueType>(0));
 	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Filter::SignedInput::Signal));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Filter::SignedOutput::Signal));
+
+	_types.emplace_back("rang", "Range", Engine::ModuleType::Range);
+	_types.back().AddInput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Range::UnsignedInput::Value));
+	_types.back().AddInput(std::make_unique<PinType>("mini", "Minimum", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Range::UnsignedInput::Minimum)).SetValueType(std::make_unique<PercentValueType>(0));
+	_types.back().AddInput(std::make_unique<PinType>("maxi", "Maximum", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Range::UnsignedInput::Maximum)).SetValueType(std::make_unique<PercentValueType>(0xffff));
+	_types.back().AddOutput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Range::UnsignedOutput::Value));
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

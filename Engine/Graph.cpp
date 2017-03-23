@@ -6,6 +6,7 @@
 #include "PolyMixerModule.h"
 #include "OutputModule.h"
 #include "FilterModule.h"
+#include "RangeModule.h"
 
 Graph* Graph::_active;
 
@@ -57,6 +58,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::Mixer: mod = new PolyMixerModule; break;
 	case ModuleType::Target: mod = new OutputModule; break;
 	case ModuleType::Filter: mod = new FilterModule; break;
+	case ModuleType::Range: mod = new RangeModule; break;
 	default: return;
 	}
 

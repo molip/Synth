@@ -57,12 +57,14 @@ void SetPositionCommand::Do()
 	Module* mod = _graph.FindModule(_modID);
 	_oldPos = mod->GetPosition();
 	mod->SetPosition(_relative ? _pos + _oldPos : _pos);
+	_graph.SendNotification(GenericChangedNotification());
 }
 
 void SetPositionCommand::Undo() 
 {
 	Module* mod = _graph.FindModule(_modID);
 	mod->SetPosition(_oldPos);
+	_graph.SendNotification(GenericChangedNotification());
 }
 
 

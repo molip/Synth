@@ -24,10 +24,8 @@ Module* Graph::FindModule(int modID)
 	return nullptr;
 }
 
-void Graph::SortModules()
+void Graph::SortModules(bool notify)
 {
-	SendNotification(StructureChangedNotification());
-
 	std::set<int> done;
 	_sorted.clear();
 
@@ -46,6 +44,9 @@ void Graph::SortModules()
 				_sorted.push_back(&mod);
 				done.insert(mod.GetID());
 			}
+
+	if (notify)
+		SendNotification(StructureChangedNotification());
 }
 	
 // Assumes sorted.
@@ -79,7 +80,7 @@ void Graph::Load(Serial::LoadNode& node)
 		_nextModuleID = std::max(_nextModuleID, mod.GetID());
 
 	++_nextModuleID;
-	SortModules();
+	SortModules(false);
 }
 
 Graph::AddModuleUndo Graph::AddModule(Tag type)

@@ -23,6 +23,7 @@ namespace Synth
 		virtual void SetCapture(bool capture) = 0;
 		virtual void StartValueEdit(const Model::Rect& rect, const std::string& str) = 0;
 		virtual bool UploadData(const Buffer& buffer) = 0;
+		virtual void SetModified(bool modified) = 0;
 	};
 	}
 }

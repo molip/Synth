@@ -14,6 +14,8 @@ namespace Model
 		virtual ~Notification() = default;
 	};
 
+	class GenericChangedNotification : public Notification {};
+
 	class StructureChangedNotification : public Notification {};
 
 	class ValueChangedNotification : public Notification 

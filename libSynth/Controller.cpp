@@ -59,26 +59,22 @@ bool Controller::CanRedo() const
 void Controller::Undo()
 {
 	_commandStack->Undo();
-	_view->InvalidateAll();
 }
 
 void Controller::Redo()
 {
 	_commandStack->Redo();
-	_view->InvalidateAll();
 }
 
 void Controller::InsertModule(const std::string& type)
 {
 	_commandStack->Do(std::make_unique<AddModuleCommand>(type, *_graph));
-	_view->InvalidateAll();
 }
 
 void Controller::DeleteModule()
 {
 	_commandStack->Do(std::make_unique<RemoveModuleCommand>(_selection.moduleID, *_graph));
 	_selection = Selection(); // TODO: What about undo? Need notifications! 
-	_view->InvalidateAll();
 }
 
 bool Controller::CanDeleteModule() const
@@ -93,13 +89,13 @@ void Controller::OnMouseMove(Model::Point point)
 		if (_liveConnection)
 		{
 			_liveConnection->second = point;
+			_view->InvalidateAll();
 		}
 		else
 		{
 			Model::Point delta(point.x - _mouseDownPoint->x, point.y - _mouseDownPoint->y);
 			_commandStack->Do(std::make_unique<SetPositionCommand>(_selection.moduleID, delta, true, *_graph), true);
 		}
-		_view->InvalidateAll();
 	}
 }
 
@@ -159,7 +155,7 @@ void Controller::OnLButtonUp(Model::Point point)
 			if(connect)
 				_commandStack->Do(std::make_unique<AddConnectionCommand>(input, output, *_graph));
 			else
-				_commandStack->Do(std::make_unique<RemoveConnectionCommand>(input, *_graph));
+				_commandStack->Do(std::make_unique<RemoveConnectionCommand>(input, *_graph)); // TODO: don't do if null.
 		}
 		else
 		{
@@ -168,7 +164,6 @@ void Controller::OnLButtonUp(Model::Point point)
 		}
 		_mouseDownPoint.reset();
 	}
-	_view->InvalidateAll();
 	_view->SetCapture(false);
 }
 
@@ -187,7 +182,6 @@ void Synth::UI::Controller::OnMouseWheel(Model::Point point, bool negative, bool
 	if (newVal != oldVal) // TODO: Command::IsNull.
 	{
 		_commandStack->Do(std::make_unique<SetValueCommand>(sel.moduleID, sel.pinID, newVal, *_graph)); // TODO: Consolidate.
-		_view->InvalidateAll();
 	}
 }
 
@@ -310,7 +304,12 @@ bool Controller::ExportMIDIFile(const std::wstring& path) const
 
 bool Controller::Save(const std::wstring& path) const
 {
-	return Kernel::Serial::SaveClass(path, *_graph);
+	if (Kernel::Serial::SaveClass(path, *_graph))
+	{
+		_view->SetModified(false);
+		return true;
+	}
+	return false;
 }
 
 bool Controller::Load(const std::wstring& path)
@@ -320,6 +319,9 @@ bool Controller::Load(const std::wstring& path)
 
 void Controller::OnGraphNotification(const Model::Notification& notification) 
 {
+	_view->SetModified(true);
+	_view->InvalidateAll();
+
 	if (dynamic_cast<const Model::StructureChangedNotification*>(&notification))
 	{
 		_inSync = false;

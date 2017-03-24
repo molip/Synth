@@ -49,13 +49,22 @@ namespace Model
 		virtual int AddDelta(int val, int delta) const override;
 	};
 
-	class BoolValueType : public ValueType
+	class IntValueType : public ValueType
 	{
 	public:
-		BoolValueType(bool default) : ValueType(DisplayType::Number, default) {}
+		IntValueType(int default, int min, int max) : ValueType(DisplayType::Number, default), _min(min), _max(max) {}
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
 		virtual int AddDelta(int val, int delta) const override;
+	private:
+		int _min, _max;
 	};
+
+	class BoolValueType : public IntValueType
+	{
+	public:
+		BoolValueType(bool default) : IntValueType(default, 0, 1) {}
+	};
+
 }
 }

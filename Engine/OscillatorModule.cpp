@@ -1,4 +1,5 @@
 #include "OscillatorModule.h"
+#include "Sine.h"
 
 OscillatorModule::OscillatorModule()
 {
@@ -43,7 +44,22 @@ void OscillatorModule::Update()
 
 	_phase += _phaseDelta;
 
-	uint16_t output = ((_phase & 0x8000) ? 0xffff - _phase : _phase) << 1; // Triangle.
+	uint16_t output = 0;
+	switch (_unsignedInputs[Pin::Oscillator::UnsignedInput::Waveform].GetValue())
+	{
+	case 0: // Sawtooth. 
+		output = _phase; 
+		break;
+	case 1: // Triangle.
+		output = ((_phase & 0x8000) ? 0xffff - _phase : _phase) << 1;
+		break;
+	case 2: // Square.
+		output = _phase > 0x8000 ? 0xffff : 0;
+		break;
+	case 3: // Sine.
+		output = pgm_read_byte_near(SineTable + (_phase >> 5)) << 8;
+		break;
+	}
 
 	//Serial.println(output);
 

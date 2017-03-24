@@ -15,7 +15,7 @@ namespace Pin
 	}
 	namespace Oscillator 
 	{
-		namespace UnsignedInput { enum Type { Pitch, Level, _Count }; }
+		namespace UnsignedInput { enum Type { Waveform, Pitch, Level, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace PolyMixer 

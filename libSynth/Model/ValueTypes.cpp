@@ -54,17 +54,23 @@ int PercentValueType::AddDelta(int val, int delta) const
 }
 
 
-std::string BoolValueType::ToString(int val) const
+std::string IntValueType::ToString(int val) const
 {
-	return val ? "1" : "0";
+	std::ostringstream oss;
+	oss << val;
+	return oss.str();
 }
 
-int BoolValueType::FromString(const std::string& str) const
+int IntValueType::FromString(const std::string& str) const
 {
-	return str == "1" ? 1 : 0;
+	std::istringstream iss(str);
+	int val = 0;
+	iss >> val;
+
+	return std::min(_max, std::max(_min, val));
 }
 
-int BoolValueType::AddDelta(int val, int delta) const
+int IntValueType::AddDelta(int val, int delta) const
 {
-	return std::min(1, std::max(0, val + delta));
+	return std::min(_max, std::max(_min, val + delta));
 }

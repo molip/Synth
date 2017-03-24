@@ -20,14 +20,12 @@ Exporter::Exporter(const Graph& graph) : _graph(graph)
 
 BufferPtr Exporter::Export()
 {
-	const byte polyphony = 4;
-
 	Add(Engine::CommandType::StartGraph);
 
 	Add(Engine::CommandType::InitGraph);
 	Add(_monoModCount);
 	Add(_polyModCount);
-	Add(polyphony);
+	Add(_graph.GetPolyphony());
 
 	for (auto& mod : _graph.GetSorted())
 	{
@@ -70,13 +68,15 @@ BufferPtr Exporter::Export()
 BufferPtr Exporter::ExportValues(int moduleID, Tag pinID)
 {
 	auto& mod = *_graph.FindModule(moduleID);
-	WriteValues(mod, mod.GetInputDef(pinID));
-	return std::move(_buffer);
+	if (WriteValues(mod, mod.GetInputDef(pinID)))
+		return std::move(_buffer);
+	
+	return nullptr;
 }
 
-void Exporter::WriteValues(const Module& mod, const PinType& input)
+bool Exporter::WriteValues(const Module& mod, const PinType& input)
 {
-	if (input.GetValueType() && !mod.FindConnection(input.GetID()))
+	if (input.GetValueType() && !mod.FindConnection(input.GetID()) && !input.IsInternal())
 	{
 		const int val = *mod.FindValue(input.GetID());
 
@@ -86,5 +86,7 @@ void Exporter::WriteValues(const Module& mod, const PinType& input)
 		Add(input.GetEngineID());
 		Add(val >> 8);
 		Add(val & 0xff);
+		return true;
 	}
+	return false;
 }

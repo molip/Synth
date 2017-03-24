@@ -206,7 +206,7 @@ Controller::Selection Controller::HitTest(Model::Point point, Model::Rect* eleme
 		{
 			for (auto& pin : output ? ikon.GetOutputPins() : ikon.GetInputPins())
 			{
-				if (pin.connectionRect.Contains(point))
+				if (!pin.internal && pin.connectionRect.Contains(point))
 				{
 					sel.pinID = pin.id;
 					sel.element = output ? Selection::Element::Output : Selection::Element::Input;
@@ -337,10 +337,11 @@ void Controller::OnGraphNotification(const Model::Notification& notification)
 	{
 		if (_inSync)
 		{
+			_inSync = false;
 			Model::Exporter exporter(*_graph);
-			BufferPtr buffer = exporter.ExportValues(vcn->modID, vcn->pinID);
-			if (!_view->UploadData(*buffer)) // Now out of sync! 
-				_inSync = false;
+			if (BufferPtr buffer = exporter.ExportValues(vcn->modID, vcn->pinID))
+				if (_view->UploadData(*buffer)) // Back in sync.
+					_inSync = true;
 		}
 	}
 }

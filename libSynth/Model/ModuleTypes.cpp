@@ -14,6 +14,7 @@ const ModuleTypes& ModuleTypes::Instance()
 ModuleTypes::ModuleTypes()
 {
 	_types.emplace_back("midi", "MIDI", Engine::ModuleType::MIDI);
+	_types.back().AddInput(std::make_unique<PinType>("poly", "Polyphony", PinType::ConnectionType::Single, PinType::DataType::Unsigned, -1)).SetValueType(std::make_unique<IntValueType>(4, 1, 32));
 	_types.back().AddOutput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, PinType::DataType::Unsigned, (int)Engine::Pin::MIDI::UnsignedMultiOutput::Gate));
 	_types.back().AddOutput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Multi, PinType::DataType::Unsigned, Engine::Pin::MIDI::UnsignedMultiOutput::Pitch));
 

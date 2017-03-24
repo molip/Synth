@@ -97,7 +97,7 @@ void ModuleIkon::CreatePins(bool outputs) const
 		
 		for (auto& pinDef : pinDefs)
 		{
-			Pin pin{ pinDef->GetName(), labelRect, connectionRect, valueRect, outputs, pinDef->IsMulti() ? Colour::Red : Colour::Blue, pinDef->GetID() };
+			Pin pin{ pinDef->GetName(), labelRect, connectionRect, valueRect, outputs, pinDef->IsMulti() ? Colour::Red : Colour::Blue, pinDef->GetID(), pinDef->IsInternal() };
 			
 			if (!outputs && !_module.FindConnection(pin.id))
 				if (const auto* valType = pinDef->GetValueType())

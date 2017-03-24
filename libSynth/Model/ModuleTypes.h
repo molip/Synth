@@ -31,6 +31,7 @@ namespace Model
 		ConnectionType GetConnectionType() const { return _connType; }
 		DataType GetDataType() const { return _dataType; }
 		int GetEngineID() const { return _engineID; }
+		bool IsInternal() const { return _engineID < 0; }
 	
 	private:
 		Tag _id;

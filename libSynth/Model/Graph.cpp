@@ -24,6 +24,15 @@ Module* Graph::FindModule(int modID)
 	return nullptr;
 }
 
+int Graph::GetPolyphony() const
+{
+	for (auto& mod : _modules)
+		if (mod.GetDef().GetID() == "midi")
+			return *mod.FindValue("poly");
+	
+	return 1;
+}
+
 void Graph::SortModules(bool notify)
 {
 	std::set<int> done;

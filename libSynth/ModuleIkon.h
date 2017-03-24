@@ -40,6 +40,7 @@ namespace Synth
 			bool isOutput = false;
 			Colour colour {};
 			Model::Tag id;
+			bool internal = false;
 			
 			bool showValue = false;
 			std::string value;

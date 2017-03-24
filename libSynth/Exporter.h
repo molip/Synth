@@ -29,7 +29,7 @@ namespace Model
 		void Add(Engine::ModuleType data) { Add((byte)data); }
 		void Add(Engine::PinType data) { Add((byte)data); }
 		
-		void WriteValues(const Module& mod, const PinType& input);
+		bool WriteValues(const Module& mod, const PinType& input);
 
 		const Graph& _graph;
 		BufferPtr _buffer;

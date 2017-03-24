@@ -26,7 +26,8 @@ namespace Model
 
 		Module* FindModule(int modID);
 		const Module* FindModule(int modID) const { return const_cast<Graph*>(this)->FindModule(modID); }
-		std::vector<Module*>& GetSorted() { return _sorted; } 
+		int GetPolyphony() const;
+		std::vector<Module*>& GetSorted() { return _sorted; }
 		const std::vector<const Module*>& GetSorted() const { return reinterpret_cast<const std::vector<const Module*>&>(_sorted); } 
 		void SortModules(bool notify = true);
 		void Save(Serial::SaveNode& node) const;

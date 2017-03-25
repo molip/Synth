@@ -4,6 +4,7 @@
 #include "MIDIModule.h"
 #include "OscillatorModule.h"
 #include "PolyMixerModule.h"
+#include "MixerModule.h"
 #include "OutputModule.h"
 #include "FilterModule.h"
 #include "RangeModule.h"
@@ -55,7 +56,8 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::MIDI: mod = _midiModule = new MIDIModule(_polyphony); break;
 	case ModuleType::Envelope: mod = new EnvelopeModule; break;
 	case ModuleType::Oscillator: mod = new OscillatorModule; break;
-	case ModuleType::Mixer: mod = new PolyMixerModule; break;
+	case ModuleType::PolyMixer: mod = new PolyMixerModule; break;
+	case ModuleType::Mixer: mod = new MixerModule; break;
 	case ModuleType::Target: mod = new OutputModule; break;
 	case ModuleType::Filter: mod = new FilterModule; break;
 	case ModuleType::Range: mod = new RangeModule; break;

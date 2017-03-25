@@ -1,20 +1,30 @@
 #include "MixerModule.h"
 
-MixerModule::MixerModule(int inputCount) : _inputCount(inputCount)
+MixerModule::MixerModule()
 {
-	_inputs = new SignedInput[inputCount];
-}
-
-MixerModule::~MixerModule()
-{
-	delete [] _inputs;
+	_signedInputs.SetSize(Pin::Mixer::SignedInput::_Count);
+	_signedOutputs.SetSize(Pin::Mixer::SignedOutput::_Count);
+	_activeInputs.Reserve(_signedInputs.GetSize());
 }
 
 void MixerModule::Update()
 {
-	uint32_t total = 0;
-	for (int i = 0; i < _inputCount; ++i)
-		total += _inputs[i].GetValue();
+	if (!_initialised)
+	{
+		for (int i = 0; i < _signedInputs.GetSize(); ++i)
+			if (_signedInputs[i].IsConnected())
+				_activeInputs.Push(&_signedInputs[i]);
 
-	_ouput.SetValue(total / _inputCount);
+		_initialised = true;
+	}
+
+	const int count = _activeInputs.GetSize();
+	if (count == 0)
+		return;
+
+	int32_t total = 0;
+	for (int i = 0; i < count; ++i)
+		total += _activeInputs[i]->GetValue();
+
+	_signedOutputs[Pin::Mixer::SignedOutput::Signal].SetValue(total / count);
 }

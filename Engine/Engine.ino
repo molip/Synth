@@ -41,7 +41,7 @@ void TestInput()
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::MIDI, // 0			
 		(byte)CommandType::AddPolyModule, (byte)ModuleType::Envelope,		// 0
 		(byte)CommandType::AddPolyModule, (byte)ModuleType::Oscillator,		// 1
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::Mixer,	// 1
+		(byte)CommandType::AddMonoModule, (byte)ModuleType::PolyMixer,	// 1
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
 
 		(byte)CommandType::SetPolyUnsignedValue, 0, Pin::Envelope::UnsignedInput::Attack, 100 >> 8, 100 & 0xff, 

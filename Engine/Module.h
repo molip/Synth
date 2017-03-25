@@ -47,11 +47,13 @@ public:
 
 	T GetValue() const { return _value; }
 	bool HasChanged() const { return _changed; }
-	void Connect(OutputT<T>& output) { output.AddDest(*this); }
+	bool IsConnected() const { return _connected; }
+	void Connect(OutputT<T>& output) { output.AddDest(*this); _connected = true; }
 	void ResetChanged() { _changed = false; }
 
 private:
 	bool _changed = false;
+	bool _connected = false;
 	T _value = 0;
 };
 

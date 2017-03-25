@@ -4,12 +4,10 @@
 class MixerModule : public Module
 {
 public:
-	MixerModule(int inputCount);
-	virtual ~MixerModule();
+	MixerModule();
 	virtual void Update() override;
 	virtual bool WantUpdate() const override { return true; }
-
-	int _inputCount;
-	SignedInput* _inputs;
-	SignedOutput _ouput;
+private:
+	Array<SignedInput*> _activeInputs;
+	bool _initialised = false;
 };

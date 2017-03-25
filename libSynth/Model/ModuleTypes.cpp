@@ -57,6 +57,11 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("sig2", "Signal 2", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Mixer::SignedInput::Signal2));
 	_types.back().AddInput(std::make_unique<PinType>("sig3", "Signal 3", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Mixer::SignedInput::Signal3));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Mixer::SignedOutput::Signal));
+
+	_types.emplace_back("pitc", "PitchShift", Engine::ModuleType::PitchShift);
+	_types.back().AddInput(std::make_unique<PinType>("shft", "Shift", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::PitchShift::SignedInput::Shift)).SetValueType(std::make_unique<IntValueType>(0, -127, 127));
+	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::PitchShift::UnsignedInput::Pitch));
+	_types.back().AddOutput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::PitchShift::UnsignedOutput::Pitch));
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

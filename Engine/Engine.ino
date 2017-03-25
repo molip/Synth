@@ -44,10 +44,10 @@ void TestInput()
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::PolyMixer,	// 1
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
 
-		(byte)CommandType::SetPolyUnsignedValue, 0, Pin::Envelope::UnsignedInput::Attack, 100 >> 8, 100 & 0xff, 
-		(byte)CommandType::SetPolyUnsignedValue, 0, Pin::Envelope::UnsignedInput::Decay, 1000 >> 8, 1000 & 0xff,
-		(byte)CommandType::SetPolyUnsignedValue, 0, Pin::Envelope::UnsignedInput::Sustain, 0x8000 >> 8, 0x8000 & 0xff,
-		(byte)CommandType::SetPolyUnsignedValue, 0, Pin::Envelope::UnsignedInput::Release, 1000 >> 8, 1000 & 0xff, 
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Attack, 100 >> 8, 100 & 0xff, 
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Decay, 1000 >> 8, 1000 & 0xff,
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Sustain, 0x8000 >> 8, 0x8000 & 0xff,
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Release, 1000 >> 8, 1000 & 0xff, 
 
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
 			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, Pin::Oscillator::UnsignedInput::Level,

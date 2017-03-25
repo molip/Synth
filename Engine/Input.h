@@ -128,31 +128,52 @@ namespace Input
 		Connection _input, _output;
 	};
 
-	class SetUnsignedValueCommand : public Command
+	template <typename T>
+	class SetValueCommand : public Command
 	{
 	public:
-		SetUnsignedValueCommand(Graph* graph, bool poly) : Command(graph), _poly(poly) {}
-		virtual Error AddData(byte data) override;
-		virtual bool Execute() const override;
+		SetValueCommand(Graph* graph) : Command(graph) {}
+		virtual Error AddData(byte data) override
+		{
+			if (_poly < 0)
+				_poly = data;
+			else if (_modIndex < 0)
+				_modIndex = data;
+			else if (_pinIndex < 0)
+				_pinIndex = data;
+			else if (!_val.IsFinished())
+				_val.AddData(data);
+			else
+				return Error::TooManyParameters;
+
+			return Error::None;
+		}
+
+		virtual bool Execute() const override
+		{
+			if (!_val.IsFinished())
+				return false;
+
+			if (_poly)
+			{
+				for (int i = 0; i < _graph->GetPolyphony(); ++i)
+					_graph->GetPolyModule(_modIndex, i)->GetPins<InputT<T>>()[_pinIndex].SetValue(_val);
+			}
+			else
+				_graph->GetMonoModule(_modIndex)->GetPins<InputT<T>>()[_pinIndex].SetValue(_val);
+
+			return true;
+		}
 
 	protected:
-		bool _poly;
+		int _poly = -1;
 		int _modIndex = -1;
 		int _pinIndex = -1;
-		Value<Module::unsigned_t> _val;
+		Value<T> _val;
 	};
 
-	class SetMonoUnsignedValueCommand : public SetUnsignedValueCommand 
-	{
-	public:
-		SetMonoUnsignedValueCommand(Graph* graph) : SetUnsignedValueCommand(graph, false) {}
-	};
-
-	class SetPolyUnsignedValueCommand : public SetUnsignedValueCommand 
-	{
-	public:
-		SetPolyUnsignedValueCommand(Graph* graph) : SetUnsignedValueCommand(graph, true) {}
-	};
+	using SetUnsignedValueCommand = SetValueCommand<Module::unsigned_t>;
+	using SetSignedValueCommand = SetValueCommand<Module::signed_t>;
 
 	class SetMIDIDataCommand : public Command
 	{

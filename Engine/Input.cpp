@@ -44,9 +44,9 @@ void Process(byte data)
 		case CommandType::SetMIDIData: _command = new SetMIDIDataCommand(Graph::GetActive()); break;
 		
 		// Can be either.
-		case CommandType::SetMonoUnsignedValue: _command = new SetMonoUnsignedValueCommand(graph); break;
-		case CommandType::SetPolyUnsignedValue: _command = new SetPolyUnsignedValueCommand(graph); break;
-		
+		case CommandType::SetUnsignedValue: _command = new SetUnsignedValueCommand(graph); break;
+		case CommandType::SetSignedValue: _command = new SetSignedValueCommand(graph); break;
+
 		case CommandType::StartGraph: 
 		{
 			if (_newGraph)
@@ -189,38 +189,6 @@ bool AddConnectionCommand::Execute() const
 
 	return true;
 }
-
-
-Error SetUnsignedValueCommand::AddData(byte data) 
-{
-	if (_modIndex < 0)
-		_modIndex = data;
-	else if (_pinIndex < 0)
-		_pinIndex = data;
-	else if (!_val.IsFinished())
-		_val.AddData(data);
-	else
-		return Error::TooManyParameters;
-
-	return Error::None;
-}
-
-bool SetUnsignedValueCommand::Execute() const
-{
-	if (!_val.IsFinished())
-		return false;
-
-	if (_poly)
-	{
-		for (int i = 0; i < _graph->GetPolyphony(); ++i)
-			_graph->GetPolyModule(_modIndex, i)->GetPins<UnsignedInput>()[_pinIndex].SetValue(_val);
-	}
-	else
-		_graph->GetMonoModule(_modIndex)->GetPins<UnsignedInput>()[_pinIndex].SetValue(_val);
-
-	return true;
-}
-
 
 
 Error SetMIDIDataCommand::AddData(byte data)

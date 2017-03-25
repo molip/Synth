@@ -80,7 +80,8 @@ void Exporter::WriteValues(const Module& mod, const PinType& input)
 	{
 		const int val = *mod.FindValue(input.GetID());
 
-		Add(mod.IsInstanced(_graph) ? Engine::CommandType::SetPolyUnsignedValue : Engine::CommandType::SetMonoUnsignedValue);
+		Add(input.IsSigned() ? Engine::CommandType::SetSignedValue : Engine::CommandType::SetUnsignedValue);
+		Add(mod.IsInstanced(_graph));
 		Add(_modIndices[mod.GetID()]);
 		Add(input.GetEngineID());
 		Add(val >> 8);

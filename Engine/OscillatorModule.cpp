@@ -4,6 +4,7 @@
 OscillatorModule::OscillatorModule()
 {
 	_unsignedInputs.SetSize(Pin::Oscillator::UnsignedInput::_Count);
+	_signedInputs.SetSize(Pin::Oscillator::SignedInput::_Count);
 	_signedOutputs.SetSize(Pin::Oscillator::SignedOutput::_Count);
 }
 
@@ -43,21 +44,23 @@ void OscillatorModule::Update()
 	}
 
 	_phase += _phaseDelta;
+	
+	uint16_t phase = _phase + _signedInputs[Pin::Oscillator::SignedInput::PhaseMod].GetValue();
 
 	uint16_t output = 0;
 	switch (_unsignedInputs[Pin::Oscillator::UnsignedInput::Waveform].GetValue())
 	{
 	case 0: // Sawtooth. 
-		output = _phase; 
+		output = phase;
 		break;
 	case 1: // Triangle.
-		output = ((_phase & 0x8000) ? 0xffff - _phase : _phase) << 1;
+		output = ((phase & 0x8000) ? 0xffff - phase : phase) << 1;
 		break;
 	case 2: // Square.
-		output = _phase > 0x8000 ? 0xffff : 0;
+		output = phase > 0x8000 ? 0xffff : 0;
 		break;
 	case 3: // Sine.
-		output = pgm_read_byte_near(SineTable + (_phase >> 5)) << 8;
+		output = pgm_read_byte_near(SineTable + (phase >> 5)) << 8;
 		break;
 	}
 

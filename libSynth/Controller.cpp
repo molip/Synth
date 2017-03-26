@@ -302,6 +302,13 @@ bool Controller::ExportMIDIFile(const std::wstring& path) const
 	return false;
 }
 
+void Controller::StopMIDIFilePlayback() const
+{
+	MIDIExporter exporter;
+	if (BufferPtr buffer = exporter.ExportStopMIDI())
+		_view->UploadData(*buffer);
+}
+
 bool Controller::Save(const std::wstring& path) const
 {
 	if (Kernel::Serial::SaveClass(path, *_graph))

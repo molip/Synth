@@ -51,7 +51,7 @@ namespace Pin
 		namespace UnsignedOutput { enum Type { Pitch, _Count }; }
 	}}
 
-enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetUnsignedValue, SetSignedValue, SetMIDIData };
+enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetUnsignedValue, SetSignedValue, SetMIDIData, StopMIDIPlayback };
 enum class Error { None, UnknownCommandType, InvalidParameter, TooManyParameters, PinTypeMismatch, GraphAlreadyStarted };
 
 enum class ConnectionType { None, Single, Multi, _Count };

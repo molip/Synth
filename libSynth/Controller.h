@@ -56,6 +56,7 @@ namespace Synth
 
 		bool Export() const;
 		bool ExportMIDIFile(const std::wstring& path) const;
+		void StopMIDIFilePlayback() const;
 		bool Save(const std::wstring& path) const;
 		bool Load(const std::wstring& path);
 

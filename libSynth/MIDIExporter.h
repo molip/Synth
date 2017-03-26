@@ -10,7 +10,7 @@ namespace Synth
 	{
 	public:
 		BufferPtr Export(const std::wstring& path);
-
+		BufferPtr ExportStopMIDI();
 	private:
 		void Add(byte data) { (*_buffer).push_back(data); }
 

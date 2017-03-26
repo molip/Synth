@@ -75,3 +75,10 @@ BufferPtr MIDIExporter::Export(const std::wstring& path)
 
 	return std::move(_buffer);
 }
+
+BufferPtr MIDIExporter::ExportStopMIDI()
+{
+	_buffer = std::make_unique<Buffer>();
+	Add((byte)Engine::CommandType::StopMIDIPlayback);
+	return std::move(_buffer);
+}

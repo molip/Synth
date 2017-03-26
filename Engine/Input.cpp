@@ -42,7 +42,11 @@ void Process(byte data)
 
 		// Always Graph::GetActive().
 		case CommandType::SetMIDIData: _command = new SetMIDIDataCommand(Graph::GetActive()); break;
-		
+		case CommandType::StopMIDIPlayback:
+			MIDIData::Instance().ResetData();
+			Graph::GetActive()->ResetMIDI();
+			break;
+			
 		// Can be either.
 		case CommandType::SetUnsignedValue: _command = new SetUnsignedValueCommand(graph); break;
 		case CommandType::SetSignedValue: _command = new SetSignedValueCommand(graph); break;

@@ -1,7 +1,6 @@
 #include "Config.h"
 
-float Config::pitchMult = 1.059463094359;
-float Config::freqs[12];
+float Config::freqs[Config::pitchesPerOctave];
 
 const uint32_t Config::sampleRate = 50000;
 const uint32_t Config::sampleRateMS = 50;

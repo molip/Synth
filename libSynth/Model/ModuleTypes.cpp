@@ -63,6 +63,14 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("shft", "Shift", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::PitchShift::SignedInput::Shift)).SetValueType(std::make_unique<IntValueType>(0, -127, 127));
 	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::PitchShift::UnsignedInput::Pitch));
 	_types.back().AddOutput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::PitchShift::UnsignedOutput::Pitch));
+
+	_types.emplace_back("lfo", "LFO", Engine::ModuleType::LFO);
+	_types.back().AddInput(std::make_unique<PinType>("trig", "Trigger", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedInput::Trigger));
+	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedInput::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 0, 3));
+	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedInput::Pitch)).SetValueType(std::make_unique<PercentValueType>(0x8000));
+	_types.back().AddInput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedInput::Level)).SetValueType(std::make_unique<PercentValueType>(0xffff));
+	_types.back().AddInput(std::make_unique<PinType>("duty", "Duty", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedInput::Duty)).SetValueType(std::make_unique<PercentValueType>(0x8000));
+	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedOutput::Signal));
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

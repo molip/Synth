@@ -9,6 +9,7 @@
 #include "FilterModule.h"
 #include "RangeModule.h"
 #include "PitchShiftModule.h"
+#include "LFOModule.h"
 
 Graph* Graph::_active;
 
@@ -63,6 +64,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::Filter: mod = new FilterModule; break;
 	case ModuleType::Range: mod = new RangeModule; break;
 	case ModuleType::PitchShift: mod = new PitchShiftModule; break;
+	case ModuleType::LFO: mod = new LFOModule; break;
 	default: return;
 	}
 

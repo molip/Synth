@@ -1,6 +1,6 @@
 #pragma once
 
-enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Range, PitchShift, _Count };
+enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Range, PitchShift, LFO, _Count };
 
 namespace Pin
 {
@@ -49,8 +49,13 @@ namespace Pin
 		namespace SignedInput { enum Type { Shift, _Count }; }
 		namespace UnsignedInput { enum Type { Pitch, _Count }; }
 		namespace UnsignedOutput { enum Type { Pitch, _Count }; }
-	}}
-
+	}
+	namespace LFO
+	{
+		namespace UnsignedInput { enum Type { Trigger, Duty, Waveform, Pitch, Level, _Count }; }
+		namespace UnsignedOutput { enum Type { Signal, _Count }; }
+	}
+}
 enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetUnsignedValue, SetSignedValue, SetMIDIData, StopMIDIPlayback };
 enum class Error { None, UnknownCommandType, InvalidParameter, TooManyParameters, PinTypeMismatch, GraphAlreadyStarted };
 

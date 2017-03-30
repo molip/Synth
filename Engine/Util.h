@@ -10,9 +10,10 @@ inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t du
 	switch (waveform)
 	{
 	case 0: // Sawtooth. 
-		output = phase;
+		output = phase + 0x8000;
 		break;
 	case 1: // Triangle.
+		phase += 0x4000;
 		output = ((phase & 0x8000) ? 0xffff - phase : phase) << 1;
 		break;
 	case 2: // Square.

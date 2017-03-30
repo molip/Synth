@@ -25,11 +25,49 @@ inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t du
 	return output;
 }
 
+// Converts midi note [0, 127] to 16 bit.
+inline extern uint16_t MidiNoteToPitch(byte midiNote)
+{
+	return (midiNote < 120 ? midiNote : 120) * Config::pitchPerSemitone;
+}
+
+inline extern float GetPitchMultiplier(int16_t semitones)
+{
+	if (semitones == 0)
+		return 1;
+
+	int octaves = semitones / 12;
+	int index = semitones % 12;
+
+	float result, octaveMult;
+	if (semitones > 0)
+	{
+		result = Config::freqFactors[index];
+		octaveMult = 2;
+	}
+	else
+	{
+		result = Config::freqFactors[12 - index];
+		octaveMult = 0.5;
+		octaves = 1 - octaves;
+	}
+
+	for (int i = 0; i < octaves; ++i)
+		result *= octaveMult;
+
+	Serial.println(index);
+	Serial.println(octaves);
+
+	Serial.println(result);
+	return result;
+}
+
 inline extern uint16_t PitchToPhaseDelta(uint16_t pitch) // pitch: midi note << 4 (11 bit)
 {
-	uint16_t pitchIndex = pitch >> 5; // 11 bit;
-	int octave = pitchIndex / Config::pitchesPerOctave;
-	int freqIndex = pitchIndex % Config::pitchesPerOctave;
+	uint16_t pitchIndex = pitch * Config::pitchStepsPerPitch;
+
+	int octave = pitchIndex / Config::pitchStepsPerOctave;
+	int freqIndex = pitchIndex % Config::pitchStepsPerOctave;
 
 	float freq = Config::freqs[freqIndex];
 	for (int i = 0; i < octave; ++i)

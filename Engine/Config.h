@@ -7,19 +7,35 @@ public:
 	static void Init()
 	{
 		const float baseFreq = 16.35; // C0
-		const float pitchMult = ::pow(2, 1.0 / pitchesPerOctave);
+		const float pitchMult = ::pow(2, 1.0 / pitchStepsPerOctave);
 		float freq = baseFreq;
-		for (int i = 0; i < pitchesPerOctave; ++i)
+		for (int i = 0; i < pitchStepsPerOctave; ++i)
 		{
 			freqs[i] = freq;
 			freq *= pitchMult;
 		}
+
+		const float pitchMult12 = ::pow(2, 1.0 / 12);
+		freq = 1;
+		for (int i = 0; i < 12; ++i)
+		{
+			freqFactors[i] = freq;
+			freq *= pitchMult12;
+		}
+
+		pitchPerSemitone = 0xffff / 120.0;
+		pitchStepsPerPitch = 16 * 120.0 / 0xffff;
 	}
 
 	using value_t = uint16_t;
 
-	static const int pitchesPerOctave = 12 * 16;
-	static float freqs[pitchesPerOctave];
+	static const int pitchStepsPerOctave = 12 * 16;
+
+	static float pitchPerSemitone;
+	static float pitchStepsPerPitch;
+
+	static float freqs[pitchStepsPerOctave];
+	static float freqFactors[12];
 
 	static const uint32_t sampleRate, sampleRateMS;
 	static float freqToDeltaScale;

@@ -1,4 +1,5 @@
 #include "MIDIModule.h"
+#include "Util.h"
 
 #include <limits.h>
 
@@ -83,7 +84,8 @@ void MIDIModule::StartNote(int8_t midiNote)
 
 	Note& note = _notes[index];
 	note.midiNote = midiNote;
-	_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Pitch][index].SetValue(midiNote << 9); // To 16 bit.
+	uint16_t pitch = MidiNoteToPitch(midiNote);
+	_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Pitch][index].SetValue(pitch);
 	_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Gate][index].SetValue(UnsignedMax, true);
 	note.order = ++_startCount;
 }

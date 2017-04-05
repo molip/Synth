@@ -76,3 +76,13 @@ inline extern uint16_t PitchToPhaseDelta(uint16_t pitch) // pitch: midi note << 
 
 	return uint16_t(freq * Config::freqToDeltaScale);
 }
+
+inline extern int16_t ClipSigned(int32_t val)
+{
+	if (val > 0x7fff)
+		val = 0x7fff;
+	else if (val < -0x8000)
+		val = -0x8000;
+
+	return val;
+}

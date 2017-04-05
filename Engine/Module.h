@@ -39,6 +39,9 @@ template <typename T>
 class InputT
 {
 public:
+	InputT() = default;
+	InputT(const InputT<T>&) = delete;
+
 	void SetValue(T val)
 	{
 		_value = val;

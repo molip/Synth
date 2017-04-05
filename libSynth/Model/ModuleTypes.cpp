@@ -71,6 +71,12 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedInput::Level)).SetValueType(std::make_unique<PercentValueType>(0xffff));
 	_types.back().AddInput(std::make_unique<PinType>("duty", "Duty", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedInput::Duty)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedOutput::Signal));
+
+	_types.emplace_back("dely", "Delay", Engine::ModuleType::Delay);
+	_types.back().AddInput(std::make_unique<PinType>("peri", "Period", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Delay::UnsignedInput::Period)).SetValueType(std::make_unique<TimeValueType>(250));
+	_types.back().AddInput(std::make_unique<PinType>("fbck", "Feedback", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Delay::UnsignedInput::Feedback)).SetValueType(std::make_unique<PercentValueType>(0x8000));
+	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Delay::SignedInput::Signal));
+	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Delay::SignedOutput::Signal));
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

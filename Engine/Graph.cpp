@@ -10,6 +10,7 @@
 #include "RangeModule.h"
 #include "PitchShiftModule.h"
 #include "LFOModule.h"
+#include "DelayModule.h"
 
 Graph* Graph::_active;
 
@@ -65,6 +66,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::Range: mod = new RangeModule; break;
 	case ModuleType::PitchShift: mod = new PitchShiftModule; break;
 	case ModuleType::LFO: mod = new LFOModule; break;
+	case ModuleType::Delay: mod = new DelayModule; break;
 	default: return;
 	}
 

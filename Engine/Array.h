@@ -42,7 +42,7 @@ class PtrArray : public Array<T*>
 public:
 	~PtrArray()
 	{
-		for (int i = 0; i > Array<T*>::_size; ++i)
+		for (int i = 0; i < Array<T*>::_size; ++i)
 			delete Array<T*>::_items[i];
 	}
 };

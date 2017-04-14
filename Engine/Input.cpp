@@ -53,6 +53,7 @@ void Process(byte data)
 
 		case CommandType::StartGraph: 
 		{
+			Serial.println("CommandType::StartGraph");
 			if (_newGraph)
 			{
 				SendError(Error::GraphAlreadyStarted);
@@ -66,8 +67,11 @@ void Process(byte data)
 			if (_gotError)
 				delete _newGraph;
 			else
+			{
 				_newGraph->Activate();
-				
+				Serial.println("Graph activated.");
+			}
+
 			_gotError = false;
 			_newGraph = nullptr;
 			break;

@@ -87,31 +87,31 @@ namespace Input
 			bool IsMono() const { return _modType == InstanceType::Mono; }
 			bool IsSigned() const { return _pinType == PinType::Signed; }
 
-			template <typename T> T& GetMonoPin(Graph& graph) const 
+			template <typename T> T& GetMonoSinglePin(Graph& graph) const
 			{
 				return graph.GetMonoModule(_modIndex)->GetPins<T>()[_pinIndex];
 			}
 
-			template <typename T> T& GetMultiPin(Graph& graph, int i) const 
+			template <typename T> T& GetMonoMultiPin(Graph& graph, int i) const
 			{
 				return graph.GetMonoModule(_modIndex)->GetMultiPins<T>()[_pinIndex][i];
 			}
 
-			template <typename T> T& GetPolyPin(Graph& graph, int i) const 
+			template <typename T> T& GetPolySinglePin(Graph& graph, int i) const 
 			{
 				return graph.GetPolyModule(_modIndex, i)->GetPins<T>()[_pinIndex];
 			}
 
 			template <typename T> T& GetPin(Graph& graph, int i, bool multi) const 
 			{
-				return IsMono() ? multi ? GetMultiPin<T>(graph, i) : GetMonoPin<T>(graph) : GetPolyPin<T>(graph, i);
+				return IsMono() ? multi ? GetMonoMultiPin<T>(graph, i) : GetMonoSinglePin<T>(graph) : GetPolySinglePin<T>(graph, i);
 			}
 
 			template <typename TVal> void ConnectToOutput(Graph& graph, const Connection& output, bool multi) const 
 			{
-				if (IsMono() && output.IsMono())
-					GetMonoPin<InputT<TVal>>(graph).Connect(output.GetMonoPin<OutputT<TVal>>(graph));
-				else 
+				if (IsMono() && output.IsMono() && !multi)
+					GetMonoSinglePin<InputT<TVal>>(graph).Connect(output.GetMonoSinglePin<OutputT<TVal>>(graph));
+				else
 					for (int i = 0; i < graph.GetPolyphony(); ++i)
 						GetPin<InputT<TVal>>(graph, i, multi).Connect(output.GetPin<OutputT<TVal>>(graph, i, multi));
 			}

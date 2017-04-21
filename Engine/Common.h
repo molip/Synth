@@ -1,6 +1,6 @@
 #pragma once
 
-enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Range, PitchShift, LFO, Delay, _Count };
+enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Range, PitchShift, LFO, Delay, Arpeggiator, _Count };
 
 namespace Pin
 {
@@ -60,6 +60,12 @@ namespace Pin
 		namespace UnsignedInput { enum Type { Period, Feedback, _Count }; }
 		namespace SignedInput { enum Type { Signal, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
+	}
+	namespace Arpeggiator
+	{
+		namespace UnsignedInput { enum Type { Period, Octaves, _Count }; }
+		namespace UnsignedMultiInput { enum Type { Gate, Pitch, _Count }; }
+		namespace UnsignedMultiOutput { enum Type { Gate, Pitch, _Count }; }
 	}
 }
 enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetUnsignedValue, SetSignedValue, SetMIDIData, StopMIDIPlayback };

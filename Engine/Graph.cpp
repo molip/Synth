@@ -11,6 +11,7 @@
 #include "PitchShiftModule.h"
 #include "LFOModule.h"
 #include "DelayModule.h"
+#include "ArpeggiatorModule.h"
 
 Graph* Graph::_active;
 
@@ -67,6 +68,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::PitchShift: mod = new PitchShiftModule; break;
 	case ModuleType::LFO: mod = new LFOModule; break;
 	case ModuleType::Delay: mod = new DelayModule; break;
+	case ModuleType::Arpeggiator: mod = new ArpeggiatorModule(_polyphony); break;
 	default: return;
 	}
 

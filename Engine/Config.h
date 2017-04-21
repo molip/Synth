@@ -24,6 +24,7 @@ public:
 		}
 
 		pitchPerSemitone = 0xffff / 120.0;
+		pitchPerOctave = pitchPerSemitone * 12;
 		pitchStepsPerPitch = 16 * 120.0 / 0xffff;
 	}
 
@@ -32,6 +33,7 @@ public:
 	static const int pitchStepsPerOctave = 12 * 16;
 
 	static float pitchPerSemitone;
+	static float pitchPerOctave;
 	static float pitchStepsPerPitch;
 
 	static float freqs[pitchStepsPerOctave];

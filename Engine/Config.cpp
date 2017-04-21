@@ -1,6 +1,7 @@
 #include "Config.h"
 
 float Config::pitchPerSemitone;
+float Config::pitchPerOctave;
 float Config::pitchStepsPerPitch;
 
 float Config::freqs[Config::pitchStepsPerOctave];

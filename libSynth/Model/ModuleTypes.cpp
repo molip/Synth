@@ -77,6 +77,14 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("fbck", "Feedback", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Delay::UnsignedInput::Feedback)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Delay::SignedInput::Signal));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Delay::SignedOutput::Signal));
+
+	_types.emplace_back("arpe", "Arpeggiator", Engine::ModuleType::Arpeggiator);
+	_types.back().AddInput(std::make_unique<PinType>("peri", "Period", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedInput::Period)).SetValueType(std::make_unique<TimeValueType>(250));
+	_types.back().AddInput(std::make_unique<PinType>("octa", "Octaves", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedInput::Octaves)).SetValueType(std::make_unique<IntValueType>(1, 1, 8));
+	_types.back().AddInput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedMultiInput::Gate));
+	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedMultiInput::Pitch));
+	_types.back().AddOutput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedMultiOutput::Gate));
+	_types.back().AddOutput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedMultiOutput::Pitch));
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

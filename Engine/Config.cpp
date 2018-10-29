@@ -4,6 +4,9 @@ float Config::pitchPerSemitone;
 float Config::pitchPerOctave;
 float Config::pitchStepsPerPitch;
 
+float Config::div15;
+float Config::divUnsignedMax;
+
 float Config::freqs[Config::pitchStepsPerOctave];
 float Config::freqFactors[12];
 

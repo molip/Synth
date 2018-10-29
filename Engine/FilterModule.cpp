@@ -25,15 +25,15 @@ void FilterModule::Update()
 	{
 		freqInput.ResetChanged();
 		resInput.ResetChanged();
-		float freq = freqInput.GetValue() / (float)0xffff / 4; // Arbitrary scale. 
-		float res = resInput.GetValue() / (float)0xffff;
+		float freq = freqInput.GetValue() * Config::divUnsignedMax * 0.25f; // Arbitrary scale. 
+		float res = resInput.GetValue() * Config::divUnsignedMax;
 		_q = 1.0f - freq;
 		_p = freq + 0.8f * freq * _q;
 		_f = _p + _p - 1.0f;
 		_q = res * (1.0f + 0.5f * _q * (1.0f - _q + 5.6f * _q * _q));
 	}
 
-	float in = signalInput.GetValue() / (float)0x8000;
+	float in = signalInput.GetValue() * Config::div15;
 
 	in -= _q * _b4;                          //feedback
 	float t1 = _b1;

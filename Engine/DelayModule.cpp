@@ -20,7 +20,7 @@ void DelayModule::Update()
 	if (feedbackInput.HasChanged())
 	{
 		feedbackInput.ResetChanged();
-		_feedback = feedbackInput.GetValue() / float(0xffff);
+		_feedback = feedbackInput.GetValue() * Config::divUnsignedMax;
 	}
 
 	if (periodInput.HasChanged())

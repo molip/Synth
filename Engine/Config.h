@@ -26,6 +26,9 @@ public:
 		pitchPerSemitone = 0xffff / 120.0;
 		pitchPerOctave = pitchPerSemitone * 12;
 		pitchStepsPerPitch = 16 * 120.0 / 0xffff;
+
+		div15 = 1.0 / 0x8000;
+		divUnsignedMax = 1.0 / unsignedMax;
 	}
 
 	using unsigned_t = uint16_t;
@@ -36,6 +39,9 @@ public:
 	static float pitchPerSemitone;
 	static float pitchPerOctave;
 	static float pitchStepsPerPitch;
+
+	static float div15;
+	static float divUnsignedMax;
 
 	static float freqs[pitchStepsPerOctave];
 	static float freqFactors[12];

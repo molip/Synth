@@ -60,7 +60,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::MIDI: mod = _midiModule = new MIDIModule(_polyphony); break;
 	case ModuleType::Envelope: mod = new EnvelopeModule; break;
 	case ModuleType::Oscillator: mod = new OscillatorModule; break;
-	case ModuleType::PolyMixer: mod = new PolyMixerModule; break;
+	case ModuleType::PolyMixer: mod = new PolyMixerModule(_polyphony); break;
 	case ModuleType::Mixer: mod = new MixerModule; break;
 	case ModuleType::Target: mod = new OutputModule; break;
 	case ModuleType::Filter: mod = new FilterModule; break;

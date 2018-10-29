@@ -22,7 +22,7 @@ void MixerModule::Update()
 	if (count == 0)
 		return;
 
-	int32_t total = 0;
+	signed_t total = 0;
 	for (int i = 0; i < count; ++i)
 		total += _activeInputs[i]->GetValue();
 

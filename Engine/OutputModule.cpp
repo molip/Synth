@@ -1,4 +1,5 @@
 #include "OutputModule.h"
+#include "Util.h"
 
 OutputModule::OutputModule()
 {
@@ -8,5 +9,5 @@ OutputModule::OutputModule()
 void OutputModule::Update()
 {
 	const SignedInput& signal = _signedInputs[Pin::Target::SignedInput::Signal];
-	analogWrite(A21, (signal.GetValue() + 0x8000) >> 4);
+	analogWrite(A21, 0x800 + ClipSigned(signal.GetValue()) * 0x7ff); // 12 bit.
 }

@@ -33,7 +33,7 @@ void FilterModule::Update()
 		_q = res * (1.0f + 0.5f * _q * (1.0f - _q + 5.6f * _q * _q));
 	}
 
-	float in = signalInput.GetValue() * Config::div15;
+	float in = signalInput.GetValue();
 
 	in -= _q * _b4;                          //feedback
 	float t1 = _b1;
@@ -46,5 +46,5 @@ void FilterModule::Update()
 	_b4 = _b4 - _b4 * _b4 * _b4 * 0.166667f;    //clipping
 	_b0 = in;
 
-	signalOutput.SetValue(int16_t(_b4 * 0x8000)); // Signed.
+	signalOutput.SetValue(_b4); // Signed.
 }

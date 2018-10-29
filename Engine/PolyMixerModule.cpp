@@ -1,18 +1,20 @@
 #include "PolyMixerModule.h"
 
-PolyMixerModule::PolyMixerModule()
+PolyMixerModule::PolyMixerModule(int polyphony)
 {
 	_signedMultiInputs.SetSize(Pin::PolyMixer::SignedMultiInput::_Count);
 	_signedOutputs.SetSize(Pin::PolyMixer::SignedOutput::_Count);
+
+	_scale = 1.0 / polyphony;
 }
 
 void PolyMixerModule::Update()
 {
 	SignedMultiInput& multiInput = _signedMultiInputs[Pin::PolyMixer::SignedMultiInput::Signal];
-	int32_t total = 0;
+	signed_t total = 0;
 	int count = multiInput.GetSize();
 	for (int i = 0; i < count; ++i)
 		total += multiInput[i].GetValue();
 
-	_signedOutputs[Pin::PolyMixer::SignedOutput::Signal].SetValue(total / count);
+	_signedOutputs[Pin::PolyMixer::SignedOutput::Signal].SetValue(signed_t(total * _scale));
 }

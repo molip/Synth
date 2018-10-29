@@ -128,7 +128,7 @@ namespace Input
 		Connection _input, _output;
 	};
 
-	template <typename T>
+	template <typename T, typename TOut = T>
 	class SetValueCommand : public Command
 	{
 	public:
@@ -157,10 +157,10 @@ namespace Input
 			if (_poly)
 			{
 				for (int i = 0; i < _graph->GetPolyphony(); ++i)
-					_graph->GetPolyModule(_modIndex, i)->GetPins<InputT<T>>()[_pinIndex].SetValue(_val);
+					_graph->GetPolyModule(_modIndex, i)->GetPins<InputT<TOut>>()[_pinIndex].SetValue(_val);
 			}
 			else
-				_graph->GetMonoModule(_modIndex)->GetPins<InputT<T>>()[_pinIndex].SetValue(_val);
+				_graph->GetMonoModule(_modIndex)->GetPins<InputT<TOut>>()[_pinIndex].SetValue(_val);
 
 			return true;
 		}
@@ -173,7 +173,7 @@ namespace Input
 	};
 
 	using SetUnsignedValueCommand = SetValueCommand<Module::unsigned_t>;
-	using SetSignedValueCommand = SetValueCommand<Module::signed_t>;
+	using SetSignedValueCommand = SetValueCommand<int16_t, Module::signed_t>;
 
 	class SetMIDIDataCommand : public Command
 	{

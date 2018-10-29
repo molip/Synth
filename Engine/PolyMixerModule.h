@@ -4,7 +4,9 @@
 class PolyMixerModule : public Module
 {
 public:
-	PolyMixerModule();
+	PolyMixerModule(int polyphony);
 	virtual void Update() override;
 	virtual bool WantUpdate() const override { return true; }
+private:
+	float _scale;
 };

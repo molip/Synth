@@ -60,22 +60,22 @@ private:
 	T _value = 0;
 };
 
-using SignedOutput = OutputT<int16_t>;
-using UnsignedOutput = OutputT<uint16_t>;
-using SignedMultiOutput = Array<OutputT<int16_t>>;
-using UnsignedMultiOutput = Array<OutputT<uint16_t>>;
+using SignedOutput = OutputT<Config::signed_t>;
+using UnsignedOutput = OutputT<Config::unsigned_t>;
+using SignedMultiOutput = Array<OutputT<Config::signed_t>>;
+using UnsignedMultiOutput = Array<OutputT<Config::unsigned_t>>;
 
-using SignedInput = InputT<int16_t>;
-using UnsignedInput = InputT<uint16_t>;
-using SignedMultiInput = Array<InputT<int16_t>>;
-using UnsignedMultiInput = Array<InputT<uint16_t>>;
+using SignedInput = InputT<Config::signed_t>;
+using UnsignedInput = InputT<Config::unsigned_t>;
+using SignedMultiInput = Array<InputT<Config::signed_t>>;
+using UnsignedMultiInput = Array<InputT<Config::unsigned_t>>;
 
 class Module
 {
 public:
-	using signed_t = int16_t;
-	using unsigned_t = uint16_t;
-	const unsigned_t UnsignedMax = 0xffff;
+	using signed_t = Config::signed_t;
+	using unsigned_t = Config::unsigned_t;
+	const unsigned_t UnsignedMax = Config::unsignedMax;
 
 	virtual ~Module() = default;
 	virtual void Update() {}

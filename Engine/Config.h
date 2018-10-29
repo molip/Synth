@@ -28,7 +28,8 @@ public:
 		pitchStepsPerPitch = 16 * 120.0 / 0xffff;
 	}
 
-	using value_t = uint16_t;
+	using unsigned_t = uint16_t;
+	using signed_t = int16_t;
 
 	static const int pitchStepsPerOctave = 12 * 16;
 
@@ -42,5 +43,5 @@ public:
 	static const uint32_t sampleRate, sampleRateMS;
 	static float freqToDeltaScale;
 	
-	static const value_t valueMax;
+	static const unsigned_t unsignedMax;
 };

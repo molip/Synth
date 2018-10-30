@@ -18,7 +18,7 @@ void PitchShiftModule::Update()
 		shiftInput.ResetChanged();
 		pitchInput.ResetChanged();
 
-		int32_t pitch = pitchInput.GetValue() + shiftInput.GetValue() * Config::pitchPerSemitone;
+		int32_t pitch = pitchInput.GetValue() + static_cast<int32_t>(shiftInput.GetValue() * Config::pitchPerSemitone);
 		
 		if (pitch > Config::unsignedMax)
 			pitch = Config::unsignedMax;

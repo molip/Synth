@@ -1,3 +1,5 @@
+#include "Platform.h"
+
 struct Note
 {
 	int8_t midiNote;		// -1: null note.

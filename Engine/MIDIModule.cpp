@@ -21,7 +21,7 @@ void MIDIModule::ProcessMIDI(int8_t midiByte)
 		_midiCommand = midiByte & 0xf0;
 		_midiNote = 0;
 
-		//Serial.print("Command: "); Serial.print(_midiCommand); Serial.print("\n");
+		//SERIAL_PRINT("Command: "); SERIAL_PRINT(_midiCommand); SERIAL_PRINT("\n");
 	}
 	else
 	{
@@ -30,7 +30,7 @@ void MIDIModule::ProcessMIDI(int8_t midiByte)
 			if (_midiNote == 0)
 			{
 				_midiNote = midiByte;
-				//Serial.print("Note: "); Serial.println(_midiNote);
+				//SERIAL_PRINT("Note: "); SERIAL_PRINTLN(_midiNote);
 			}
 			else
 			{
@@ -42,7 +42,7 @@ void MIDIModule::ProcessMIDI(int8_t midiByte)
 					StopNote(_midiNote);
 
 				_midiNote = 0;
-				//Serial.print("Velocity: "); Serial.print(velocity); Serial.print("\n");
+				//SERIAL_PRINT("Velocity: "); SERIAL_PRINT(velocity); SERIAL_PRINT("\n");
 			}
 		}
 		else if (_midiCommand == MIDI_NOTE_OFF)
@@ -50,7 +50,7 @@ void MIDIModule::ProcessMIDI(int8_t midiByte)
 			if (_midiNote == 0)
 			{
 				_midiNote = midiByte;
-				//Serial.print("Note: "); Serial.println(_midiNote);
+				//SERIAL_PRINT("Note: "); SERIAL_PRINTLN(_midiNote);
 			}
 			else
 			{
@@ -80,7 +80,7 @@ void MIDIModule::StartNote(int8_t midiNote)
 	if (index < 0)
 		index = FindOldestNote();
 
-	//Serial.print("Starting note: "); Serial.println(index);
+	//SERIAL_PRINT("Starting note: "); SERIAL_PRINTLN(index);
 
 	Note& note = _notes[index];
 	note.midiNote = midiNote;
@@ -95,7 +95,7 @@ void MIDIModule::StopNote(int8_t midiNote)
 	int index = FindNote(midiNote);
 	if (index >= 0)
 	{
-		//Serial.print("Stopping note: "); Serial.println(index);
+		//SERIAL_PRINT("Stopping note: "); SERIAL_PRINTLN(index);
 
 		_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Gate][index].SetValue(0, true);
 		_notes[index].midiNote = -1;

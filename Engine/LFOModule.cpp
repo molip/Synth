@@ -42,7 +42,7 @@ void LFOModule::Update()
 		_phaseDelta = ::PitchToPhaseDelta(pitchInput.GetValue());
 	}
 
-	const byte waveform = waveformInput.GetValue();
+	const byte waveform = static_cast<byte>(waveformInput.GetValue());
 	if (waveformInput.HasChanged())
 	{
 		waveformInput.ResetChanged();
@@ -51,7 +51,7 @@ void LFOModule::Update()
 
 	_phase += _phaseDelta;
 	
-	const uint32_t output = ::SampleWaveform(waveformInput.GetValue(), _phase + _phaseAdjust, dutyInput.GetValue());
+	const uint32_t output = ::SampleWaveform(waveform, _phase + _phaseAdjust, dutyInput.GetValue());
 
 	signalOutput.SetValue((output * level) >> 16);
 }

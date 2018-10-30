@@ -4,7 +4,7 @@
 #include "Array.h"
 #include "Common.h"
 
-#include <arduino.h>
+#include "Platform.h"
 
 template <typename T> class InputT;
 
@@ -23,7 +23,7 @@ public:
 	{
 		if (forceChanged || val != _value)
 		{
-			for (size_t i = 0; i < _dests.GetSize(); ++i)
+			for (int i = 0; i < _dests.GetSize(); ++i)
 				_dests[i]->SetValue(val);
 			
 			_value = val;

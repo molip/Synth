@@ -107,7 +107,7 @@ byte MIDIData::ReadByte()
 {
 	if (IsFinished())
 	{
-		Serial.println("[MIDIData::ReadVariableData] Out of data!");
+		SERIAL_PRINTLN("[MIDIData::ReadVariableData] Out of data!");
 		return 0;
 	}
 	return *_current++;
@@ -130,7 +130,7 @@ void MIDIData::UpdateNextEvent()
 {
 	if (IsFinished())
 	{
-		Serial.println("Finished");
+		SERIAL_PRINTLN("Finished");
 		_current = _data;
 		UpdateNextEvent();
 	}

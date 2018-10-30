@@ -1,6 +1,6 @@
 #pragma once
 
-#include <arduino.h>
+#include "Platform.h"
 //using byte = unsigned char;
 //using uint32_t = unsigned int;
 

@@ -87,7 +87,7 @@ void ArpeggiatorModule::Update()
 
 		if (_noteCount)
 		{
-			unsigned_t pitch = _pitches[_currentPitch] + _currentOctave * Config::pitchPerOctave;
+			unsigned_t pitch = _pitches[_currentPitch] + static_cast<unsigned_t>(_currentOctave * Config::pitchPerOctave);
 			_unsignedMultiOutputs[Pin::Arpeggiator::UnsignedMultiOutput::Gate][_currentOutput].SetValue(0xffff);
 			_unsignedMultiOutputs[Pin::Arpeggiator::UnsignedMultiOutput::Pitch][_currentOutput].SetValue(pitch);
 			_waiting = false; // Don't sync until _noteCount == 0 again.

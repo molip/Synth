@@ -3,7 +3,7 @@
 #include "Array.h"
 #include "Module.h"
 
-#include <arduino.h>
+#include "Platform.h"
 
 class Module;
 class MIDIModule;

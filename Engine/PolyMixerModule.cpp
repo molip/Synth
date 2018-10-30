@@ -5,7 +5,7 @@ PolyMixerModule::PolyMixerModule(int polyphony)
 	_signedMultiInputs.SetSize(Pin::PolyMixer::SignedMultiInput::_Count);
 	_signedOutputs.SetSize(Pin::PolyMixer::SignedOutput::_Count);
 
-	_scale = 1.0 / polyphony;
+	_scale = 1.0f / polyphony;
 }
 
 void PolyMixerModule::Update()

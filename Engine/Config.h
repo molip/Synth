@@ -1,13 +1,13 @@
 #pragma once 
-#include <arduino.h>
+#include "Platform.h"
 
 class Config
 {
 public:
 	static void Init()
 	{
-		const float baseFreq = 16.35; // C0
-		const float pitchMult = ::pow(2, 1.0 / pitchStepsPerOctave);
+		const float baseFreq = 16.35f; // C0
+		const float pitchMult = ::pow(2.0f, 1.0f / pitchStepsPerOctave);
 		float freq = baseFreq;
 		for (int i = 0; i < pitchStepsPerOctave; ++i)
 		{
@@ -15,7 +15,7 @@ public:
 			freq *= pitchMult;
 		}
 
-		const float pitchMult12 = ::pow(2, 1.0 / 12);
+		const float pitchMult12 = ::pow(2.0f, 1.0f / 12);
 		freq = 1;
 		for (int i = 0; i < 12; ++i)
 		{
@@ -23,12 +23,12 @@ public:
 			freq *= pitchMult12;
 		}
 
-		pitchPerSemitone = 0xffff / 120.0;
+		pitchPerSemitone = 0xffff / 120.0f;
 		pitchPerOctave = pitchPerSemitone * 12;
-		pitchStepsPerPitch = 16 * 120.0 / 0xffff;
+		pitchStepsPerPitch = 16 * 120.0f / 0xffff;
 
-		divUnsignedMax = 1.0 / unsignedMax;
-		divUnsignedMax2 = 1.0 / unsignedMax2;
+		divUnsignedMax = 1.0f / unsignedMax;
+		divUnsignedMax2 = 1.0f / unsignedMax2;
 	}
 
 	using unsigned_t = uint16_t;

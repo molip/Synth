@@ -3,7 +3,7 @@
 #include "Module.h"
 #include "Graph.h"
 
-#include <arduino.h>
+#include "Platform.h"
 
 class Graph;
 class Module;

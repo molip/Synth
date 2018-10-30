@@ -13,7 +13,6 @@ void OscillatorModule::Update()
 	UnsignedInput& levelInput = _unsignedInputs[Pin::Oscillator::UnsignedInput::Level];
 	UnsignedInput& pitchInput = _unsignedInputs[Pin::Oscillator::UnsignedInput::Pitch];
 	SignedOutput& signalOutput = _signedOutputs[Pin::Oscillator::SignedOutput::Signal];
-
 	float level = levelInput.GetValue();
 	if (level == 0)
 	{
@@ -33,7 +32,8 @@ void OscillatorModule::Update()
 	_phase += _phaseDelta;
 	
 	uint16_t phase = _phase + static_cast<int16_t>(_signedInputs[Pin::Oscillator::SignedInput::PhaseMod].GetValue() * 0x7fff);
-	uint16_t output = ::SampleWaveform(_unsignedInputs[Pin::Oscillator::UnsignedInput::Waveform].GetValue(), phase, 0x8000);
+	const byte waveform = static_cast<byte>(_unsignedInputs[Pin::Oscillator::UnsignedInput::Waveform].GetValue());
+	uint16_t output = ::SampleWaveform(waveform, phase, 0x8000);
 
 	signalOutput.SetValue(UnsignedToSigned(output) * level); // Signed.
 }

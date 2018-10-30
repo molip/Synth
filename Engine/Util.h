@@ -1,6 +1,5 @@
 #pragma once 
 
-#include <arduino.h>
 #include "Config.h"
 #include "Sine.h"
 
@@ -29,13 +28,12 @@ inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t du
 // Converts midi note [0, 127] to 16 bit.
 inline extern uint16_t MidiNoteToPitch(byte midiNote)
 {
-	return (midiNote < 120 ? midiNote : 120) * Config::pitchPerSemitone;
+	return static_cast<uint16_t>((midiNote < 120 ? midiNote : 120) * Config::pitchPerSemitone);
 }
-
 
 inline extern uint16_t PitchToPhaseDelta(uint16_t pitch) // pitch: midi note << 4 (11 bit)
 {
-	uint16_t pitchIndex = pitch * Config::pitchStepsPerPitch;
+	uint16_t pitchIndex = static_cast<uint16_t>(pitch * Config::pitchStepsPerPitch);
 
 	int octave = pitchIndex / Config::pitchStepsPerOctave;
 	int freqIndex = pitchIndex % Config::pitchStepsPerOctave;
@@ -64,5 +62,5 @@ inline extern Config::signed_t UnsignedToSigned(Config::unsigned_t val)
 
 inline extern Config::unsigned_t SignedToUnsigned(Config::signed_t val)
 {
-	return (val + 1) * Config::unsignedMax2;
+	return Config::unsigned_t((val + 1) * Config::unsignedMax2);
 }

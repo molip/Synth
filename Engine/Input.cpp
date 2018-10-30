@@ -13,8 +13,8 @@ namespace
 
 void SendError(Error error)
 {
-	Serial.print("Error: ");
-	Serial.println((int)error);
+	SERIAL_PRINT("Error: ");
+	SERIAL_PRINTLN((int)error);
 }
 
 void Process(byte data)
@@ -53,7 +53,7 @@ void Process(byte data)
 
 		case CommandType::StartGraph: 
 		{
-			Serial.println("CommandType::StartGraph");
+			SERIAL_PRINTLN("CommandType::StartGraph");
 			if (_newGraph)
 			{
 				SendError(Error::GraphAlreadyStarted);
@@ -69,7 +69,7 @@ void Process(byte data)
 			else
 			{
 				_newGraph->Activate();
-				Serial.println("Graph activated.");
+				SERIAL_PRINTLN("Graph activated.");
 			}
 
 			_gotError = false;

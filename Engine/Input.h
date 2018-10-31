@@ -21,7 +21,7 @@ namespace Input
 		bool IsFinished() const { return _read >= sizeof(T); }
 		operator T() const { return _value; }
 	private:
-		int _size = 0, _read = 0;
+		size_t _size = 0, _read = 0;
 		T _value = 0;
 	};
 

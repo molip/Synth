@@ -11,18 +11,7 @@
 #include "Input.h"
 #include "MIDIData.h"
 
-#ifdef __AVR_ATmega328P__
-	//SoftwareSerial mySerial(2, 3); // RX, TX
-	//#define MIDISERIAL mySerial
-	#define MIDISERIAL Serial
-	#define INIT_DAC() MCP4822_init()
-	#define SET_OUTPUT(val)	MCP4822_setOutput(val)
-#else
-	#define MIDISERIAL Serial2
-
-	#define INIT_DAC() analogWriteResolution(12)
-	#define SET_OUTPUT(val) analogWrite(A21, val)
-#endif
+#define MIDISERIAL Serial2
 
 boolean gotTick;
 
@@ -82,7 +71,7 @@ void setup()
 	pinMode(6, INPUT_PULLUP);
 	pinMode(7, INPUT_PULLUP);
 	
-	INIT_DAC();
+	analogWriteResolution(12);
 
 	const unsigned long interval = 1000000 / Config::sampleRate;
 	Timer1.initialize(interval); 

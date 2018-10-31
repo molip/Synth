@@ -19,7 +19,7 @@ inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t du
 		output = phase < uint16_t(~duty) ? 0 : 0xffff;
 		break;
 	case 3: // Sine.
-		output = pgm_read_byte_near(SineTable + (phase >> 5)) << 8;
+		output = *(SineTable + (phase >> 5)) << 8;
 		break;
 	}
 	return output;

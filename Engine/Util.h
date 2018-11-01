@@ -47,20 +47,20 @@ inline extern uint16_t PitchToPhaseDelta(uint16_t pitch) // pitch: midi note << 
 
 inline extern float ClipSigned(float val)
 {
-	if (val > 1)
-		val = 1;
-	else if (val < -1)
-		val = -1;
+	if (val > 0.5f)
+		val = 0.5f;
+	else if (val < -0.5f)
+		val = -0.5f;
 
 	return val;
 }
 
 inline extern Config::signed_t UnsignedToSigned(Config::unsigned_t val)
 {
-	return val * Config::divUnsignedMax2 - 1;
+	return val * Config::divUnsignedMax - 0.5f;
 }
 
 inline extern Config::unsigned_t SignedToUnsigned(Config::signed_t val)
 {
-	return Config::unsigned_t((val + 1) * Config::unsignedMax2);
+	return Config::unsigned_t((val + 0.5f) * Config::unsignedMax);
 }

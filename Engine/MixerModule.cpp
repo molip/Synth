@@ -15,6 +15,7 @@ void MixerModule::Update()
 			if (_signedInputs[i].IsConnected())
 				_activeInputs.Push(&_signedInputs[i]);
 
+		_scale = 1.0f / _activeInputs.GetSize();
 		_initialised = true;
 	}
 
@@ -26,5 +27,5 @@ void MixerModule::Update()
 	for (int i = 0; i < count; ++i)
 		total += _activeInputs[i]->GetValue();
 
-	_signedOutputs[Pin::Mixer::SignedOutput::Signal].SetValue(total / count);
+	_signedOutputs[Pin::Mixer::SignedOutput::Signal].SetValue(total * _scale);
 }

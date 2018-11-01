@@ -10,4 +10,5 @@ public:
 private:
 	Array<SignedInput*> _activeInputs;
 	bool _initialised = false;
+	float _scale = 0;
 };

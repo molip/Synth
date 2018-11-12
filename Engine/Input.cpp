@@ -21,6 +21,8 @@ void Process(byte data)
 {
 	if (_command)
 	{
+		SERIAL_PRINT("Data: ");
+		SERIAL_PRINTLN(data);
 		Error error = _command->AddData(data);
 		if (error != Error::None)
 		{
@@ -35,21 +37,43 @@ void Process(byte data)
 		switch (static_cast<CommandType>(data))
 		{
 		// Always _newGraph.
-		case CommandType::InitGraph: _command = new InitGraphCommand(_newGraph); break;
-		case CommandType::AddMonoModule: _command = new AddMonoModuleCommand(_newGraph); break;
-		case CommandType::AddPolyModule: _command = new AddPolyModuleCommand(_newGraph); break;
-		case CommandType::AddConnection: _command = new AddConnectionCommand(_newGraph); break;
+		case CommandType::InitGraph:
+			SERIAL_PRINTLN("CommandType::InitGraphCommand");
+			_command = new InitGraphCommand(_newGraph);
+			break;
+		case CommandType::AddMonoModule: 
+			SERIAL_PRINTLN("CommandType::AddMonoModuleCommand");
+			_command = new AddMonoModuleCommand(_newGraph);
+			break;
+		case CommandType::AddPolyModule: 
+			SERIAL_PRINTLN("CommandType::AddPolyModuleCommand");
+			_command = new AddPolyModuleCommand(_newGraph);
+			break;
+		case CommandType::AddConnection: 
+			SERIAL_PRINTLN("CommandType::AddConnectionCommand");
+			_command = new AddConnectionCommand(_newGraph);
+			break;
 
 		// Always Graph::GetActive().
-		case CommandType::SetMIDIData: _command = new SetMIDIDataCommand(Graph::GetActive()); break;
+		case CommandType::SetMIDIData: 
+			SERIAL_PRINTLN("CommandType::SetMIDIDataCommand");
+			_command = new SetMIDIDataCommand(Graph::GetActive());
+			break;
 		case CommandType::StopMIDIPlayback:
+			SERIAL_PRINTLN("CommandType::StopMIDIPlayback");
 			MIDIData::Instance().ResetData();
 			Graph::GetActive()->ResetMIDI();
 			break;
 			
 		// Can be either.
-		case CommandType::SetUnsignedValue: _command = new SetUnsignedValueCommand(graph); break;
-		case CommandType::SetSignedValue: _command = new SetSignedValueCommand(graph); break;
+		case CommandType::SetUnsignedValue: 
+			SERIAL_PRINTLN("CommandType::SetUnsignedValueCommand");
+			_command = new SetUnsignedValueCommand(graph);
+			break;
+		case CommandType::SetSignedValue: 
+			SERIAL_PRINTLN("CommandType::SetSignedValueCommand");
+			_command = new SetSignedValueCommand(graph);
+			break;
 
 		case CommandType::StartGraph: 
 		{

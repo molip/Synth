@@ -2,6 +2,7 @@
 #include "Controller.h"
 #include "Command.h"
 #include "CommandStack.h"
+#include "EngineTest.h"
 #include "Exporter.h"
 #include "MIDIExporter.h"
 #include "View.h"
@@ -289,7 +290,16 @@ bool Controller::Export() const
 			return true;
 		}
 	}
-	
+
+	return false;
+}
+
+bool Controller::TestGraph() const
+{
+	Model::Exporter exporter(*_graph);
+	if (BufferPtr buffer = exporter.Export())
+		return EngineTest::Instance().Test(*buffer);
+
 	return false;
 }
 

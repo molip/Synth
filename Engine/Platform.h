@@ -14,9 +14,15 @@ namespace Engine
 using byte = uint8_t;
 
 #ifdef _WIN32
-	#define SERIAL_PRINT(val)
-	#define SERIAL_PRINTLN(val)
-	#define OUTPUT_AUDIO(val)
+	void SerialPrint(const char* val);
+	void SerialPrint(const int val);
+	void SerialPrintLn(const char* val);
+	void SerialPrintLn(const int val);
+	void OutputAudio(const int val);
+
+	#define SERIAL_PRINT(val) SerialPrint(val)
+	#define SERIAL_PRINTLN(val) SerialPrintLn(val)
+	#define OUTPUT_AUDIO(val) OutputAudio(val)
 	#define delay(val)
 #else
 	#define SERIAL_PRINT(val) Serial.print(val)

@@ -55,6 +55,7 @@ namespace Synth
 		std::vector<Connection> GetConnections() const;
 
 		bool Export() const;
+		bool TestGraph() const;
 		bool ExportMIDIFile(const std::wstring& path) const;
 		void StopMIDIFilePlayback() const;
 		bool Save(const std::wstring& path) const;

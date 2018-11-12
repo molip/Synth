@@ -109,7 +109,7 @@ namespace Input
 				return IsMono() ? multi ? GetMonoMultiPin<T>(graph, i) : GetMonoSinglePin<T>(graph) : GetPolySinglePin<T>(graph, i);
 			}
 
-			template <typename TVal> void ConnectToOutput(Graph& graph, const Connection& output, bool multi) const 
+			template <typename TVal> void ConnectToOutput(Graph& graph, const Connection& output, bool multi) const
 			{
 				if (IsMono() && output.IsMono() && !multi)
 					GetMonoSinglePin<InputT<TVal>>(graph).Connect(output.GetMonoSinglePin<OutputT<TVal>>(graph));
@@ -151,18 +151,22 @@ namespace Input
 			return Error::None;
 		}
 
+		TOut Convert(T val) const { return val; }
+
 		virtual bool Execute() const override
 		{
 			if (!_val.IsFinished())
 				return false;
 
+			const TOut val = Convert(_val);
+
 			if (_poly)
 			{
 				for (int i = 0; i < _graph->GetPolyphony(); ++i)
-					_graph->GetPolyModule(_modIndex, i)->GetPins<InputT<TOut>>()[_pinIndex].SetValue(_val);
+					_graph->GetPolyModule(_modIndex, i)->GetPins<InputT<TOut>>()[_pinIndex].SetValue(val);
 			}
 			else
-				_graph->GetMonoModule(_modIndex)->GetPins<InputT<TOut>>()[_pinIndex].SetValue(_val);
+				_graph->GetMonoModule(_modIndex)->GetPins<InputT<TOut>>()[_pinIndex].SetValue(val);
 
 			return true;
 		}
@@ -174,8 +178,8 @@ namespace Input
 		Value<T> _val;
 	};
 
-	using SetUnsignedValueCommand = SetValueCommand<Module::unsigned_t>;
-	using SetSignedValueCommand = SetValueCommand<int16_t, Module::signed_t>;
+	using SetUnsignedValueCommand = SetValueCommand<uint16_t>;
+	using SetSignedValueCommand = SetValueCommand<uint16_t, Module::signed_t>;
 
 	class SetMIDIDataCommand : public Command
 	{

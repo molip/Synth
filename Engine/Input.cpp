@@ -254,4 +254,11 @@ bool SetMIDIDataCommand::Execute() const
 	return true;
 }
 
+
+template<> 
+Module::signed_t SetValueCommand<uint16_t, Module::signed_t>::Convert(uint16_t val) const
+{
+	return val * Config::uint16ToFloat; 
+}
+
 }} //namespace 

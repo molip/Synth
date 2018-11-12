@@ -6,12 +6,13 @@ using namespace Engine;
 LFOModule::LFOModule()
 {
 	_unsignedInputs.SetSize(Pin::LFO::UnsignedInput::_Count);
-	_unsignedOutputs.SetSize(Pin::LFO::UnsignedOutput::_Count);
+	_signedInputs.SetSize(Pin::LFO::SignedInput::_Count);
+	_signedOutputs.SetSize(Pin::LFO::SignedOutput::_Count);
 }
 
 void LFOModule::Update()
 {
-	UnsignedInput& triggerInput = _unsignedInputs[Pin::LFO::UnsignedInput::Trigger];
+	SignedInput& triggerInput = _signedInputs[Pin::LFO::SignedInput::Trigger];
 	if (triggerInput.HasChanged())
 	{
 		if (triggerInput.GetValue())
@@ -25,17 +26,24 @@ void LFOModule::Update()
 	_divide = 0;
 
 	UnsignedInput& waveformInput = _unsignedInputs[Pin::LFO::UnsignedInput::Waveform];
-	UnsignedInput& levelInput = _unsignedInputs[Pin::LFO::UnsignedInput::Level];
+	SignedInput& levelInput = _signedInputs[Pin::LFO::SignedInput::Level];
 	UnsignedInput& pitchInput = _unsignedInputs[Pin::LFO::UnsignedInput::Pitch];
-	UnsignedInput& dutyInput = _unsignedInputs[Pin::LFO::UnsignedInput::Duty];
-	UnsignedOutput& signalOutput = _unsignedOutputs[Pin::LFO::UnsignedOutput::Signal];
+	SignedInput& dutyInput = _signedInputs[Pin::LFO::SignedInput::Duty];
+	SignedOutput& signalOutput = _signedOutputs[Pin::LFO::SignedOutput::Signal];
 
-	unsigned_t level = levelInput.GetValue();
+	const float level = levelInput.GetValue();
+
 	if (level == 0)
 	{
 		signalOutput.SetValue(0);
 		_phase = 0;
 		return;
+	}
+
+	if (dutyInput.HasChanged())
+	{
+		dutyInput.ResetChanged();
+		_dutyFixed = FloatToFixed16(dutyInput.GetValue());
 	}
 
 	if (pitchInput.HasChanged())
@@ -53,7 +61,7 @@ void LFOModule::Update()
 
 	_phase += _phaseDelta;
 	
-	const uint32_t output = ::SampleWaveform(waveform, _phase + _phaseAdjust, dutyInput.GetValue());
+	const uint16_t output = ::SampleWaveform(waveform, _phase + _phaseAdjust, _dutyFixed);
 
-	signalOutput.SetValue((output * level) >> 16);
+	signalOutput.SetValue(output * Config::uint16ToFloat * level);
 }

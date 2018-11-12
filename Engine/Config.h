@@ -29,8 +29,8 @@ public:
 		pitchPerOctave = pitchPerSemitone * 12;
 		pitchStepsPerPitch = 16 * 120.0f / 0xffff;
 
-		divUnsignedMax = 1.0f / unsignedMax;
-		divUnsignedMax2 = 1.0f / unsignedMax2;
+		uint16ToFloat = 1.0f / 0xffff;
+		uint32ToFloat = 1.0f / 0xffffffff;
 	}
 
 	using unsigned_t = uint16_t;
@@ -42,16 +42,13 @@ public:
 	static float pitchPerOctave;
 	static float pitchStepsPerPitch;
 
-	static float divUnsignedMax;
-	static float divUnsignedMax2;
+	static float uint16ToFloat;
+	static float uint32ToFloat;
 
 	static float freqs[pitchStepsPerOctave];
 	static float freqFactors[12];
 
 	static const uint32_t sampleRate, sampleRateMS;
 	static float freqToDeltaScale;
-	
-	static const unsigned_t unsignedMax;
-	static const float unsignedMax2;
 };
 }

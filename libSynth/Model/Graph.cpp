@@ -77,7 +77,17 @@ void Graph::Load(Serial::LoadNode& node)
 
 	_nextModuleID = 0;
 	for (auto& mod : _modules)
+	{
 		_nextModuleID = std::max(_nextModuleID, mod.GetID());
+
+		// Check connection data types.
+		for (auto& conn : mod.GetConnections())
+		{
+			const PinType& inputDef = mod.GetInputDef(conn.first);
+			const PinType& outputDef = mod.GetSourceOutputDef(conn.second, *this);
+			KERNEL_ASSERT(inputDef.GetDataType() == outputDef.GetDataType());
+		}
+	}
 
 	++_nextModuleID;
 	SortModules(false);

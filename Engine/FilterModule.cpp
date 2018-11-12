@@ -20,15 +20,15 @@ void FilterModule::Update()
 		return;
 	}
 
-	UnsignedInput& freqInput = _unsignedInputs[Pin::Filter::UnsignedInput::Frequency];
-	UnsignedInput& resInput = _unsignedInputs[Pin::Filter::UnsignedInput::Resonance];
+	SignedInput& freqInput = _signedInputs[Pin::Filter::SignedInput::Frequency];
+	SignedInput& resInput = _signedInputs[Pin::Filter::SignedInput::Resonance];
 
 	if (freqInput.HasChanged() || resInput.HasChanged())
 	{
 		freqInput.ResetChanged();
 		resInput.ResetChanged();
-		float freq = freqInput.GetValue() * Config::divUnsignedMax * 0.25f; // Arbitrary scale. 
-		float res = resInput.GetValue() * Config::divUnsignedMax;
+		float freq = freqInput.GetValue() * 0.25f; // Arbitrary scale. 
+		float res = resInput.GetValue();
 		_q = 1.0f - freq;
 		_p = freq + 0.8f * freq * _q;
 		_f = _p + _p - 1.0f;

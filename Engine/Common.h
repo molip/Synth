@@ -8,17 +8,19 @@ namespace Pin
 {
 	namespace MIDI
 	{
-		namespace UnsignedMultiOutput { enum Type { Gate, Pitch, _Count }; }
+		namespace UnsignedMultiOutput { enum Type { Pitch, _Count }; }
+		namespace SignedMultiOutput { enum Type { Gate, _Count }; }
 	}
 	namespace Envelope 
 	{
-		namespace UnsignedInput { enum Type { Gate, Attack, Decay, Sustain, Release, _Count }; }
-		namespace UnsignedOutput { enum Type { Level, _Count }; }
+		namespace UnsignedInput { enum Type { Attack, Decay, Release, _Count }; }
+		namespace SignedInput { enum Type { Gate, Sustain, _Count }; }
+		namespace SignedOutput { enum Type { Level, _Count }; }
 	}
 	namespace Oscillator 
 	{
-		namespace UnsignedInput { enum Type { Waveform, Pitch, Level, _Count }; }
-		namespace SignedInput { enum Type { PhaseMod, _Count }; }
+		namespace UnsignedInput { enum Type { Waveform, Pitch, _Count }; }
+		namespace SignedInput { enum Type { PhaseMod, Level, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace PolyMixer 
@@ -32,14 +34,14 @@ namespace Pin
 	}
 	namespace Filter
 	{
-		namespace UnsignedInput { enum Type { Frequency, Resonance, Bypass, _Count }; }
-		namespace SignedInput { enum Type { Signal, _Count }; }
+		namespace UnsignedInput { enum Type { Bypass, _Count }; }
+		namespace SignedInput { enum Type { Frequency, Resonance, Signal, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace Range
 	{
-		namespace UnsignedInput { enum Type { Value, Minimum, Maximum, _Count }; }
-		namespace UnsignedOutput { enum Type { Value, _Count }; }
+		namespace SignedInput { enum Type { Value, Minimum, Maximum, _Count }; }
+		namespace SignedOutput { enum Type { Value, _Count }; }
 	}
 	namespace Mixer
 	{
@@ -48,26 +50,28 @@ namespace Pin
 	}
 	namespace PitchShift
 	{
-		namespace SignedInput { enum Type { Shift, _Count }; }
-		namespace UnsignedInput { enum Type { Pitch, _Count }; }
+		namespace UnsignedInput { enum Type { Pitch, Shift, _Count }; }
 		namespace UnsignedOutput { enum Type { Pitch, _Count }; }
 	}
 	namespace LFO
 	{
-		namespace UnsignedInput { enum Type { Trigger, Duty, Waveform, Pitch, Level, _Count }; }
-		namespace UnsignedOutput { enum Type { Signal, _Count }; }
+		namespace UnsignedInput { enum Type { Waveform, Pitch, _Count }; }
+		namespace SignedInput { enum Type { Trigger, Duty, Level, _Count }; }
+		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace Delay
 	{
-		namespace UnsignedInput { enum Type { Period, Feedback, _Count }; }
-		namespace SignedInput { enum Type { Signal, _Count }; }
+		namespace UnsignedInput { enum Type { Period, _Count }; }
+		namespace SignedInput { enum Type { Feedback, Signal, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace Arpeggiator
 	{
 		namespace UnsignedInput { enum Type { Period, Octaves, _Count }; }
-		namespace UnsignedMultiInput { enum Type { Gate, Pitch, _Count }; }
-		namespace UnsignedMultiOutput { enum Type { Gate, Pitch, _Count }; }
+		namespace UnsignedMultiInput { enum Type { Pitch, _Count }; }
+		namespace SignedMultiInput { enum Type { Gate, _Count }; }
+		namespace UnsignedMultiOutput { enum Type { Pitch, _Count }; }
+		namespace SignedMultiOutput { enum Type { Gate, _Count }; }
 	}
 }
 enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetUnsignedValue, SetSignedValue, SetMIDIData, StopMIDIPlayback };

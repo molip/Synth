@@ -77,7 +77,6 @@ class Module
 public:
 	using signed_t = Config::signed_t;
 	using unsigned_t = Config::unsigned_t;
-	const unsigned_t UnsignedMax = Config::unsignedMax;
 
 	virtual ~Module() = default;
 	virtual void Update() {}

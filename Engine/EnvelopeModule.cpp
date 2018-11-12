@@ -1,4 +1,5 @@
 #include "EnvelopeModule.h"
+#include "Util.h"
 
 #include <Limits.h>
 
@@ -7,12 +8,13 @@ using namespace Engine;
 EnvelopeModule::EnvelopeModule()
 {
 	_unsignedInputs.SetSize(Pin::Envelope::UnsignedInput::_Count);
-	_unsignedOutputs.SetSize(Pin::Envelope::UnsignedOutput::_Count);
+	_signedInputs.SetSize(Pin::Envelope::SignedInput::_Count);
+	_signedOutputs.SetSize(Pin::Envelope::SignedOutput::_Count);
 }
 
 void EnvelopeModule::Update()
 {
-	UnsignedInput& gateInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Gate];
+	SignedInput& gateInput = _signedInputs[Pin::Envelope::SignedInput::Gate];
 
 	if (gateInput.HasChanged())
 	{
@@ -22,11 +24,11 @@ void EnvelopeModule::Update()
 		{
 			const UnsignedInput& attackInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Attack];
 			const UnsignedInput& decayInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Decay];
-			const UnsignedInput& sustainInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Sustain];
+			const SignedInput& sustainInput = _signedInputs[Pin::Envelope::SignedInput::Sustain];
 
 			unsigned_t attack = attackInput.GetValue();
 			unsigned_t decay = decayInput.GetValue();
-			_sustainLevel = sustainInput.GetValue() << 16;
+			_sustainLevel = FloatToFixed32(sustainInput.GetValue());
 
 			_attackDelta = attack ? ULONG_MAX / (attack * Config::sampleRateMS) : 0;
 			_decayDelta = decay ? (ULONG_MAX - _sustainLevel) / (decay * Config::sampleRateMS) : 0;
@@ -86,6 +88,6 @@ void EnvelopeModule::Update()
 		break;
 	}
 
-	UnsignedOutput& levelOutput = _unsignedOutputs[Pin::Envelope::UnsignedOutput::Level];
-	levelOutput.SetValue(_level >> 16);
+	SignedOutput& levelOutput = _signedOutputs[Pin::Envelope::SignedOutput::Level];
+	levelOutput.SetValue(_level * Config::uint32ToFloat);
 }

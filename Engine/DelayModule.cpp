@@ -16,13 +16,13 @@ void DelayModule::Update()
 {
 	SignedInput& signalInput = _signedInputs[Pin::Delay::SignedInput::Signal];
 	SignedOutput& signalOutput = _signedOutputs[Pin::Delay::SignedOutput::Signal];
-	UnsignedInput& feedbackInput = _unsignedInputs[Pin::Delay::UnsignedInput::Feedback];
+	SignedInput& feedbackInput = _signedInputs[Pin::Delay::SignedInput::Feedback];
 	UnsignedInput& periodInput = _unsignedInputs[Pin::Delay::UnsignedInput::Period];
 
 	if (feedbackInput.HasChanged())
 	{
 		feedbackInput.ResetChanged();
-		_feedback = feedbackInput.GetValue() * Config::divUnsignedMax;
+		_feedback = feedbackInput.GetValue();
 	}
 
 	if (periodInput.HasChanged())
@@ -43,7 +43,7 @@ void DelayModule::Update()
 	if (!_clear)
 		val = ClipSigned(val + _buffer[_current]);
 
-	_buffer[_current++] = signed_t(val * _feedback);
+	_buffer[_current++] = val * _feedback;
 
 	if (_current >= _period)
 	{

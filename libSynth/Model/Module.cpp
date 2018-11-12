@@ -60,7 +60,7 @@ void Module::SetValue(Tag inputType, int value)
 	auto* valDef = GetInputDef(inputType).GetValueType();
 	KERNEL_VERIFY(valDef);
 
-	if (valDef->GetDefault() == value)
+	if (valDef->GetDefault() == value) // TODO: What if the default changes? 
 		_values.erase(inputType);
 	else
 		_values[inputType] = value;

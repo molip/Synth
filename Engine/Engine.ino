@@ -37,12 +37,12 @@ void TestInput()
 
 		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Attack, 100 >> 8, 100 & 0xff, 
 		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Decay, 1000 >> 8, 1000 & 0xff,
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Sustain, 0x8000 >> 8, 0x8000 & 0xff,
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::SignedInput::Sustain, 0x8000 >> 8, 0x8000 & 0xff,
 		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Release, 1000 >> 8, 1000 & 0xff, 
 
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, Pin::Oscillator::UnsignedInput::Level,
-			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedOutput::Level,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 1, Pin::Oscillator::SignedInput::Level,
+			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::SignedOutput::Level,
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
 			(byte)InstanceType::Poly, (byte)PinType::Unsigned, 0, Pin::Envelope::UnsignedInput::Gate,
 			(byte)InstanceType::Mono, (byte)PinType::Unsigned, 0, Pin::MIDI::UnsignedMultiOutput::Gate,

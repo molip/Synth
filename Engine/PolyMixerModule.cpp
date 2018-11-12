@@ -18,5 +18,5 @@ void PolyMixerModule::Update()
 	for (int i = 0; i < count; ++i)
 		total += multiInput[i].GetValue();
 
-	_signedOutputs[Pin::PolyMixer::SignedOutput::Signal].SetValue(signed_t(total * _scale));
+	_signedOutputs[Pin::PolyMixer::SignedOutput::Signal].SetValue(total * _scale);
 }

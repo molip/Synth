@@ -57,13 +57,13 @@ inline extern float ClipSigned(float val)
 	return val;
 }
 
-inline extern Config::signed_t UnsignedToSigned(Config::unsigned_t val)
+inline extern uint16_t FloatToFixed16(float val)
 {
-	return val * Config::divUnsignedMax - 0.5f;
+	return static_cast<uint16_t>(val * 0xffff);
 }
 
-inline extern Config::unsigned_t SignedToUnsigned(Config::signed_t val)
+inline extern uint32_t FloatToFixed32(float val)
 {
-	return Config::unsigned_t((val + 0.5f) * Config::unsignedMax);
+	return static_cast<uint32_t>(val * 0xffffffff);
 }
 }

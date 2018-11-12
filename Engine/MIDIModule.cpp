@@ -12,6 +12,7 @@ MIDIModule::MIDIModule(int polyphony)
 {
 	_notes.SetSize(polyphony);
 	_unsignedMultiOutputs.SetSize(Pin::MIDI::UnsignedMultiOutput::_Count);
+	_signedMultiOutputs.SetSize(Pin::MIDI::SignedMultiOutput::_Count);
 }
 
 void MIDIModule::ProcessMIDI(int8_t midiByte)
@@ -69,7 +70,7 @@ void MIDIModule::ResetMIDI()
 
 	for (int i = 0; i < _notes.GetSize(); ++i)
 	{
-		_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Gate][i].SetValue(0, true);
+		_signedMultiOutputs[Pin::MIDI::SignedMultiOutput::Gate][i].SetValue(0, true);
 		_notes[i].midiNote = -1;
 		_notes[i].order = 0;
 		_startCount = _endCount = 0;
@@ -88,7 +89,7 @@ void MIDIModule::StartNote(int8_t midiNote)
 	note.midiNote = midiNote;
 	uint16_t pitch = MidiNoteToPitch(midiNote);
 	_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Pitch][index].SetValue(pitch);
-	_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Gate][index].SetValue(UnsignedMax, true);
+	_signedMultiOutputs[Pin::MIDI::SignedMultiOutput::Gate][index].SetValue(1, true);
 	note.order = ++_startCount;
 }
 
@@ -99,7 +100,7 @@ void MIDIModule::StopNote(int8_t midiNote)
 	{
 		//SERIAL_PRINT("Stopping note: "); SERIAL_PRINTLN(index);
 
-		_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Gate][index].SetValue(0, true);
+		_signedMultiOutputs[Pin::MIDI::SignedMultiOutput::Gate][index].SetValue(0, true);
 		_notes[index].midiNote = -1;
 		_notes[index].order = ++_endCount;
 	}

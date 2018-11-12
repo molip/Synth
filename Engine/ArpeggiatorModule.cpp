@@ -7,13 +7,15 @@ ArpeggiatorModule::ArpeggiatorModule(int polyphony) : _polyphony(polyphony)
 	_unsignedInputs.SetSize(Pin::Arpeggiator::UnsignedInput::_Count);
 	_unsignedMultiInputs.SetSize(Pin::Arpeggiator::UnsignedMultiInput::_Count);
 	_unsignedMultiOutputs.SetSize(Pin::Arpeggiator::UnsignedMultiOutput::_Count);
+	_signedMultiInputs.SetSize(Pin::Arpeggiator::SignedMultiInput::_Count);
+	_signedMultiOutputs.SetSize(Pin::Arpeggiator::SignedMultiOutput::_Count);
 
 	_pitches.SetSize(polyphony);
 }
 
 void ArpeggiatorModule::Update()
 {
-	UnsignedMultiInput& gateInputs = _unsignedMultiInputs[Pin::Arpeggiator::UnsignedMultiInput::Gate];
+	SignedMultiInput& gateInputs = _signedMultiInputs[Pin::Arpeggiator::SignedMultiInput::Gate];
 	UnsignedMultiInput& pitchInputs = _unsignedMultiInputs[Pin::Arpeggiator::UnsignedMultiInput::Pitch];
 	UnsignedInput& periodInput = _unsignedInputs[Pin::Arpeggiator::UnsignedInput::Period];
 	UnsignedInput& octavesInput = _unsignedInputs[Pin::Arpeggiator::UnsignedInput::Octaves];
@@ -75,7 +77,7 @@ void ArpeggiatorModule::Update()
 			_currentPitch = -1;
 
 		if (_currentOutput >= 0)  // Stop current output. 
-			_unsignedMultiOutputs[Pin::Arpeggiator::UnsignedMultiOutput::Gate][_currentOutput].SetValue(0);
+			_signedMultiOutputs[Pin::Arpeggiator::SignedMultiOutput::Gate][_currentOutput].SetValue(0);
 
 		_currentOutput = (_currentOutput + 1) % _polyphony;
 		
@@ -90,7 +92,7 @@ void ArpeggiatorModule::Update()
 		if (_noteCount)
 		{
 			unsigned_t pitch = _pitches[_currentPitch] + static_cast<unsigned_t>(_currentOctave * Config::pitchPerOctave);
-			_unsignedMultiOutputs[Pin::Arpeggiator::UnsignedMultiOutput::Gate][_currentOutput].SetValue(0xffff);
+			_signedMultiOutputs[Pin::Arpeggiator::SignedMultiOutput::Gate][_currentOutput].SetValue(1);
 			_unsignedMultiOutputs[Pin::Arpeggiator::UnsignedMultiOutput::Pitch][_currentOutput].SetValue(pitch);
 			_waiting = false; // Don't sync until _noteCount == 0 again.
 		}

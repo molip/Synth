@@ -4,16 +4,16 @@ using namespace Engine;
 
 RangeModule::RangeModule()
 {
-	_unsignedInputs.SetSize(Pin::Range::UnsignedInput::_Count);
-	_unsignedOutputs.SetSize(Pin::Range::UnsignedOutput::_Count);
+	_signedInputs.SetSize(Pin::Range::SignedInput::_Count);
+	_signedOutputs.SetSize(Pin::Range::SignedOutput::_Count);
 }
 
 void RangeModule::Update()
 {
-	unsigned_t signal = _unsignedInputs[Pin::Range::UnsignedInput::Value].GetValue();
-	unsigned_t min = _unsignedInputs[Pin::Range::UnsignedInput::Minimum].GetValue();
-	unsigned_t max = _unsignedInputs[Pin::Range::UnsignedInput::Maximum].GetValue();
+	signed_t signal = _signedInputs[Pin::Range::SignedInput::Value].GetValue();
+	signed_t min = _signedInputs[Pin::Range::SignedInput::Minimum].GetValue();
+	signed_t max = _signedInputs[Pin::Range::SignedInput::Maximum].GetValue();
 
-	unsigned_t output = unsigned_t(min + uint32_t(max - min) * signal / 0xffff); // Rounding down.
-	_unsignedOutputs[Pin::Range::UnsignedOutput::Value].SetValue(output);
+	signed_t output = min + (max - min) * signal;
+	_signedOutputs[Pin::Range::SignedOutput::Value].SetValue(output);
 }

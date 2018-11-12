@@ -16,7 +16,7 @@ namespace Model
 	{
 	public:
 		enum class ConnectionType { Single, Multi };
-		enum class DataType { Signed, Unsigned };
+		enum class DataType { Signed, Unsigned};
 
 		PinType(Tag id, const std::string& name, ConnectionType connType, DataType dataType, int engineID) : _id(id), _name(name), _connType(connType), _dataType(dataType), _engineID(engineID) {}
 

@@ -78,7 +78,12 @@ void Exporter::WriteValues(const Module& mod, const PinType& input)
 {
 	if (input.GetValueType() && !mod.FindConnection(input.GetID()))
 	{
-		const int val = *mod.FindValue(input.GetID());
+		int val = *mod.FindValue(input.GetID());
+
+		// TODO: Fix properly. 
+		if (mod.GetDef().GetEngineID() == Engine::ModuleType::PitchShift)
+			if (input.GetEngineID() == Engine::Pin::PitchShift::UnsignedInput::Shift)
+				val += 128; // See PitchShiftModule::Update().
 
 		Add(input.IsSigned() ? Engine::CommandType::SetSignedValue : Engine::CommandType::SetUnsignedValue);
 		Add(mod.IsInstanced(_graph));

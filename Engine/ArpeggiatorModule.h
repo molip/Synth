@@ -17,9 +17,9 @@ private:
 	int _currentPitch = 0;
 	int _currentOctave = 0;
 	int _currentOutput = -1;
-	unsigned_t _phase = 0;
-	unsigned_t _period = 0;
-	unsigned_t _octaves = 0;
+	uint16_t _phase = 0;
+	uint16_t _period = 0;
+	uint16_t _octaves = 0;
 	bool _waiting = true;
 };
 }

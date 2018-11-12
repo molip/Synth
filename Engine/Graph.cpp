@@ -13,6 +13,8 @@
 #include "DelayModule.h"
 #include "ArpeggiatorModule.h"
 
+using namespace Engine;
+
 Graph* Graph::_active;
 
 void Graph::Init(byte modCount, byte polyModCount, byte polyphony)

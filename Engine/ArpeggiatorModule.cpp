@@ -1,5 +1,7 @@
 #include "ArpeggiatorModule.h"
 
+using namespace Engine;
+
 ArpeggiatorModule::ArpeggiatorModule(int polyphony) : _polyphony(polyphony)
 {
 	_unsignedInputs.SetSize(Pin::Arpeggiator::UnsignedInput::_Count);

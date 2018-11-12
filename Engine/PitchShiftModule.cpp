@@ -1,6 +1,8 @@
 #include "PitchShiftModule.h"
 #include "Util.h"
 
+using namespace Engine;
+
 PitchShiftModule::PitchShiftModule()
 {
 	_signedInputs.SetSize(Pin::PitchShift::SignedInput::_Count);

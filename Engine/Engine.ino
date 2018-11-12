@@ -11,6 +11,8 @@
 #include "Input.h"
 #include "MIDIData.h"
 
+using namespace Engine;
+
 #define MIDISERIAL Serial2
 
 boolean gotTick;

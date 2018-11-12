@@ -1,6 +1,8 @@
 #pragma once 
 #include "Module.h"
 
+namespace Engine
+{
 class DelayModule : public Module
 {
 public:
@@ -15,3 +17,4 @@ private:
 	unsigned_t _period = 0;
 	bool _clear = true;
 };
+}

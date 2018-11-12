@@ -1,6 +1,8 @@
 #pragma once 
 #include "Module.h"
 
+namespace Engine
+{
 class LFOModule : public Module
 {
 public:
@@ -14,3 +16,4 @@ private:
 	uint16_t _phaseDelta = 0;
 	uint16_t _divide = 0;
 };
+}

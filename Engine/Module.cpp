@@ -1,5 +1,7 @@
 #include "Module.h"
 
+using namespace Engine;
+
 void Module::SetPolyphony(int polyphony)
 {
 	for (int i = 0; i < _signedMultiOutputs.GetSize(); ++i)
@@ -15,6 +17,8 @@ void Module::SetPolyphony(int polyphony)
 		_unsignedMultiInputs[i].SetSize(polyphony);
 }
 
+namespace Engine
+{
 template<> Array<SignedOutput>& Module::GetPins() { return _signedOutputs; }
 template<> Array<UnsignedOutput>& Module::GetPins() { return _unsignedOutputs; }
 template<> Array<SignedInput>& Module::GetPins() { return _signedInputs; }
@@ -24,3 +28,4 @@ template<> Array<SignedMultiOutput>& Module::GetMultiPins() { return _signedMult
 template<> Array<UnsignedMultiOutput>& Module::GetMultiPins() { return _unsignedMultiOutputs; }
 template<> Array<SignedMultiInput>& Module::GetMultiPins() { return _signedMultiInputs; }
 template<> Array<UnsignedMultiInput>& Module::GetMultiPins() { return _unsignedMultiInputs; }
+}

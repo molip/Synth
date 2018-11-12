@@ -2,6 +2,8 @@
 #include "Module.h"
 #include "Array.h"
 
+namespace Engine
+{
 class MIDIModule : public Module
 {
 public:
@@ -31,3 +33,4 @@ private:
 	unsigned long _startCount = 0;
 	unsigned long _endCount = 0;
 };
+}

@@ -1,6 +1,8 @@
 #include "LFOModule.h"
 #include "Util.h"
 
+using namespace Engine;
+
 LFOModule::LFOModule()
 {
 	_unsignedInputs.SetSize(Pin::LFO::UnsignedInput::_Count);

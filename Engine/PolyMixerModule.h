@@ -1,6 +1,8 @@
 #pragma once 
 #include "Module.h"
 
+namespace Engine
+{
 class PolyMixerModule : public Module
 {
 public:
@@ -10,3 +12,4 @@ public:
 private:
 	float _scale;
 };
+}

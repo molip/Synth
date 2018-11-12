@@ -1,5 +1,7 @@
 #include "PolyMixerModule.h"
 
+using namespace Engine;
+
 PolyMixerModule::PolyMixerModule(int polyphony)
 {
 	_signedMultiInputs.SetSize(Pin::PolyMixer::SignedMultiInput::_Count);

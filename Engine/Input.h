@@ -5,6 +5,8 @@
 
 #include "Platform.h"
 
+namespace Engine
+{
 class Graph;
 class Module;
 
@@ -190,4 +192,5 @@ namespace Input
 		bool _gotError = false;
 	};
 
+}
 }

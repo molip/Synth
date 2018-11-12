@@ -1,5 +1,7 @@
 #include "Platform.h"
 
+namespace Engine
+{
 struct Note
 {
 	int8_t midiNote;		// -1: null note.
@@ -23,3 +25,4 @@ struct Envelope
 	float attack, decay, release; // s
 	float sustain; // [0, 1]
 };
+}

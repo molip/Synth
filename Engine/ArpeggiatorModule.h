@@ -1,6 +1,8 @@
 #pragma once 
 #include "Module.h"
 
+namespace Engine
+{
 class ArpeggiatorModule : public Module
 {
 public:
@@ -20,3 +22,4 @@ private:
 	unsigned_t _octaves = 0;
 	bool _waiting = true;
 };
+}

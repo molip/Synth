@@ -1,6 +1,8 @@
 #include "OscillatorModule.h"
 #include "Util.h"
 
+using namespace Engine;
+
 OscillatorModule::OscillatorModule()
 {
 	_unsignedInputs.SetSize(Pin::Oscillator::UnsignedInput::_Count);

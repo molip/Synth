@@ -1,6 +1,8 @@
 #pragma once 
 #include "Module.h"
 
+namespace Engine
+{
 class OutputModule : public Module
 {
 public:
@@ -8,3 +10,4 @@ public:
 	virtual void Update() override;
 	virtual bool WantUpdate() const override { return true; }
 };
+}

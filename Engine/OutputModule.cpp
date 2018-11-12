@@ -1,6 +1,8 @@
 #include "OutputModule.h"
 #include "Util.h"
 
+using namespace Engine;
+
 OutputModule::OutputModule()
 {
 	_signedInputs.SetSize(Pin::Target::SignedInput::_Count);

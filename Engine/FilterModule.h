@@ -1,6 +1,8 @@
 #pragma once 
 #include "Module.h"
 
+namespace Engine
+{
 class FilterModule : public Module
 {
 public:
@@ -18,3 +20,4 @@ private:
 	float _b3 = 0;
 	float _b4 = 0;
 };
+}

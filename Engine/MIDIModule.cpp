@@ -3,6 +3,8 @@
 
 #include <limits.h>
 
+using namespace Engine;
+
 #define MIDI_NOTE_OFF 128
 #define MIDI_NOTE_ON 144
 

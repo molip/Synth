@@ -3,6 +3,8 @@
 #include "Config.h"
 #include "Sine.h"
 
+namespace Engine
+{
 inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t duty)
 {
 	uint16_t output = 0;
@@ -63,4 +65,5 @@ inline extern Config::signed_t UnsignedToSigned(Config::unsigned_t val)
 inline extern Config::unsigned_t SignedToUnsigned(Config::signed_t val)
 {
 	return Config::unsigned_t((val + 0.5f) * Config::unsignedMax);
+}
 }

@@ -1,6 +1,8 @@
 #pragma once 
 #include "Module.h"
 
+namespace Engine
+{
 class EnvelopeModule : public Module
 {
 public:
@@ -18,3 +20,4 @@ private:
     uint32_t _level = 0;
     Stage _stage = Stage::Off;
 };
+}

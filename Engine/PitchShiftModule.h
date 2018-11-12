@@ -1,6 +1,8 @@
 #pragma once 
 #include "Module.h"
 
+namespace Engine
+{
 class PitchShiftModule : public Module
 {
 public:
@@ -11,3 +13,4 @@ public:
 private:
 	float _multiplier = 1;
 };
+}

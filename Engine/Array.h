@@ -1,5 +1,7 @@
 #pragma once 
 
+namespace Engine
+{
 template <typename T>
 class Array
 {
@@ -46,3 +48,4 @@ public:
 			delete Array<T*>::_items[i];
 	}
 };
+}

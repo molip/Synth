@@ -1,5 +1,7 @@
 #include "RangeModule.h"
 
+using namespace Engine;
+
 RangeModule::RangeModule()
 {
 	_unsignedInputs.SetSize(Pin::Range::UnsignedInput::_Count);

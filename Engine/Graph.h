@@ -5,6 +5,8 @@
 
 #include "Platform.h"
 
+namespace Engine
+{
 class Module;
 class MIDIModule;
 
@@ -40,3 +42,4 @@ private:
 	MIDIModule* _midiModule = nullptr;
 };
 
+}

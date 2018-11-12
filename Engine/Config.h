@@ -1,6 +1,8 @@
 #pragma once 
 #include "Platform.h"
 
+namespace Engine
+{
 class Config
 {
 public:
@@ -52,3 +54,4 @@ public:
 	static const unsigned_t unsignedMax;
 	static const float unsignedMax2;
 };
+}

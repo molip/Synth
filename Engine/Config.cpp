@@ -1,5 +1,7 @@
 #include "Config.h"
 
+using namespace Engine;
+
 float Config::pitchPerSemitone;
 float Config::pitchPerOctave;
 float Config::pitchStepsPerPitch;

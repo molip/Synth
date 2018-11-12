@@ -1,6 +1,8 @@
 #pragma once 
 #include "Module.h"
 
+namespace Engine
+{
 class MixerModule : public Module
 {
 public:
@@ -12,3 +14,4 @@ private:
 	bool _initialised = false;
 	float _scale = 0;
 };
+}

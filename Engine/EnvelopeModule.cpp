@@ -2,6 +2,8 @@
 
 #include <Limits.h>
 
+using namespace Engine;
+
 EnvelopeModule::EnvelopeModule()
 {
 	_unsignedInputs.SetSize(Pin::Envelope::UnsignedInput::_Count);

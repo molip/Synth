@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Engine
+{
 enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Range, PitchShift, LFO, Delay, Arpeggiator, _Count };
 
 namespace Pin
@@ -75,3 +77,4 @@ enum class ConnectionType { None, Single, Multi, _Count };
 enum class InstanceType { None, Mono, Poly, _Count };
 enum class PinType { None, Signed, Unsigned, _Count };
 
+}

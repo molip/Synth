@@ -3,6 +3,14 @@
 #include <cmath>
 #include <cstdint>
 
+#ifndef _WIN32
+#include "kinetis.h"
+#include "core_pins.h"
+#include "usb_serial.h"
+#endif
+
+namespace Engine
+{
 using byte = uint8_t;
 
 #ifdef _WIN32
@@ -11,11 +19,8 @@ using byte = uint8_t;
 	#define OUTPUT_AUDIO(val)
 	#define delay(val)
 #else
-	#include "kinetis.h"
-	#include "core_pins.h"
-	#include "usb_serial.h"
-
-	#define SERIAL_PRINT(val) Serial.println(val)
+	#define SERIAL_PRINT(val) Serial.print(val)
 	#define SERIAL_PRINTLN(val) Serial.println(val)
 	#define OUTPUT_AUDIO(val) analogWrite(A21, val)
 #endif
+}

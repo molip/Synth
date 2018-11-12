@@ -4,6 +4,8 @@
 //using byte = unsigned char;
 //using uint32_t = unsigned int;
 
+namespace Engine
+{
 class MIDIData
 {
 public:
@@ -34,3 +36,4 @@ private:
 	uint32_t _ticksPerMidiTick = 0;
 	size_t _commandBytesLeft = 0;
 };
+}

@@ -1,5 +1,7 @@
 #include "FilterModule.h"
 
+using namespace Engine;
+
 FilterModule::FilterModule()
 {
 	_unsignedInputs.SetSize(Pin::Filter::UnsignedInput::_Count);

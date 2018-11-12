@@ -6,6 +6,8 @@
 
 #include "Platform.h"
 
+namespace Engine
+{
 template <typename T> class InputT;
 
 template <typename T>
@@ -97,3 +99,4 @@ protected:
 	Array<SignedMultiInput> _signedMultiInputs;
 	Array<UnsignedMultiInput> _unsignedMultiInputs;
 };
+}

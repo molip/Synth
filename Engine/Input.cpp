@@ -1,7 +1,7 @@
 #include "Input.h"
 #include "MIDIData.h"
 
-namespace Input 
+namespace Engine { namespace Input
 {
 
 namespace 
@@ -230,4 +230,4 @@ bool SetMIDIDataCommand::Execute() const
 	return true;
 }
 
-} //namespace 
+}} //namespace 

@@ -1,6 +1,8 @@
 #include "MIDIData.h"
 #include "Config.h"
 
+using namespace Engine;
+
 MIDIData::MIDIData()
 {
 }

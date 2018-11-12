@@ -1,6 +1,8 @@
 #include "DelayModule.h"
 #include "Util.h"
 
+using namespace Engine;
+
 DelayModule::DelayModule()
 {
 	_unsignedInputs.SetSize(Pin::Delay::UnsignedInput::_Count);

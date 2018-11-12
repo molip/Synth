@@ -1,5 +1,7 @@
 #include "MixerModule.h"
 
+using namespace Engine;
+
 MixerModule::MixerModule()
 {
 	_signedInputs.SetSize(Pin::Mixer::SignedInput::_Count);

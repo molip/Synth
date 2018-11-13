@@ -27,15 +27,35 @@ inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t du
 	return output;
 }
 
-// Converts midi note [0, 127] to 16 bit.
-inline extern uint16_t MidiNoteToPitch(byte midiNote)
+inline extern float ClipBipolar(float val)
 {
-	return static_cast<uint16_t>((midiNote < 120 ? midiNote : 120) * Config::pitchPerSemitone);
+	if (val > 0.5f)
+		val = 0.5f;
+	else if (val < -0.5f)
+		val = -0.5f;
+
+	return val;
 }
 
-inline extern uint16_t PitchToPhaseDelta(uint16_t pitch) // pitch: midi note << 4 (11 bit)
+inline extern float ClipUnipolar(float val)
 {
-	uint16_t pitchIndex = static_cast<uint16_t>(pitch * Config::pitchStepsPerPitch);
+	if (val > 1.0f)
+		val = 1.0f;
+	else if (val < 0)
+		val = 0;
+
+	return val;
+}
+
+// Converts midi note [0, 119] to 16 bit.
+inline extern float MidiNoteToPitch(byte midiNote)
+{
+	return (midiNote < Config::midiNoteCount ? midiNote : Config::midiNoteCount - 1) * Config::pitchPerSemitone;
+}
+
+inline extern uint16_t PitchToPhaseDelta(float pitch) 
+{
+	uint16_t pitchIndex = static_cast<uint16_t>(ClipUnipolar(pitch) * Config::pitchStepsPerSemitone * Config::midiNoteCount);
 
 	int octave = pitchIndex / Config::pitchStepsPerOctave;
 	int freqIndex = pitchIndex % Config::pitchStepsPerOctave;
@@ -45,16 +65,6 @@ inline extern uint16_t PitchToPhaseDelta(uint16_t pitch) // pitch: midi note << 
 		freq = freq + freq;
 
 	return uint16_t(freq * Config::freqToDeltaScale);
-}
-
-inline extern float ClipSigned(float val)
-{
-	if (val > 0.5f)
-		val = 0.5f;
-	else if (val < -0.5f)
-		val = -0.5f;
-
-	return val;
 }
 
 inline extern uint16_t FloatToFixed16(float val)

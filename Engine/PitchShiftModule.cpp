@@ -6,13 +6,14 @@ using namespace Engine;
 PitchShiftModule::PitchShiftModule()
 {
 	_unsignedInputs.SetSize(Pin::PitchShift::UnsignedInput::_Count);
-	_unsignedOutputs.SetSize(Pin::PitchShift::UnsignedOutput::_Count);
+	_signedInputs.SetSize(Pin::PitchShift::SignedInput::_Count);
+	_signedOutputs.SetSize(Pin::PitchShift::SignedOutput::_Count);
 }
 
 void PitchShiftModule::Update()
 {
 	UnsignedInput& shiftInput = _unsignedInputs[Pin::PitchShift::UnsignedInput::Shift];
-	UnsignedInput& pitchInput = _unsignedInputs[Pin::PitchShift::UnsignedInput::Pitch];
+	SignedInput& pitchInput = _signedInputs[Pin::PitchShift::SignedInput::Pitch];
 	
 	if (shiftInput.HasChanged() || pitchInput.HasChanged())
 	{
@@ -20,13 +21,8 @@ void PitchShiftModule::Update()
 		pitchInput.ResetChanged();
 
 		const int16_t shift = static_cast<int16_t>(shiftInput.GetValue()) - 128; // See Exporter::WriteValues.
-		int32_t pitch = pitchInput.GetValue() + static_cast<int32_t>(shift * Config::pitchPerSemitone);
+		float pitch = pitchInput.GetValue() + shift * Config::pitchPerSemitone;
 		
-		if (pitch > 0xffff)
-			pitch = 0xffff;
-		else if (pitch < 0)
-			pitch = 0;
-
-		_unsignedOutputs[Pin::PitchShift::UnsignedOutput::Pitch].SetValue(pitch);
+		_signedOutputs[Pin::PitchShift::SignedOutput::Pitch].SetValue(pitch);
 	}
 }

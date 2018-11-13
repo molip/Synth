@@ -14,7 +14,7 @@ const ModuleTypes& ModuleTypes::Instance()
 ModuleTypes::ModuleTypes()
 {
 	_types.emplace_back("midi", "MIDI", Engine::ModuleType::MIDI);
-	_types.back().AddOutput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Multi, PinType::DataType::Unsigned, Engine::Pin::MIDI::UnsignedMultiOutput::Pitch));
+	_types.back().AddOutput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Multi, PinType::DataType::Signed, Engine::Pin::MIDI::SignedMultiOutput::Pitch));
 	_types.back().AddOutput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, PinType::DataType::Signed, Engine::Pin::MIDI::SignedMultiOutput::Gate));
 
 	_types.emplace_back("envl", "Envelope", Engine::ModuleType::Envelope);
@@ -27,7 +27,7 @@ ModuleTypes::ModuleTypes()
 		
 	_types.emplace_back("oscl", "Oscillator", Engine::ModuleType::Oscillator);
 	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Oscillator::UnsignedInput::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 0, 3));
-	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Oscillator::UnsignedInput::Pitch)).SetValueType(std::make_unique<PercentValueType>(0x8000));
+	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Oscillator::SignedInput::Pitch)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Oscillator::SignedInput::Level)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("pmod", "PhaseMod", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Oscillator::SignedInput::PhaseMod));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Oscillator::SignedOutput::Signal));
@@ -61,13 +61,13 @@ ModuleTypes::ModuleTypes()
 
 	_types.emplace_back("pitc", "PitchShift", Engine::ModuleType::PitchShift);
 	_types.back().AddInput(std::make_unique<PinType>("shft", "Shift", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::PitchShift::UnsignedInput::Shift)).SetValueType(std::make_unique<IntValueType>(0, -127, 127));
-	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::PitchShift::UnsignedInput::Pitch));
-	_types.back().AddOutput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::PitchShift::UnsignedOutput::Pitch));
+	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::PitchShift::SignedInput::Pitch));
+	_types.back().AddOutput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::PitchShift::SignedOutput::Pitch));
 
 	_types.emplace_back("lfo", "LFO", Engine::ModuleType::LFO);
 	_types.back().AddInput(std::make_unique<PinType>("trig", "Trigger", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::LFO::SignedInput::Trigger));
 	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedInput::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 0, 3));
-	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedInput::Pitch)).SetValueType(std::make_unique<PercentValueType>(0x8000));
+	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::LFO::SignedInput::Pitch)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::LFO::SignedInput::Level)).SetValueType(std::make_unique<PercentValueType>(0xffff));
 	_types.back().AddInput(std::make_unique<PinType>("duty", "Duty", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::LFO::SignedInput::Duty)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::LFO::SignedOutput::Signal));
@@ -82,9 +82,9 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("peri", "Period", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedInput::Period)).SetValueType(std::make_unique<TimeValueType>(250));
 	_types.back().AddInput(std::make_unique<PinType>("octa", "Octaves", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedInput::Octaves)).SetValueType(std::make_unique<IntValueType>(1, 1, 8));
 	_types.back().AddInput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, PinType::DataType::Signed, Engine::Pin::Arpeggiator::SignedMultiInput::Gate));
-	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedMultiInput::Pitch));
+	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, PinType::DataType::Signed, Engine::Pin::Arpeggiator::SignedMultiInput::Pitch));
 	_types.back().AddOutput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, PinType::DataType::Signed, Engine::Pin::Arpeggiator::SignedMultiOutput::Gate));
-	_types.back().AddOutput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedMultiOutput::Pitch));
+	_types.back().AddOutput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, PinType::DataType::Signed, Engine::Pin::Arpeggiator::SignedMultiOutput::Pitch));
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

@@ -11,7 +11,7 @@ public:
 	virtual bool WantUpdate() const override { return true; }
 
 private:
-	Array<unsigned_t> _pitches;
+	Array<float> _pitches;
 	const int _polyphony;
 	int _noteCount = 0;
 	int _currentPitch = 0;

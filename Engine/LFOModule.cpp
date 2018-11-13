@@ -27,7 +27,7 @@ void LFOModule::Update()
 
 	UnsignedInput& waveformInput = _unsignedInputs[Pin::LFO::UnsignedInput::Waveform];
 	SignedInput& levelInput = _signedInputs[Pin::LFO::SignedInput::Level];
-	UnsignedInput& pitchInput = _unsignedInputs[Pin::LFO::UnsignedInput::Pitch];
+	SignedInput& pitchInput = _signedInputs[Pin::LFO::SignedInput::Pitch];
 	SignedInput& dutyInput = _signedInputs[Pin::LFO::SignedInput::Duty];
 	SignedOutput& signalOutput = _signedOutputs[Pin::LFO::SignedOutput::Signal];
 

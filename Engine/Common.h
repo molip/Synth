@@ -8,8 +8,7 @@ namespace Pin
 {
 	namespace MIDI
 	{
-		namespace UnsignedMultiOutput { enum Type { Pitch, _Count }; }
-		namespace SignedMultiOutput { enum Type { Gate, _Count }; }
+		namespace SignedMultiOutput { enum Type { Pitch, Gate, _Count }; }
 	}
 	namespace Envelope 
 	{
@@ -19,8 +18,8 @@ namespace Pin
 	}
 	namespace Oscillator 
 	{
-		namespace UnsignedInput { enum Type { Waveform, Pitch, _Count }; }
-		namespace SignedInput { enum Type { PhaseMod, Level, _Count }; }
+		namespace UnsignedInput { enum Type { Waveform, _Count }; }
+		namespace SignedInput { enum Type { Pitch, PhaseMod, Level, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace PolyMixer 
@@ -50,13 +49,14 @@ namespace Pin
 	}
 	namespace PitchShift
 	{
-		namespace UnsignedInput { enum Type { Pitch, Shift, _Count }; }
-		namespace UnsignedOutput { enum Type { Pitch, _Count }; }
+		namespace UnsignedInput { enum Type { Shift, _Count }; }
+		namespace SignedInput { enum Type { Pitch, _Count }; }
+		namespace SignedOutput { enum Type { Pitch, _Count }; }
 	}
 	namespace LFO
 	{
-		namespace UnsignedInput { enum Type { Waveform, Pitch, _Count }; }
-		namespace SignedInput { enum Type { Trigger, Duty, Level, _Count }; }
+		namespace UnsignedInput { enum Type { Waveform, _Count }; }
+		namespace SignedInput { enum Type { Pitch, Trigger, Duty, Level, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace Delay
@@ -68,10 +68,8 @@ namespace Pin
 	namespace Arpeggiator
 	{
 		namespace UnsignedInput { enum Type { Period, Octaves, _Count }; }
-		namespace UnsignedMultiInput { enum Type { Pitch, _Count }; }
-		namespace SignedMultiInput { enum Type { Gate, _Count }; }
-		namespace UnsignedMultiOutput { enum Type { Pitch, _Count }; }
-		namespace SignedMultiOutput { enum Type { Gate, _Count }; }
+		namespace SignedMultiInput { enum Type { Gate, Pitch, _Count }; }
+		namespace SignedMultiOutput { enum Type { Gate, Pitch, _Count }; }
 	}
 }
 enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetUnsignedValue, SetSignedValue, SetMIDIData, StopMIDIPlayback };

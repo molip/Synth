@@ -13,7 +13,7 @@ OscillatorModule::OscillatorModule()
 void OscillatorModule::Update()
 {
 	SignedInput& levelInput = _signedInputs[Pin::Oscillator::SignedInput::Level];
-	UnsignedInput& pitchInput = _unsignedInputs[Pin::Oscillator::UnsignedInput::Pitch];
+	SignedInput& pitchInput = _signedInputs[Pin::Oscillator::SignedInput::Pitch];
 	SignedOutput& signalOutput = _signedOutputs[Pin::Oscillator::SignedOutput::Signal];
 
 	const float level = levelInput.GetValue();

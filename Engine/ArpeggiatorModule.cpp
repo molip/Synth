@@ -1,12 +1,11 @@
 #include "ArpeggiatorModule.h"
+#include "Util.h"
 
 using namespace Engine;
 
 ArpeggiatorModule::ArpeggiatorModule(int polyphony) : _polyphony(polyphony)
 {
 	_unsignedInputs.SetSize(Pin::Arpeggiator::UnsignedInput::_Count);
-	_unsignedMultiInputs.SetSize(Pin::Arpeggiator::UnsignedMultiInput::_Count);
-	_unsignedMultiOutputs.SetSize(Pin::Arpeggiator::UnsignedMultiOutput::_Count);
 	_signedMultiInputs.SetSize(Pin::Arpeggiator::SignedMultiInput::_Count);
 	_signedMultiOutputs.SetSize(Pin::Arpeggiator::SignedMultiOutput::_Count);
 
@@ -16,7 +15,7 @@ ArpeggiatorModule::ArpeggiatorModule(int polyphony) : _polyphony(polyphony)
 void ArpeggiatorModule::Update()
 {
 	SignedMultiInput& gateInputs = _signedMultiInputs[Pin::Arpeggiator::SignedMultiInput::Gate];
-	UnsignedMultiInput& pitchInputs = _unsignedMultiInputs[Pin::Arpeggiator::UnsignedMultiInput::Pitch];
+	SignedMultiInput& pitchInputs = _signedMultiInputs[Pin::Arpeggiator::SignedMultiInput::Pitch];
 	UnsignedInput& periodInput = _unsignedInputs[Pin::Arpeggiator::UnsignedInput::Period];
 	UnsignedInput& octavesInput = _unsignedInputs[Pin::Arpeggiator::UnsignedInput::Octaves];
 
@@ -67,7 +66,7 @@ void ArpeggiatorModule::Update()
 			for (int j = 0; j < _noteCount - i - 1; ++j)
 				if (_pitches[j] > _pitches[j + 1])
 				{
-					unsigned_t temp = _pitches[j + 1];
+					float temp = _pitches[j + 1];
 					_pitches[j + 1] = _pitches[j];
 					_pitches[j] = temp;
 				}
@@ -91,9 +90,9 @@ void ArpeggiatorModule::Update()
 
 		if (_noteCount)
 		{
-			unsigned_t pitch = _pitches[_currentPitch] + static_cast<unsigned_t>(_currentOctave * Config::pitchPerOctave);
+			float pitch = _pitches[_currentPitch] + _currentOctave * Config::pitchPerOctave;
 			_signedMultiOutputs[Pin::Arpeggiator::SignedMultiOutput::Gate][_currentOutput].SetValue(1);
-			_unsignedMultiOutputs[Pin::Arpeggiator::UnsignedMultiOutput::Pitch][_currentOutput].SetValue(pitch);
+			_signedMultiOutputs[Pin::Arpeggiator::SignedMultiOutput::Pitch][_currentOutput].SetValue(pitch);
 			_waiting = false; // Don't sync until _noteCount == 0 again.
 		}
 		else

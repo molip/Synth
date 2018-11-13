@@ -41,7 +41,7 @@ void DelayModule::Update()
 
 	signed_t val = signalInput.GetValue();
 	if (!_clear)
-		val = ClipSigned(val + _buffer[_current]);
+		val = ClipBipolar(val + _buffer[_current]);
 
 	_buffer[_current++] = val * _feedback;
 

@@ -11,7 +11,6 @@ using namespace Engine;
 MIDIModule::MIDIModule(int polyphony)
 {
 	_notes.SetSize(polyphony);
-	_unsignedMultiOutputs.SetSize(Pin::MIDI::UnsignedMultiOutput::_Count);
 	_signedMultiOutputs.SetSize(Pin::MIDI::SignedMultiOutput::_Count);
 }
 
@@ -87,8 +86,8 @@ void MIDIModule::StartNote(int8_t midiNote)
 
 	Note& note = _notes[index];
 	note.midiNote = midiNote;
-	uint16_t pitch = MidiNoteToPitch(midiNote);
-	_unsignedMultiOutputs[Pin::MIDI::UnsignedMultiOutput::Pitch][index].SetValue(pitch);
+	const float pitch = MidiNoteToPitch(midiNote);
+	_signedMultiOutputs[Pin::MIDI::SignedMultiOutput::Pitch][index].SetValue(pitch);
 	_signedMultiOutputs[Pin::MIDI::SignedMultiOutput::Gate][index].SetValue(1, true);
 	note.order = ++_startCount;
 }

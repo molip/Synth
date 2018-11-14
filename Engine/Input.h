@@ -87,7 +87,6 @@ namespace Input
 		public:
 			void AddData(byte data); // Returns true if data accepted. 
 			bool IsMono() const { return _modType == InstanceType::Mono; }
-			bool IsSigned() const { return _pinType == PinType::Signed; }
 
 			template <typename T> T& GetMonoSinglePin(Graph& graph) const
 			{
@@ -119,7 +118,6 @@ namespace Input
 			}
 
 			InstanceType _modType = InstanceType::None;
-			PinType _pinType = PinType::None;
 			int _modIndex = -1;
 			int _pinIndex = -1;
 			bool _done = false;
@@ -130,11 +128,10 @@ namespace Input
 		Connection _input, _output;
 	};
 
-	template <typename T, typename TOut = T>
 	class SetValueCommand : public Command
 	{
 	public:
-		SetValueCommand(Graph* graph) : Command(graph) {}
+		SetValueCommand(Graph* graph, float multiplier) : Command(graph), _multiplier(multiplier) {}
 		virtual Error AddData(byte data) override
 		{
 			if (_poly < 0)
@@ -151,22 +148,20 @@ namespace Input
 			return Error::None;
 		}
 
-		TOut Convert(T val) const { return val; }
-
 		virtual bool Execute() const override
 		{
 			if (!_val.IsFinished())
 				return false;
 
-			const TOut val = Convert(_val);
+			const float val = _val * _multiplier;
 
 			if (_poly)
 			{
 				for (int i = 0; i < _graph->GetPolyphony(); ++i)
-					_graph->GetPolyModule(_modIndex, i)->GetPins<InputT<TOut>>()[_pinIndex].SetValue(val);
+					_graph->GetPolyModule(_modIndex, i)->GetPins<InputT<float>>()[_pinIndex].SetValue(val);
 			}
 			else
-				_graph->GetMonoModule(_modIndex)->GetPins<InputT<TOut>>()[_pinIndex].SetValue(val);
+				_graph->GetMonoModule(_modIndex)->GetPins<InputT<float>>()[_pinIndex].SetValue(val);
 
 			return true;
 		}
@@ -175,11 +170,21 @@ namespace Input
 		int _poly = -1;
 		int _modIndex = -1;
 		int _pinIndex = -1;
-		Value<T> _val;
+		Value<uint16_t> _val;
+		float _multiplier;
 	};
 
-	using SetUnsignedValueCommand = SetValueCommand<uint16_t>;
-	using SetSignedValueCommand = SetValueCommand<uint16_t, Module::signed_t>;
+	class SetUnsignedValueCommand : public SetValueCommand
+	{
+	public:
+		SetUnsignedValueCommand(Graph* graph) : SetValueCommand(graph, 1.0f) {}
+	};
+
+	class SetSignedValueCommand : public SetValueCommand
+	{
+	public:
+		SetSignedValueCommand(Graph* graph) : SetValueCommand(graph, Config::uint16ToFloat) {}
+	};
 
 	class SetMIDIDataCommand : public Command
 	{

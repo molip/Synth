@@ -38,7 +38,6 @@ BufferPtr Exporter::Export()
 	auto AddPin = [&](const Module& mod, const PinType& pinDef)
 	{
 		Add(mod.IsInstanced(_graph) ? Engine::InstanceType::Poly : Engine::InstanceType::Mono);
-		Add(pinDef.IsSigned() ? Engine::PinType::Signed : Engine::PinType::Unsigned);
 		Add(_modIndices[mod.GetID()]);
 		Add(pinDef.GetEngineID());
 	};
@@ -82,7 +81,7 @@ void Exporter::WriteValues(const Module& mod, const PinType& input)
 
 		// TODO: Fix properly. 
 		if (mod.GetDef().GetEngineID() == Engine::ModuleType::PitchShift)
-			if (input.GetEngineID() == Engine::Pin::PitchShift::UnsignedInput::Shift)
+			if (input.GetEngineID() == Engine::Pin::PitchShift::SignedInput::Shift)
 				val += 128; // See PitchShiftModule::Update().
 
 		Add(input.IsSigned() ? Engine::CommandType::SetSignedValue : Engine::CommandType::SetUnsignedValue);

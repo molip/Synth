@@ -5,7 +5,7 @@ using namespace Engine;
 
 ArpeggiatorModule::ArpeggiatorModule(int polyphony) : _polyphony(polyphony)
 {
-	_unsignedInputs.SetSize(Pin::Arpeggiator::UnsignedInput::_Count);
+	_signedInputs.SetSize(Pin::Arpeggiator::SignedInput::_Count);
 	_signedMultiInputs.SetSize(Pin::Arpeggiator::SignedMultiInput::_Count);
 	_signedMultiOutputs.SetSize(Pin::Arpeggiator::SignedMultiOutput::_Count);
 
@@ -16,19 +16,19 @@ void ArpeggiatorModule::Update()
 {
 	SignedMultiInput& gateInputs = _signedMultiInputs[Pin::Arpeggiator::SignedMultiInput::Gate];
 	SignedMultiInput& pitchInputs = _signedMultiInputs[Pin::Arpeggiator::SignedMultiInput::Pitch];
-	UnsignedInput& periodInput = _unsignedInputs[Pin::Arpeggiator::UnsignedInput::Period];
-	UnsignedInput& octavesInput = _unsignedInputs[Pin::Arpeggiator::UnsignedInput::Octaves];
+	SignedInput& periodInput = _signedInputs[Pin::Arpeggiator::SignedInput::Period];
+	SignedInput& octavesInput = _signedInputs[Pin::Arpeggiator::SignedInput::Octaves];
 
 	if (periodInput.HasChanged())
 	{
 		periodInput.ResetChanged();
-		_period = periodInput.GetValue() * Config::sampleRateMS;
+		_period = static_cast<uint16_t>(periodInput.GetValue()) * Config::sampleRateMS;
 	}
 
 	if (octavesInput.HasChanged())
 	{
 		octavesInput.ResetChanged();
-		_octaves = octavesInput.GetValue();
+		_octaves = static_cast<uint16_t>(octavesInput.GetValue());
 		if (_currentOctave >= _octaves)
 			_currentOctave = 0;
 	}

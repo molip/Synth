@@ -5,7 +5,6 @@ using namespace Engine;
 
 DelayModule::DelayModule()
 {
-	_unsignedInputs.SetSize(Pin::Delay::UnsignedInput::_Count);
 	_signedInputs.SetSize(Pin::Delay::SignedInput::_Count);
 	_signedOutputs.SetSize(Pin::Delay::SignedOutput::_Count);
 
@@ -17,7 +16,7 @@ void DelayModule::Update()
 	SignedInput& signalInput = _signedInputs[Pin::Delay::SignedInput::Signal];
 	SignedOutput& signalOutput = _signedOutputs[Pin::Delay::SignedOutput::Signal];
 	SignedInput& feedbackInput = _signedInputs[Pin::Delay::SignedInput::Feedback];
-	UnsignedInput& periodInput = _unsignedInputs[Pin::Delay::UnsignedInput::Period];
+	SignedInput& periodInput = _signedInputs[Pin::Delay::SignedInput::Period];
 
 	if (feedbackInput.HasChanged())
 	{
@@ -29,7 +28,7 @@ void DelayModule::Update()
 	{
 		periodInput.ResetChanged();
 
-		unsigned_t newPeriod = periodInput.GetValue();
+		uint16_t newPeriod = static_cast<uint16_t>(periodInput.GetValue());
 		if (newPeriod > 1000)
 			newPeriod = 1000;
 		

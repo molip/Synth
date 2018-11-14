@@ -5,14 +5,13 @@ using namespace Engine;
 
 PitchShiftModule::PitchShiftModule()
 {
-	_unsignedInputs.SetSize(Pin::PitchShift::UnsignedInput::_Count);
 	_signedInputs.SetSize(Pin::PitchShift::SignedInput::_Count);
 	_signedOutputs.SetSize(Pin::PitchShift::SignedOutput::_Count);
 }
 
 void PitchShiftModule::Update()
 {
-	UnsignedInput& shiftInput = _unsignedInputs[Pin::PitchShift::UnsignedInput::Shift];
+	SignedInput& shiftInput = _signedInputs[Pin::PitchShift::SignedInput::Shift];
 	SignedInput& pitchInput = _signedInputs[Pin::PitchShift::SignedInput::Pitch];
 	
 	if (shiftInput.HasChanged() || pitchInput.HasChanged())

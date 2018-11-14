@@ -63,20 +63,15 @@ private:
 };
 
 using SignedOutput = OutputT<Config::signed_t>;
-using UnsignedOutput = OutputT<Config::unsigned_t>;
 using SignedMultiOutput = Array<OutputT<Config::signed_t>>;
-using UnsignedMultiOutput = Array<OutputT<Config::unsigned_t>>;
 
 using SignedInput = InputT<Config::signed_t>;
-using UnsignedInput = InputT<Config::unsigned_t>;
 using SignedMultiInput = Array<InputT<Config::signed_t>>;
-using UnsignedMultiInput = Array<InputT<Config::unsigned_t>>;
 
 class Module
 {
 public:
 	using signed_t = Config::signed_t;
-	using unsigned_t = Config::unsigned_t;
 
 	virtual ~Module() = default;
 	virtual void Update() {}
@@ -89,13 +84,9 @@ public:
 
 protected:
 	Array<SignedOutput> _signedOutputs;
-	Array<UnsignedOutput> _unsignedOutputs;
 	Array<SignedMultiOutput> _signedMultiOutputs;
-	Array<UnsignedMultiOutput> _unsignedMultiOutputs;
 
 	Array<SignedInput> _signedInputs;
-	Array<UnsignedInput> _unsignedInputs;
 	Array<SignedMultiInput> _signedMultiInputs;
-	Array<UnsignedMultiInput> _unsignedMultiInputs;
 };
 }

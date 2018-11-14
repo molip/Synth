@@ -35,27 +35,27 @@ void TestInput()
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::PolyMixer,	// 1
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
 
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Attack, 100 >> 8, 100 & 0xff, 
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Decay, 1000 >> 8, 1000 & 0xff,
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::SignedInput::Attack, 100 >> 8, 100 & 0xff, 
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::SignedInput::Decay, 1000 >> 8, 1000 & 0xff,
 		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::SignedInput::Sustain, 0x8000 >> 8, 0x8000 & 0xff,
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::UnsignedInput::Release, 1000 >> 8, 1000 & 0xff, 
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::SignedInput::Release, 1000 >> 8, 1000 & 0xff, 
 
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
-			(byte)InstanceType::Poly, (byte)PinType::Signed, 1, Pin::Oscillator::SignedInput::Level,
-			(byte)InstanceType::Poly, (byte)PinType::Signed, 0, Pin::Envelope::SignedOutput::Level,
+			(byte)InstanceType::Poly, 1, Pin::Oscillator::SignedInput::Level,
+			(byte)InstanceType::Poly, 0, Pin::Envelope::SignedOutput::Level,
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
-			(byte)InstanceType::Poly, (byte)PinType::Signed, 0, Pin::Envelope::SignedInput::Gate,
-			(byte)InstanceType::Mono, (byte)PinType::Signed, 0, Pin::MIDI::SignedMultiOutput::Gate,
+			(byte)InstanceType::Poly, 0, Pin::Envelope::SignedInput::Gate,
+			(byte)InstanceType::Mono, 0, Pin::MIDI::SignedMultiOutput::Gate,
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
-			(byte)InstanceType::Poly, (byte)PinType::Signed, 1, Pin::Oscillator::SignedInput::Pitch,
-			(byte)InstanceType::Mono, (byte)PinType::Signed, 0, Pin::MIDI::SignedMultiOutput::Pitch,
+			(byte)InstanceType::Poly, 1, Pin::Oscillator::SignedInput::Pitch,
+			(byte)InstanceType::Mono, 0, Pin::MIDI::SignedMultiOutput::Pitch,
 
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
-			(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedMultiInput::Signal,
-			(byte)InstanceType::Poly, (byte)PinType::Signed, 1, Pin::Oscillator::SignedOutput::Signal,
+			(byte)InstanceType::Mono, 1, Pin::PolyMixer::SignedMultiInput::Signal,
+			(byte)InstanceType::Poly, 1, Pin::Oscillator::SignedOutput::Signal,
 		(byte)CommandType::AddConnection,  (byte)ConnectionType::Single,  
-			(byte)InstanceType::Mono, (byte)PinType::Signed, 2, Pin::Target::SignedInput::Signal,
-			(byte)InstanceType::Mono, (byte)PinType::Signed, 1, Pin::PolyMixer::SignedOutput::Signal,
+			(byte)InstanceType::Mono, 2, Pin::Target::SignedInput::Signal,
+			(byte)InstanceType::Mono, 1, Pin::PolyMixer::SignedOutput::Signal,
 
 		(byte)CommandType::EndGraph,
 	};

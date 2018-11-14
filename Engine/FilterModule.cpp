@@ -4,7 +4,6 @@ using namespace Engine;
 
 FilterModule::FilterModule()
 {
-	_unsignedInputs.SetSize(Pin::Filter::UnsignedInput::_Count);
 	_signedInputs.SetSize(Pin::Filter::SignedInput::_Count);
 	_signedOutputs.SetSize(Pin::Filter::SignedOutput::_Count);
 }
@@ -14,7 +13,7 @@ void FilterModule::Update()
 	SignedInput& signalInput = _signedInputs[Pin::Filter::SignedInput::Signal];
 	SignedOutput& signalOutput = _signedOutputs[Pin::Filter::SignedOutput::Signal];
 
-	if (_unsignedInputs[Pin::Filter::UnsignedInput::Bypass].GetValue())
+	if (_signedInputs[Pin::Filter::SignedInput::Bypass].GetValue())
 	{
 		signalOutput.SetValue(signalInput.GetValue());
 		return;

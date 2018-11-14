@@ -19,14 +19,14 @@ ModuleTypes::ModuleTypes()
 
 	_types.emplace_back("envl", "Envelope", Engine::ModuleType::Envelope);
 	_types.back().AddInput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Envelope::SignedInput::Gate));
-	_types.back().AddInput(std::make_unique<PinType>("atck", "Attack", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Envelope::UnsignedInput::Attack)).SetValueType(std::make_unique<TimeValueType>(50));
-	_types.back().AddInput(std::make_unique<PinType>("decy", "Decay", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Envelope::UnsignedInput::Decay)).SetValueType(std::make_unique<TimeValueType>(50));
+	_types.back().AddInput(std::make_unique<PinType>("atck", "Attack", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Envelope::SignedInput::Attack)).SetValueType(std::make_unique<TimeValueType>(50));
+	_types.back().AddInput(std::make_unique<PinType>("decy", "Decay", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Envelope::SignedInput::Decay)).SetValueType(std::make_unique<TimeValueType>(50));
 	_types.back().AddInput(std::make_unique<PinType>("sust", "Sustain", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Envelope::SignedInput::Sustain)).SetValueType(std::make_unique<PercentValueType>(0x8000));
-	_types.back().AddInput(std::make_unique<PinType>("rels", "Release", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Envelope::UnsignedInput::Release)).SetValueType(std::make_unique<TimeValueType>(400));
+	_types.back().AddInput(std::make_unique<PinType>("rels", "Release", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Envelope::SignedInput::Release)).SetValueType(std::make_unique<TimeValueType>(400));
 	_types.back().AddOutput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Envelope::SignedOutput::Level));
 		
 	_types.emplace_back("oscl", "Oscillator", Engine::ModuleType::Oscillator);
-	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Oscillator::UnsignedInput::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 0, 3));
+	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Oscillator::SignedInput::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 0, 3));
 	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Oscillator::SignedInput::Pitch)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Oscillator::SignedInput::Level)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("pmod", "PhaseMod", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Oscillator::SignedInput::PhaseMod));
@@ -42,7 +42,7 @@ ModuleTypes::ModuleTypes()
 	_types.emplace_back("filt", "Filter", Engine::ModuleType::Filter);
 	_types.back().AddInput(std::make_unique<PinType>("freq", "Frequency", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Filter::SignedInput::Frequency)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("resn", "Resonance", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Filter::SignedInput::Resonance)).SetValueType(std::make_unique<PercentValueType>(0x8000));
-	_types.back().AddInput(std::make_unique<PinType>("byps", "Bypass", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Filter::UnsignedInput::Bypass)).SetValueType(std::make_unique<BoolValueType>(0));
+	_types.back().AddInput(std::make_unique<PinType>("byps", "Bypass", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Filter::SignedInput::Bypass)).SetValueType(std::make_unique<BoolValueType>(0));
 	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Filter::SignedInput::Signal));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Filter::SignedOutput::Signal));
 
@@ -60,27 +60,27 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Mixer::SignedOutput::Signal));
 
 	_types.emplace_back("pitc", "PitchShift", Engine::ModuleType::PitchShift);
-	_types.back().AddInput(std::make_unique<PinType>("shft", "Shift", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::PitchShift::UnsignedInput::Shift)).SetValueType(std::make_unique<IntValueType>(0, -127, 127));
+	_types.back().AddInput(std::make_unique<PinType>("shft", "Shift", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::PitchShift::SignedInput::Shift)).SetValueType(std::make_unique<IntValueType>(0, -127, 127));
 	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::PitchShift::SignedInput::Pitch));
 	_types.back().AddOutput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::PitchShift::SignedOutput::Pitch));
 
 	_types.emplace_back("lfo", "LFO", Engine::ModuleType::LFO);
 	_types.back().AddInput(std::make_unique<PinType>("trig", "Trigger", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::LFO::SignedInput::Trigger));
-	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::UnsignedInput::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 0, 3));
+	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::LFO::SignedInput::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 0, 3));
 	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::LFO::SignedInput::Pitch)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::LFO::SignedInput::Level)).SetValueType(std::make_unique<PercentValueType>(0xffff));
 	_types.back().AddInput(std::make_unique<PinType>("duty", "Duty", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::LFO::SignedInput::Duty)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::LFO::SignedOutput::Signal));
 
 	_types.emplace_back("dely", "Delay", Engine::ModuleType::Delay);
-	_types.back().AddInput(std::make_unique<PinType>("peri", "Period", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Delay::UnsignedInput::Period)).SetValueType(std::make_unique<TimeValueType>(250));
+	_types.back().AddInput(std::make_unique<PinType>("peri", "Period", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Delay::SignedInput::Period)).SetValueType(std::make_unique<TimeValueType>(250));
 	_types.back().AddInput(std::make_unique<PinType>("fbck", "Feedback", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Delay::SignedInput::Feedback)).SetValueType(std::make_unique<PercentValueType>(0x8000));
 	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Delay::SignedInput::Signal));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, PinType::DataType::Signed, Engine::Pin::Delay::SignedOutput::Signal));
 
 	_types.emplace_back("arpe", "Arpeggiator", Engine::ModuleType::Arpeggiator);
-	_types.back().AddInput(std::make_unique<PinType>("peri", "Period", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedInput::Period)).SetValueType(std::make_unique<TimeValueType>(250));
-	_types.back().AddInput(std::make_unique<PinType>("octa", "Octaves", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::UnsignedInput::Octaves)).SetValueType(std::make_unique<IntValueType>(1, 1, 8));
+	_types.back().AddInput(std::make_unique<PinType>("peri", "Period", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::SignedInput::Period)).SetValueType(std::make_unique<TimeValueType>(250));
+	_types.back().AddInput(std::make_unique<PinType>("octa", "Octaves", PinType::ConnectionType::Single, PinType::DataType::Unsigned, Engine::Pin::Arpeggiator::SignedInput::Octaves)).SetValueType(std::make_unique<IntValueType>(1, 1, 8));
 	_types.back().AddInput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, PinType::DataType::Signed, Engine::Pin::Arpeggiator::SignedMultiInput::Gate));
 	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, PinType::DataType::Signed, Engine::Pin::Arpeggiator::SignedMultiInput::Pitch));
 	_types.back().AddOutput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, PinType::DataType::Signed, Engine::Pin::Arpeggiator::SignedMultiOutput::Gate));

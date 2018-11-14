@@ -32,7 +32,6 @@ public:
 		uint32ToFloat = 1.0f / 0xffffffff;
 	}
 
-	using unsigned_t = uint16_t;
 	using signed_t = float;
 
 	static const int pitchStepsPerSemitone = 16;

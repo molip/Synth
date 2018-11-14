@@ -12,14 +12,12 @@ namespace Pin
 	}
 	namespace Envelope 
 	{
-		namespace UnsignedInput { enum Type { Attack, Decay, Release, _Count }; }
-		namespace SignedInput { enum Type { Gate, Sustain, _Count }; }
+		namespace SignedInput { enum Type { Gate, Sustain, Attack, Decay, Release, _Count }; }
 		namespace SignedOutput { enum Type { Level, _Count }; }
 	}
 	namespace Oscillator 
 	{
-		namespace UnsignedInput { enum Type { Waveform, _Count }; }
-		namespace SignedInput { enum Type { Pitch, PhaseMod, Level, _Count }; }
+		namespace SignedInput { enum Type { Pitch, PhaseMod, Level, Waveform, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace PolyMixer 
@@ -33,8 +31,7 @@ namespace Pin
 	}
 	namespace Filter
 	{
-		namespace UnsignedInput { enum Type { Bypass, _Count }; }
-		namespace SignedInput { enum Type { Frequency, Resonance, Signal, _Count }; }
+		namespace SignedInput { enum Type { Frequency, Resonance, Signal, Bypass, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace Range
@@ -49,25 +46,22 @@ namespace Pin
 	}
 	namespace PitchShift
 	{
-		namespace UnsignedInput { enum Type { Shift, _Count }; }
-		namespace SignedInput { enum Type { Pitch, _Count }; }
+		namespace SignedInput { enum Type { Pitch, Shift, _Count }; }
 		namespace SignedOutput { enum Type { Pitch, _Count }; }
 	}
 	namespace LFO
 	{
-		namespace UnsignedInput { enum Type { Waveform, _Count }; }
-		namespace SignedInput { enum Type { Pitch, Trigger, Duty, Level, _Count }; }
+		namespace SignedInput { enum Type { Pitch, Trigger, Duty, Level, Waveform, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace Delay
 	{
-		namespace UnsignedInput { enum Type { Period, _Count }; }
-		namespace SignedInput { enum Type { Feedback, Signal, _Count }; }
+		namespace SignedInput { enum Type { Feedback, Signal, Period, _Count }; }
 		namespace SignedOutput { enum Type { Signal, _Count }; }
 	}
 	namespace Arpeggiator
 	{
-		namespace UnsignedInput { enum Type { Period, Octaves, _Count }; }
+		namespace SignedInput { enum Type { Period, Octaves, _Count }; }
 		namespace SignedMultiInput { enum Type { Gate, Pitch, _Count }; }
 		namespace SignedMultiOutput { enum Type { Gate, Pitch, _Count }; }
 	}
@@ -77,6 +71,5 @@ enum class Error { None, UnknownCommandType, InvalidParameter, TooManyParameters
 
 enum class ConnectionType { None, Single, Multi, _Count };
 enum class InstanceType { None, Mono, Poly, _Count };
-enum class PinType { None, Signed, Unsigned, _Count };
 
 }

@@ -5,7 +5,6 @@ using namespace Engine;
 
 LFOModule::LFOModule()
 {
-	_unsignedInputs.SetSize(Pin::LFO::UnsignedInput::_Count);
 	_signedInputs.SetSize(Pin::LFO::SignedInput::_Count);
 	_signedOutputs.SetSize(Pin::LFO::SignedOutput::_Count);
 }
@@ -25,7 +24,7 @@ void LFOModule::Update()
 
 	_divide = 0;
 
-	UnsignedInput& waveformInput = _unsignedInputs[Pin::LFO::UnsignedInput::Waveform];
+	SignedInput& waveformInput = _signedInputs[Pin::LFO::SignedInput::Waveform];
 	SignedInput& levelInput = _signedInputs[Pin::LFO::SignedInput::Level];
 	SignedInput& pitchInput = _signedInputs[Pin::LFO::SignedInput::Pitch];
 	SignedInput& dutyInput = _signedInputs[Pin::LFO::SignedInput::Duty];

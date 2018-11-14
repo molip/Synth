@@ -178,8 +178,6 @@ void AddConnectionCommand::Connection::AddData(byte data)
 {
 	if (_modType == InstanceType::None)
 		_modType = (InstanceType)data;
-	else if (_pinType == PinType::None)
-		_pinType = (PinType)data;
 	else if (_modIndex < 0)
 		_modIndex = data;
 	else if (_pinIndex < 0)
@@ -201,8 +199,6 @@ Error AddConnectionCommand::AddData(byte data)
 
 	if (_output._done)
 	{
-		if (_input._pinType != _output._pinType)
-			return Error::PinTypeMismatch;
 		// TODO: Check pin indices exist in modules.
 	}
 
@@ -214,10 +210,7 @@ bool AddConnectionCommand::Execute() const
 	if (!_output._done) 
 		return false;
 
-	if (_input.IsSigned())
-		_input.ConnectToOutput<Module::signed_t>(*_graph, _output, _connType == ConnectionType::Multi);
-	else
-		_input.ConnectToOutput<Module::unsigned_t>(*_graph, _output, _connType == ConnectionType::Multi);
+	_input.ConnectToOutput<Module::signed_t>(*_graph, _output, _connType == ConnectionType::Multi);
 
 	return true;
 }
@@ -252,13 +245,6 @@ bool SetMIDIDataCommand::Execute() const
 	_graph->ResetMIDI();
 
 	return true;
-}
-
-
-template<> 
-Module::signed_t SetValueCommand<uint16_t, Module::signed_t>::Convert(uint16_t val) const
-{
-	return val * Config::uint16ToFloat; 
 }
 
 }} //namespace 

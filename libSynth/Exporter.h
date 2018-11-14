@@ -27,7 +27,6 @@ namespace Model
 		void Add(Engine::InstanceType data) { Add((byte)data); }
 		void Add(Engine::ConnectionType data) { Add((byte)data); }
 		void Add(Engine::ModuleType data) { Add((byte)data); }
-		void Add(Engine::PinType data) { Add((byte)data); }
 		
 		void WriteValues(const Module& mod, const PinType& input);
 

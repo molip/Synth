@@ -7,7 +7,6 @@ using namespace Engine;
 
 EnvelopeModule::EnvelopeModule()
 {
-	_unsignedInputs.SetSize(Pin::Envelope::UnsignedInput::_Count);
 	_signedInputs.SetSize(Pin::Envelope::SignedInput::_Count);
 	_signedOutputs.SetSize(Pin::Envelope::SignedOutput::_Count);
 }
@@ -22,12 +21,12 @@ void EnvelopeModule::Update()
 
 		if (gateInput.GetValue() != 0) // Gate on.
 		{
-			const UnsignedInput& attackInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Attack];
-			const UnsignedInput& decayInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Decay];
+			const SignedInput& attackInput = _signedInputs[Pin::Envelope::SignedInput::Attack];
+			const SignedInput& decayInput = _signedInputs[Pin::Envelope::SignedInput::Decay];
 			const SignedInput& sustainInput = _signedInputs[Pin::Envelope::SignedInput::Sustain];
 
-			unsigned_t attack = attackInput.GetValue();
-			unsigned_t decay = decayInput.GetValue();
+			uint16_t attack = static_cast<uint16_t>(attackInput.GetValue());
+			uint16_t decay = static_cast<uint16_t>(decayInput.GetValue());
 			_sustainLevel = FloatToFixed32(sustainInput.GetValue());
 
 			_attackDelta = attack ? ULONG_MAX / (attack * Config::sampleRateMS) : 0;
@@ -38,9 +37,9 @@ void EnvelopeModule::Update()
 		}
 		else // Gate off.
 		{
-			const UnsignedInput& releaseInput = _unsignedInputs[Pin::Envelope::UnsignedInput::Release];
+			const SignedInput& releaseInput = _signedInputs[Pin::Envelope::SignedInput::Release];
 		
-			if (uint32_t release = releaseInput.GetValue())
+			if (uint32_t release = static_cast<uint32_t>(releaseInput.GetValue()))
 			{
 				_stage = Stage::Release;
 				_releaseDelta = _level / (release * Config::sampleRateMS);

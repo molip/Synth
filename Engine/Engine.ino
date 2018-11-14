@@ -35,33 +35,33 @@ void TestInput()
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::PolyMixer,	// 1
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
 
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::SignedInput::Attack, 100 >> 8, 100 & 0xff, 
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::SignedInput::Decay, 1000 >> 8, 1000 & 0xff,
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::SignedInput::Sustain, 0x8000 >> 8, 0x8000 & 0xff,
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::SignedInput::Release, 1000 >> 8, 1000 & 0xff, 
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::Input::Attack, 100 >> 8, 100 & 0xff, 
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::Input::Decay, 1000 >> 8, 1000 & 0xff,
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::Input::Sustain, 0x8000 >> 8, 0x8000 & 0xff,
+		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::Input::Release, 1000 >> 8, 1000 & 0xff, 
 
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
-			(byte)InstanceType::Poly, 1, Pin::Oscillator::SignedInput::Level,
-			(byte)InstanceType::Poly, 0, Pin::Envelope::SignedOutput::Level,
+			(byte)InstanceType::Poly, 1, Pin::Oscillator::Input::Level,
+			(byte)InstanceType::Poly, 0, Pin::Envelope::Output::Level,
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
-			(byte)InstanceType::Poly, 0, Pin::Envelope::SignedInput::Gate,
-			(byte)InstanceType::Mono, 0, Pin::MIDI::SignedMultiOutput::Gate,
+			(byte)InstanceType::Poly, 0, Pin::Envelope::Input::Gate,
+			(byte)InstanceType::Mono, 0, Pin::MIDI::MultiOutput::Gate,
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
-			(byte)InstanceType::Poly, 1, Pin::Oscillator::SignedInput::Pitch,
-			(byte)InstanceType::Mono, 0, Pin::MIDI::SignedMultiOutput::Pitch,
+			(byte)InstanceType::Poly, 1, Pin::Oscillator::Input::Pitch,
+			(byte)InstanceType::Mono, 0, Pin::MIDI::MultiOutput::Pitch,
 
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
-			(byte)InstanceType::Mono, 1, Pin::PolyMixer::SignedMultiInput::Signal,
-			(byte)InstanceType::Poly, 1, Pin::Oscillator::SignedOutput::Signal,
+			(byte)InstanceType::Mono, 1, Pin::PolyMixer::MultiInput::Signal,
+			(byte)InstanceType::Poly, 1, Pin::Oscillator::Output::Signal,
 		(byte)CommandType::AddConnection,  (byte)ConnectionType::Single,  
-			(byte)InstanceType::Mono, 2, Pin::Target::SignedInput::Signal,
-			(byte)InstanceType::Mono, 1, Pin::PolyMixer::SignedOutput::Signal,
+			(byte)InstanceType::Mono, 2, Pin::Target::Input::Signal,
+			(byte)InstanceType::Mono, 1, Pin::PolyMixer::Output::Signal,
 
 		(byte)CommandType::EndGraph,
 	};
 
 	for (size_t i = 0; i < sizeof inputData; ++i)
-		Input::Process(inputData[i]);
+		RemoteInput::Process(inputData[i]);
 }
 
 void setup()
@@ -94,7 +94,7 @@ void loop()
 	if (Serial.available() > 0)
 	{
 		byte data = Serial.read();
-		Input::Process(data);
+		RemoteInput::Process(data);
 	}
 
 	MIDIData& midiData = MIDIData::Instance();

@@ -32,8 +32,6 @@ public:
 		uint32ToFloat = 1.0f / 0xffffffff;
 	}
 
-	using signed_t = float;
-
 	static const int pitchStepsPerSemitone = 16;
 	static const int pitchStepsPerOctave = 12 * pitchStepsPerSemitone;
 	static const int midiNoteCount = 120; 

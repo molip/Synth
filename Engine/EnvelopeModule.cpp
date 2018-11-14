@@ -7,13 +7,13 @@ using namespace Engine;
 
 EnvelopeModule::EnvelopeModule()
 {
-	_signedInputs.SetSize(Pin::Envelope::SignedInput::_Count);
-	_signedOutputs.SetSize(Pin::Envelope::SignedOutput::_Count);
+	_inputs.SetSize(Pin::Envelope::Input::_Count);
+	_outputs.SetSize(Pin::Envelope::Output::_Count);
 }
 
 void EnvelopeModule::Update()
 {
-	SignedInput& gateInput = _signedInputs[Pin::Envelope::SignedInput::Gate];
+	Input& gateInput = _inputs[Pin::Envelope::Input::Gate];
 
 	if (gateInput.HasChanged())
 	{
@@ -21,9 +21,9 @@ void EnvelopeModule::Update()
 
 		if (gateInput.GetValue() != 0) // Gate on.
 		{
-			const SignedInput& attackInput = _signedInputs[Pin::Envelope::SignedInput::Attack];
-			const SignedInput& decayInput = _signedInputs[Pin::Envelope::SignedInput::Decay];
-			const SignedInput& sustainInput = _signedInputs[Pin::Envelope::SignedInput::Sustain];
+			const Input& attackInput = _inputs[Pin::Envelope::Input::Attack];
+			const Input& decayInput = _inputs[Pin::Envelope::Input::Decay];
+			const Input& sustainInput = _inputs[Pin::Envelope::Input::Sustain];
 
 			uint16_t attack = static_cast<uint16_t>(attackInput.GetValue());
 			uint16_t decay = static_cast<uint16_t>(decayInput.GetValue());
@@ -37,7 +37,7 @@ void EnvelopeModule::Update()
 		}
 		else // Gate off.
 		{
-			const SignedInput& releaseInput = _signedInputs[Pin::Envelope::SignedInput::Release];
+			const Input& releaseInput = _inputs[Pin::Envelope::Input::Release];
 		
 			if (uint32_t release = static_cast<uint32_t>(releaseInput.GetValue()))
 			{
@@ -87,6 +87,6 @@ void EnvelopeModule::Update()
 		break;
 	}
 
-	SignedOutput& levelOutput = _signedOutputs[Pin::Envelope::SignedOutput::Level];
+	Output& levelOutput = _outputs[Pin::Envelope::Output::Level];
 	levelOutput.SetValue(_level * Config::uint32ToFloat);
 }

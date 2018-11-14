@@ -5,18 +5,18 @@ using namespace Engine;
 
 DelayModule::DelayModule()
 {
-	_signedInputs.SetSize(Pin::Delay::SignedInput::_Count);
-	_signedOutputs.SetSize(Pin::Delay::SignedOutput::_Count);
+	_inputs.SetSize(Pin::Delay::Input::_Count);
+	_outputs.SetSize(Pin::Delay::Output::_Count);
 
 	_buffer.SetSize(Config::sampleRate); // 1 second.
 }
 
 void DelayModule::Update()
 {
-	SignedInput& signalInput = _signedInputs[Pin::Delay::SignedInput::Signal];
-	SignedOutput& signalOutput = _signedOutputs[Pin::Delay::SignedOutput::Signal];
-	SignedInput& feedbackInput = _signedInputs[Pin::Delay::SignedInput::Feedback];
-	SignedInput& periodInput = _signedInputs[Pin::Delay::SignedInput::Period];
+	Input& signalInput = _inputs[Pin::Delay::Input::Signal];
+	Output& signalOutput = _outputs[Pin::Delay::Output::Signal];
+	Input& feedbackInput = _inputs[Pin::Delay::Input::Feedback];
+	Input& periodInput = _inputs[Pin::Delay::Input::Period];
 
 	if (feedbackInput.HasChanged())
 	{
@@ -38,7 +38,7 @@ void DelayModule::Update()
 		_period = newPeriod;
 	}
 
-	signed_t val = signalInput.GetValue();
+	float val = signalInput.GetValue();
 	if (!_clear)
 		val = ClipBipolar(val + _buffer[_current]);
 

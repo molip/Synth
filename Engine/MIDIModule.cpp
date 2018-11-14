@@ -11,7 +11,7 @@ using namespace Engine;
 MIDIModule::MIDIModule(int polyphony)
 {
 	_notes.SetSize(polyphony);
-	_signedMultiOutputs.SetSize(Pin::MIDI::SignedMultiOutput::_Count);
+	_multiOutputs.SetSize(Pin::MIDI::MultiOutput::_Count);
 }
 
 void MIDIModule::ProcessMIDI(int8_t midiByte)
@@ -69,7 +69,7 @@ void MIDIModule::ResetMIDI()
 
 	for (int i = 0; i < _notes.GetSize(); ++i)
 	{
-		_signedMultiOutputs[Pin::MIDI::SignedMultiOutput::Gate][i].SetValue(0, true);
+		_multiOutputs[Pin::MIDI::MultiOutput::Gate][i].SetValue(0, true);
 		_notes[i].midiNote = -1;
 		_notes[i].order = 0;
 		_startCount = _endCount = 0;
@@ -87,8 +87,8 @@ void MIDIModule::StartNote(int8_t midiNote)
 	Note& note = _notes[index];
 	note.midiNote = midiNote;
 	const float pitch = MidiNoteToPitch(midiNote);
-	_signedMultiOutputs[Pin::MIDI::SignedMultiOutput::Pitch][index].SetValue(pitch);
-	_signedMultiOutputs[Pin::MIDI::SignedMultiOutput::Gate][index].SetValue(1, true);
+	_multiOutputs[Pin::MIDI::MultiOutput::Pitch][index].SetValue(pitch);
+	_multiOutputs[Pin::MIDI::MultiOutput::Gate][index].SetValue(1, true);
 	note.order = ++_startCount;
 }
 
@@ -99,7 +99,7 @@ void MIDIModule::StopNote(int8_t midiNote)
 	{
 		//SERIAL_PRINT("Stopping note: "); SERIAL_PRINTLN(index);
 
-		_signedMultiOutputs[Pin::MIDI::SignedMultiOutput::Gate][index].SetValue(0, true);
+		_multiOutputs[Pin::MIDI::MultiOutput::Gate][index].SetValue(0, true);
 		_notes[index].midiNote = -1;
 		_notes[index].order = ++_endCount;
 	}

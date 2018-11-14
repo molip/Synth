@@ -10,7 +10,7 @@ namespace Engine
 class Graph;
 class Module;
 
-namespace Input
+namespace RemoteInput
 {
 	void Process(byte data);
 	extern char* _error;
@@ -108,13 +108,13 @@ namespace Input
 				return IsMono() ? multi ? GetMonoMultiPin<T>(graph, i) : GetMonoSinglePin<T>(graph) : GetPolySinglePin<T>(graph, i);
 			}
 
-			template <typename TVal> void ConnectToOutput(Graph& graph, const Connection& output, bool multi) const
+			void ConnectToOutput(Graph& graph, const Connection& output, bool multi) const
 			{
 				if (IsMono() && output.IsMono() && !multi)
-					GetMonoSinglePin<InputT<TVal>>(graph).Connect(output.GetMonoSinglePin<OutputT<TVal>>(graph));
+					GetMonoSinglePin<Input>(graph).Connect(output.GetMonoSinglePin<Output>(graph));
 				else
 					for (int i = 0; i < graph.GetPolyphony(); ++i)
-						GetPin<InputT<TVal>>(graph, i, multi).Connect(output.GetPin<OutputT<TVal>>(graph, i, multi));
+						GetPin<Input>(graph, i, multi).Connect(output.GetPin<Output>(graph, i, multi));
 			}
 
 			InstanceType _modType = InstanceType::None;
@@ -158,10 +158,10 @@ namespace Input
 			if (_poly)
 			{
 				for (int i = 0; i < _graph->GetPolyphony(); ++i)
-					_graph->GetPolyModule(_modIndex, i)->GetPins<InputT<float>>()[_pinIndex].SetValue(val);
+					_graph->GetPolyModule(_modIndex, i)->GetPins<Input>()[_pinIndex].SetValue(val);
 			}
 			else
-				_graph->GetMonoModule(_modIndex)->GetPins<InputT<float>>()[_pinIndex].SetValue(val);
+				_graph->GetMonoModule(_modIndex)->GetPins<Input>()[_pinIndex].SetValue(val);
 
 			return true;
 		}

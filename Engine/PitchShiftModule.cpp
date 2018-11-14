@@ -5,14 +5,14 @@ using namespace Engine;
 
 PitchShiftModule::PitchShiftModule()
 {
-	_signedInputs.SetSize(Pin::PitchShift::SignedInput::_Count);
-	_signedOutputs.SetSize(Pin::PitchShift::SignedOutput::_Count);
+	_inputs.SetSize(Pin::PitchShift::Input::_Count);
+	_outputs.SetSize(Pin::PitchShift::Output::_Count);
 }
 
 void PitchShiftModule::Update()
 {
-	SignedInput& shiftInput = _signedInputs[Pin::PitchShift::SignedInput::Shift];
-	SignedInput& pitchInput = _signedInputs[Pin::PitchShift::SignedInput::Pitch];
+	Input& shiftInput = _inputs[Pin::PitchShift::Input::Shift];
+	Input& pitchInput = _inputs[Pin::PitchShift::Input::Pitch];
 	
 	if (shiftInput.HasChanged() || pitchInput.HasChanged())
 	{
@@ -22,6 +22,6 @@ void PitchShiftModule::Update()
 		const int16_t shift = static_cast<int16_t>(shiftInput.GetValue()) - 128; // See Exporter::WriteValues.
 		float pitch = pitchInput.GetValue() + shift * Config::pitchPerSemitone;
 		
-		_signedOutputs[Pin::PitchShift::SignedOutput::Pitch].SetValue(pitch);
+		_outputs[Pin::PitchShift::Output::Pitch].SetValue(pitch);
 	}
 }

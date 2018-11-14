@@ -11,7 +11,7 @@ public:
 	virtual bool WantUpdate() const override { return true; }
 
 private:
-	Array<signed_t> _buffer;
+	Array<float> _buffer;
 	float _feedback = 0;
 	uint32_t _current = 0;
 	uint16_t _period = 0;

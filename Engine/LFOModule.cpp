@@ -5,13 +5,13 @@ using namespace Engine;
 
 LFOModule::LFOModule()
 {
-	_signedInputs.SetSize(Pin::LFO::SignedInput::_Count);
-	_signedOutputs.SetSize(Pin::LFO::SignedOutput::_Count);
+	_inputs.SetSize(Pin::LFO::Input::_Count);
+	_outputs.SetSize(Pin::LFO::Output::_Count);
 }
 
 void LFOModule::Update()
 {
-	SignedInput& triggerInput = _signedInputs[Pin::LFO::SignedInput::Trigger];
+	Input& triggerInput = _inputs[Pin::LFO::Input::Trigger];
 	if (triggerInput.HasChanged())
 	{
 		if (triggerInput.GetValue())
@@ -24,11 +24,11 @@ void LFOModule::Update()
 
 	_divide = 0;
 
-	SignedInput& waveformInput = _signedInputs[Pin::LFO::SignedInput::Waveform];
-	SignedInput& levelInput = _signedInputs[Pin::LFO::SignedInput::Level];
-	SignedInput& pitchInput = _signedInputs[Pin::LFO::SignedInput::Pitch];
-	SignedInput& dutyInput = _signedInputs[Pin::LFO::SignedInput::Duty];
-	SignedOutput& signalOutput = _signedOutputs[Pin::LFO::SignedOutput::Signal];
+	Input& waveformInput = _inputs[Pin::LFO::Input::Waveform];
+	Input& levelInput = _inputs[Pin::LFO::Input::Level];
+	Input& pitchInput = _inputs[Pin::LFO::Input::Pitch];
+	Input& dutyInput = _inputs[Pin::LFO::Input::Duty];
+	Output& signalOutput = _outputs[Pin::LFO::Output::Signal];
 
 	const float level = levelInput.GetValue();
 

@@ -4,18 +4,18 @@ using namespace Engine;
 
 void Module::SetPolyphony(int polyphony)
 {
-	for (int i = 0; i < _signedMultiOutputs.GetSize(); ++i)
-		_signedMultiOutputs[i].SetSize(polyphony);
+	for (int i = 0; i < _multiOutputs.GetSize(); ++i)
+		_multiOutputs[i].SetSize(polyphony);
 	
-	for (int i = 0; i < _signedMultiInputs.GetSize(); ++i)
-		_signedMultiInputs[i].SetSize(polyphony);	
+	for (int i = 0; i < _multiInputs.GetSize(); ++i)
+		_multiInputs[i].SetSize(polyphony);	
 }
 
 namespace Engine
 {
-template<> Array<SignedOutput>& Module::GetPins() { return _signedOutputs; }
-template<> Array<SignedInput>& Module::GetPins() { return _signedInputs; }
+template<> Array<Output>& Module::GetPins() { return _outputs; }
+template<> Array<Input>& Module::GetPins() { return _inputs; }
 
-template<> Array<SignedMultiOutput>& Module::GetMultiPins() { return _signedMultiOutputs; }
-template<> Array<SignedMultiInput>& Module::GetMultiPins() { return _signedMultiInputs; }
+template<> Array<MultiOutput>& Module::GetMultiPins() { return _multiOutputs; }
+template<> Array<MultiInput>& Module::GetMultiPins() { return _multiInputs; }
 }

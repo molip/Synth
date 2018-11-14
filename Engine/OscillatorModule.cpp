@@ -5,15 +5,15 @@ using namespace Engine;
 
 OscillatorModule::OscillatorModule()
 {
-	_signedInputs.SetSize(Pin::Oscillator::SignedInput::_Count);
-	_signedOutputs.SetSize(Pin::Oscillator::SignedOutput::_Count);
+	_inputs.SetSize(Pin::Oscillator::Input::_Count);
+	_outputs.SetSize(Pin::Oscillator::Output::_Count);
 }
 
 void OscillatorModule::Update()
 {
-	SignedInput& levelInput = _signedInputs[Pin::Oscillator::SignedInput::Level];
-	SignedInput& pitchInput = _signedInputs[Pin::Oscillator::SignedInput::Pitch];
-	SignedOutput& signalOutput = _signedOutputs[Pin::Oscillator::SignedOutput::Signal];
+	Input& levelInput = _inputs[Pin::Oscillator::Input::Level];
+	Input& pitchInput = _inputs[Pin::Oscillator::Input::Pitch];
+	Output& signalOutput = _outputs[Pin::Oscillator::Output::Signal];
 
 	const float level = levelInput.GetValue();
 
@@ -32,8 +32,8 @@ void OscillatorModule::Update()
 
 	_phase += _phaseDelta;
 	
-	uint16_t phase = _phase + static_cast<int16_t>(_signedInputs[Pin::Oscillator::SignedInput::PhaseMod].GetValue() * 0x7fff);
-	const byte waveform = static_cast<byte>(_signedInputs[Pin::Oscillator::SignedInput::Waveform].GetValue());
+	uint16_t phase = _phase + static_cast<int16_t>(_inputs[Pin::Oscillator::Input::PhaseMod].GetValue() * 0x7fff);
+	const byte waveform = static_cast<byte>(_inputs[Pin::Oscillator::Input::Waveform].GetValue());
 	uint16_t output = ::SampleWaveform(waveform, phase, 0x8000);
 
 	signalOutput.SetValue((output * Config::uint16ToFloat - 0.5f) * level);

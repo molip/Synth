@@ -5,19 +5,19 @@ using namespace Engine;
 
 ArpeggiatorModule::ArpeggiatorModule(int polyphony) : _polyphony(polyphony)
 {
-	_signedInputs.SetSize(Pin::Arpeggiator::SignedInput::_Count);
-	_signedMultiInputs.SetSize(Pin::Arpeggiator::SignedMultiInput::_Count);
-	_signedMultiOutputs.SetSize(Pin::Arpeggiator::SignedMultiOutput::_Count);
+	_inputs.SetSize(Pin::Arpeggiator::Input::_Count);
+	_multiInputs.SetSize(Pin::Arpeggiator::MultiInput::_Count);
+	_multiOutputs.SetSize(Pin::Arpeggiator::MultiOutput::_Count);
 
 	_pitches.SetSize(polyphony);
 }
 
 void ArpeggiatorModule::Update()
 {
-	SignedMultiInput& gateInputs = _signedMultiInputs[Pin::Arpeggiator::SignedMultiInput::Gate];
-	SignedMultiInput& pitchInputs = _signedMultiInputs[Pin::Arpeggiator::SignedMultiInput::Pitch];
-	SignedInput& periodInput = _signedInputs[Pin::Arpeggiator::SignedInput::Period];
-	SignedInput& octavesInput = _signedInputs[Pin::Arpeggiator::SignedInput::Octaves];
+	MultiInput& gateInputs = _multiInputs[Pin::Arpeggiator::MultiInput::Gate];
+	MultiInput& pitchInputs = _multiInputs[Pin::Arpeggiator::MultiInput::Pitch];
+	Input& periodInput = _inputs[Pin::Arpeggiator::Input::Period];
+	Input& octavesInput = _inputs[Pin::Arpeggiator::Input::Octaves];
 
 	if (periodInput.HasChanged())
 	{
@@ -76,7 +76,7 @@ void ArpeggiatorModule::Update()
 			_currentPitch = -1;
 
 		if (_currentOutput >= 0)  // Stop current output. 
-			_signedMultiOutputs[Pin::Arpeggiator::SignedMultiOutput::Gate][_currentOutput].SetValue(0);
+			_multiOutputs[Pin::Arpeggiator::MultiOutput::Gate][_currentOutput].SetValue(0);
 
 		_currentOutput = (_currentOutput + 1) % _polyphony;
 		
@@ -91,8 +91,8 @@ void ArpeggiatorModule::Update()
 		if (_noteCount)
 		{
 			float pitch = _pitches[_currentPitch] + _currentOctave * Config::pitchPerOctave;
-			_signedMultiOutputs[Pin::Arpeggiator::SignedMultiOutput::Gate][_currentOutput].SetValue(1);
-			_signedMultiOutputs[Pin::Arpeggiator::SignedMultiOutput::Pitch][_currentOutput].SetValue(pitch);
+			_multiOutputs[Pin::Arpeggiator::MultiOutput::Gate][_currentOutput].SetValue(1);
+			_multiOutputs[Pin::Arpeggiator::MultiOutput::Pitch][_currentOutput].SetValue(pitch);
 			_waiting = false; // Don't sync until _noteCount == 0 again.
 		}
 		else

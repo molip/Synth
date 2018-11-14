@@ -20,7 +20,7 @@ EngineTest& EngineTest::Instance()
 bool EngineTest::Test(const Buffer& buffer)
 {
 	for (byte b : buffer)
-		Engine::Input::Process(b);
+		Engine::RemoteInput::Process(b);
 
 	if (Engine::Graph* graph = Engine::Graph::GetActive())
 	{

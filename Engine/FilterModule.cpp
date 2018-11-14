@@ -4,23 +4,23 @@ using namespace Engine;
 
 FilterModule::FilterModule()
 {
-	_signedInputs.SetSize(Pin::Filter::SignedInput::_Count);
-	_signedOutputs.SetSize(Pin::Filter::SignedOutput::_Count);
+	_inputs.SetSize(Pin::Filter::Input::_Count);
+	_outputs.SetSize(Pin::Filter::Output::_Count);
 }
 
 void FilterModule::Update()
 {
-	SignedInput& signalInput = _signedInputs[Pin::Filter::SignedInput::Signal];
-	SignedOutput& signalOutput = _signedOutputs[Pin::Filter::SignedOutput::Signal];
+	Input& signalInput = _inputs[Pin::Filter::Input::Signal];
+	Output& signalOutput = _outputs[Pin::Filter::Output::Signal];
 
-	if (_signedInputs[Pin::Filter::SignedInput::Bypass].GetValue())
+	if (_inputs[Pin::Filter::Input::Bypass].GetValue())
 	{
 		signalOutput.SetValue(signalInput.GetValue());
 		return;
 	}
 
-	SignedInput& freqInput = _signedInputs[Pin::Filter::SignedInput::Frequency];
-	SignedInput& resInput = _signedInputs[Pin::Filter::SignedInput::Resonance];
+	Input& freqInput = _inputs[Pin::Filter::Input::Frequency];
+	Input& resInput = _inputs[Pin::Filter::Input::Resonance];
 
 	if (freqInput.HasChanged() || resInput.HasChanged())
 	{

@@ -8,71 +8,67 @@
 
 namespace Engine
 {
-template <typename T> class InputT;
+class Input;
 
-template <typename T>
-class OutputT
+class Output
 {
 public:
-	OutputT()
+	Output()
 	{
 		_dests.Reserve(10); //TODO: Upload actual size.
 	}
 
-	void AddDest(InputT<T>& input) { _dests.Push(&input); }
+	void AddDest(Input& input) { _dests.Push(&input); }
 
-	void SetValue(T val, bool forceChanged = false)
-	{
-		if (forceChanged || val != _value)
-		{
-			for (int i = 0; i < _dests.GetSize(); ++i)
-				_dests[i]->SetValue(val);
-			
-			_value = val;
-		}
-	}
+	void SetValue(float val, bool forceChanged = false);
 
 private:
-	T _value = 0;
-	Array<InputT<T>*> _dests;
+	float _value = 0;
+	Array<Input*> _dests;
 };
 
-template <typename T>
-class InputT
+class Input
 {
 public:
-	InputT() = default;
-	InputT(const InputT<T>&) = delete;
+	Input() = default;
+	Input(const Input&) = delete;
 
-	void SetValue(T val)
+	void SetValue(float val)
 	{
 		_value = val;
 		_changed = true; // It's up to the output to only call this when necessary. 
 	}
 
-	T GetValue() const { return _value; }
+	float GetValue() const { return _value; }
 	bool HasChanged() const { return _changed; }
 	bool IsConnected() const { return _connected; }
-	void Connect(OutputT<T>& output) { output.AddDest(*this); _connected = true; }
+	void Connect(Output& output) { output.AddDest(*this); _connected = true; }
 	void ResetChanged() { _changed = false; }
 
 private:
 	bool _changed = false;
 	bool _connected = false;
-	T _value = 0;
+	float _value = 0;
 };
 
-using SignedOutput = OutputT<Config::signed_t>;
-using SignedMultiOutput = Array<OutputT<Config::signed_t>>;
+inline void Output::SetValue(float val, bool forceChanged)
+{
+	if (forceChanged || val != _value)
+	{
+		for (int i = 0; i < _dests.GetSize(); ++i)
+			_dests[i]->SetValue(val);
 
-using SignedInput = InputT<Config::signed_t>;
-using SignedMultiInput = Array<InputT<Config::signed_t>>;
+		_value = val;
+	}
+}
+
+
+using MultiOutput = Array<Output>;
+using MultiInput = Array<Input>;
 
 class Module
 {
 public:
-	using signed_t = Config::signed_t;
-
 	virtual ~Module() = default;
 	virtual void Update() {}
 	virtual bool WantUpdate() const { return false; }
@@ -83,10 +79,10 @@ public:
 	template<typename T> Array<Array<T>>& GetMultiPins();
 
 protected:
-	Array<SignedOutput> _signedOutputs;
-	Array<SignedMultiOutput> _signedMultiOutputs;
+	Array<Output> _outputs;
+	Array<MultiOutput> _multiOutputs;
 
-	Array<SignedInput> _signedInputs;
-	Array<SignedMultiInput> _signedMultiInputs;
+	Array<Input> _inputs;
+	Array<MultiInput> _multiInputs;
 };
 }

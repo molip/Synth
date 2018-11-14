@@ -81,7 +81,7 @@ void Exporter::WriteValues(const Module& mod, const PinType& input)
 
 		// TODO: Fix properly. 
 		if (mod.GetDef().GetEngineID() == Engine::ModuleType::PitchShift)
-			if (input.GetEngineID() == Engine::Pin::PitchShift::SignedInput::Shift)
+			if (input.GetEngineID() == Engine::Pin::PitchShift::Input::Shift)
 				val += 128; // See PitchShiftModule::Update().
 
 		Add(input.IsSigned() ? Engine::CommandType::SetSignedValue : Engine::CommandType::SetUnsignedValue);

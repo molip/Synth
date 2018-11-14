@@ -1,7 +1,7 @@
 #include "Input.h"
 #include "MIDIData.h"
 
-namespace Engine { namespace Input
+namespace Engine { namespace RemoteInput
 {
 
 namespace 
@@ -210,7 +210,7 @@ bool AddConnectionCommand::Execute() const
 	if (!_output._done) 
 		return false;
 
-	_input.ConnectToOutput<Module::signed_t>(*_graph, _output, _connType == ConnectionType::Multi);
+	_input.ConnectToOutput(*_graph, _output, _connType == ConnectionType::Multi);
 
 	return true;
 }

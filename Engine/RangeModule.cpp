@@ -4,16 +4,16 @@ using namespace Engine;
 
 RangeModule::RangeModule()
 {
-	_signedInputs.SetSize(Pin::Range::SignedInput::_Count);
-	_signedOutputs.SetSize(Pin::Range::SignedOutput::_Count);
+	_inputs.SetSize(Pin::Range::Input::_Count);
+	_outputs.SetSize(Pin::Range::Output::_Count);
 }
 
 void RangeModule::Update()
 {
-	signed_t signal = _signedInputs[Pin::Range::SignedInput::Value].GetValue();
-	signed_t min = _signedInputs[Pin::Range::SignedInput::Minimum].GetValue();
-	signed_t max = _signedInputs[Pin::Range::SignedInput::Maximum].GetValue();
+	float signal = _inputs[Pin::Range::Input::Value].GetValue();
+	float min = _inputs[Pin::Range::Input::Minimum].GetValue();
+	float max = _inputs[Pin::Range::Input::Maximum].GetValue();
 
-	signed_t output = min + (max - min) * signal;
-	_signedOutputs[Pin::Range::SignedOutput::Value].SetValue(output);
+	float output = min + (max - min) * signal;
+	_outputs[Pin::Range::Output::Value].SetValue(output);
 }

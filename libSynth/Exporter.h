@@ -32,8 +32,7 @@ namespace Model
 
 		const Graph& _graph;
 		BufferPtr _buffer;
-		byte _monoModCount = 0;
-		byte _polyModCount = 0;
+		byte _modCount = 0;
 		std::map<int, byte> _modIndices; // id -> index;
 	};
 

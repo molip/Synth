@@ -4,6 +4,8 @@ using namespace Engine;
 
 void Module::SetPolyphony(int polyphony)
 {
+	// TODO: poly inputs/outputs
+
 	for (int i = 0; i < _multiOutputs.GetSize(); ++i)
 		_multiOutputs[i].SetSize(polyphony);
 	

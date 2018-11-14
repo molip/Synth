@@ -13,12 +13,10 @@ class MIDIModule;
 class Graph
 {
 public:
-	void Init(byte modCount, byte polyModCount, byte polyphony);
-	void AddMonoModule(ModuleType type);
-	void AddPolyModule(ModuleType type);
+	void Init(byte modCount, byte polyphony);
+	void AddModule(ModuleType type);
 
-	Module* GetMonoModule(byte modIndex);
-	Module* GetPolyModule(byte modIndex, byte instanceIndex);
+	Module* GetModule(byte modIndex);
 	
 	int GetPolyphony() const { return _polyphony; }
 
@@ -30,8 +28,6 @@ public:
 	void Activate();
 
 private:
-	void AddModule(ModuleType type);
-
 	static Graph* _active;
 
 	Array<uint16_t> _modIndices;

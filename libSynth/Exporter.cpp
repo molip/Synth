@@ -13,20 +13,18 @@ Exporter::Exporter(const Graph& graph) : _graph(graph)
 
 	for (auto& mod : _graph.GetSorted())
 	{
-		byte& index = mod->IsInstanced(_graph) ? _polyModCount : _monoModCount;
-		_modIndices.insert(std::make_pair(mod->GetID(), index++));
+		_modIndices.insert(std::make_pair(mod->GetID(), _modCount++));
 	}
 }
 
 BufferPtr Exporter::Export()
 {
-	const byte polyphony = 4;
+	const byte polyphony = 16;
 
 	Add(Engine::CommandType::StartGraph);
 
 	Add(Engine::CommandType::InitGraph);
-	Add(_monoModCount);
-	Add(_polyModCount);
+	Add(_modCount);
 	Add(polyphony);
 
 	for (auto& mod : _graph.GetSorted())

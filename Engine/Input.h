@@ -47,7 +47,6 @@ namespace RemoteInput
 
 	private:
 		int _modCount = -1;
-		int _polyModCount = -1;
 		int _polyphony = -1;
 	};
 
@@ -69,12 +68,6 @@ namespace RemoteInput
 		AddMonoModuleCommand(Graph* graph) : AddModuleCommand(graph, false) {}
 	};
 
-	class AddPolyModuleCommand : public AddModuleCommand 
-	{
-	public:
-		AddPolyModuleCommand(Graph* graph) : AddModuleCommand(graph, true) {}
-	};
-
 	class AddConnectionCommand : public Command
 	{
 	public:
@@ -88,30 +81,25 @@ namespace RemoteInput
 			void AddData(byte data); // Returns true if data accepted. 
 			bool IsMono() const { return _modType == InstanceType::Mono; }
 
-			template <typename T> T& GetMonoSinglePin(Graph& graph) const
+			template <typename T> T& GetSinglePin(Graph& graph) const
 			{
-				return graph.GetMonoModule(_modIndex)->GetPins<T>()[_pinIndex];
+				return graph.GetModule(_modIndex)->GetPins<T>()[_pinIndex];
 			}
 
-			template <typename T> T& GetMonoMultiPin(Graph& graph, int i) const
+			template <typename T> T& GetMultiPin(Graph& graph, int i) const
 			{
-				return graph.GetMonoModule(_modIndex)->GetMultiPins<T>()[_pinIndex][i];
-			}
-
-			template <typename T> T& GetPolySinglePin(Graph& graph, int i) const 
-			{
-				return graph.GetPolyModule(_modIndex, i)->GetPins<T>()[_pinIndex];
+				return graph.GetModule(_modIndex)->GetMultiPins<T>()[_pinIndex][i];
 			}
 
 			template <typename T> T& GetPin(Graph& graph, int i, bool multi) const 
 			{
-				return IsMono() ? multi ? GetMonoMultiPin<T>(graph, i) : GetMonoSinglePin<T>(graph) : GetPolySinglePin<T>(graph, i);
+				return IsMono() && !multi ? GetSinglePin<T>(graph) : GetMultiPin<T>(graph, i);
 			}
 
 			void ConnectToOutput(Graph& graph, const Connection& output, bool multi) const
 			{
 				if (IsMono() && output.IsMono() && !multi)
-					GetMonoSinglePin<Input>(graph).Connect(output.GetMonoSinglePin<Output>(graph));
+					GetSinglePin<Input>(graph).Connect(output.GetSinglePin<Output>(graph));
 				else
 					for (int i = 0; i < graph.GetPolyphony(); ++i)
 						GetPin<Input>(graph, i, multi).Connect(output.GetPin<Output>(graph, i, multi));
@@ -158,10 +146,10 @@ namespace RemoteInput
 			if (_poly)
 			{
 				for (int i = 0; i < _graph->GetPolyphony(); ++i)
-					_graph->GetPolyModule(_modIndex, i)->GetPins<Input>()[_pinIndex].SetValue(val);
+					_graph->GetModule(_modIndex)->GetMultiPins<Input>()[_pinIndex][i].SetValue(val);
 			}
 			else
-				_graph->GetMonoModule(_modIndex)->GetPins<Input>()[_pinIndex].SetValue(val);
+				_graph->GetModule(_modIndex)->GetPins<Input>()[_pinIndex].SetValue(val);
 
 			return true;
 		}

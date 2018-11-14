@@ -47,7 +47,7 @@ void Process(byte data)
 			break;
 		case CommandType::AddPolyModule: 
 			SERIAL_PRINTLN("CommandType::AddPolyModuleCommand");
-			_command = new AddPolyModuleCommand(_newGraph);
+			_command = new AddMonoModuleCommand(_newGraph);
 			break;
 		case CommandType::AddConnection: 
 			SERIAL_PRINTLN("CommandType::AddConnectionCommand");
@@ -123,10 +123,6 @@ Error InitGraphCommand::AddData(byte data)
 
 		_modCount = data;
 	}
-	else if (_polyModCount < 0)
-	{
-		_polyModCount = data;
-	}
 	else if (_polyphony < 0)
 	{
 		_polyphony = data;
@@ -141,7 +137,7 @@ bool InitGraphCommand::Execute() const
 	if (_polyphony < 0)
 		return false;
 
-	_graph->Init(_modCount, _polyModCount, _polyphony);
+	_graph->Init(_modCount, _polyphony);
 	return true;
 }
 
@@ -164,10 +160,7 @@ bool AddModuleCommand::Execute() const
 	if (_moduleType == ModuleType::None)
 		return false;
 
-	if (_poly)
-		_graph->AddPolyModule(_moduleType);
-	else
-		_graph->AddMonoModule(_moduleType);
+	_graph->AddModule(_moduleType);
 
 	return true;
 }

@@ -4,18 +4,24 @@ using namespace Engine;
 
 MixerModule::MixerModule()
 {
-	_inputs.SetSize(Pin::Mixer::Input::_Count);
-	_outputs.SetSize(Pin::Mixer::Output::_Count);
-	_activeInputs.Reserve(_inputs.GetSize());
+	_multiInputs.SetSize(Pin::Mixer::Input::_Count);
+	_multiOutputs.SetSize(Pin::Mixer::Output::_Count);
+	_activeInputs.Reserve(_multiInputs.GetSize());
 }
 
 void MixerModule::Update()
 {
+	for (int i = 0; i < _multiInputs[0].GetSize(); ++i)
+		UpdateInstance(i);
+}
+
+void MixerModule::UpdateInstance(int index)
+{
 	if (!_initialised)
 	{
-		for (int i = 0; i < _inputs.GetSize(); ++i)
-			if (_inputs[i].IsConnected())
-				_activeInputs.Push(&_inputs[i]);
+		for (int i = 0; i < _multiInputs.GetSize(); ++i)
+			if (_multiInputs[i][0].IsConnected())
+				_activeInputs.Push(&_multiInputs[i]);
 
 		_scale = 1.0f / _activeInputs.GetSize();
 		_initialised = true;
@@ -27,7 +33,7 @@ void MixerModule::Update()
 
 	float total = 0;
 	for (int i = 0; i < count; ++i)
-		total += _activeInputs[i]->GetValue();
+		total += (*_activeInputs[i])[index].GetValue();
 
-	_outputs[Pin::Mixer::Output::Signal].SetValue(total * _scale);
+	_multiOutputs[Pin::Mixer::Output::Signal][index].SetValue(total * _scale);
 }

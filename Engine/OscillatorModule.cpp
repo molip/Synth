@@ -31,7 +31,7 @@ void OscillatorModule::Update()
 		_phaseDelta = ::PitchToPhaseDelta(pitchInput.GetValue());
 	}
 
-	const int16_t phaseMod = phaseModInput.IsConnected() ? static_cast<int16_t>(phaseModInput.GetValue() * 0x7fff) : 0;
+	const int16_t phaseMod = phaseModInput.IsConnected() ? static_cast<int16_t>(phaseModInput.GetValue() * 0x40000) : 0;
 
 	_phase += _phaseDelta;
 	

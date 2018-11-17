@@ -18,10 +18,8 @@ Exporter::Exporter(const Graph& graph) : _graph(graph)
 	}
 }
 
-BufferPtr Exporter::Export()
+BufferPtr Exporter::Export(byte polyphony)
 {
-	const byte polyphony = 4;
-
 	Add(Engine::CommandType::StartGraph);
 
 	Add(Engine::CommandType::InitGraph);

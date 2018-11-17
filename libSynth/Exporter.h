@@ -18,7 +18,7 @@ namespace Model
 	{
 	public:
 		Exporter(const Graph& graph);
-		BufferPtr Export();
+		BufferPtr Export(byte polyphony);
 		BufferPtr ExportValues(int moduleID, Tag pinID);
 
 	private:

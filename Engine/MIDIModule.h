@@ -11,6 +11,7 @@ public:
 
 	void ProcessMIDI(int8_t midiByte);
 	void ResetMIDI();
+	void SetAllNotesOn();
 
 	class Note 
 	{

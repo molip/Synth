@@ -11,6 +11,7 @@ namespace Synth
 	public:
 		BufferPtr Export(const std::wstring& path);
 		BufferPtr ExportStopMIDI();
+		BufferPtr ExportSetAllNotesOn();
 	private:
 		void Add(byte data) { (*_buffer).push_back(data); }
 

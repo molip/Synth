@@ -281,8 +281,13 @@ std::vector<Controller::Connection> Controller::GetConnections() const
 
 bool Controller::Export() const
 {
+	return DoExport(4);
+}
+
+bool Controller::DoExport(byte polyphony) const
+{
 	Model::Exporter exporter(*_graph);
-	if (BufferPtr buffer = exporter.Export())
+	if (BufferPtr buffer = exporter.Export(polyphony))
 	{
 		if (_view->UploadData(*buffer))
 		{
@@ -297,10 +302,19 @@ bool Controller::Export() const
 bool Controller::TestGraph() const
 {
 	Model::Exporter exporter(*_graph);
-	if (BufferPtr buffer = exporter.Export())
+	if (BufferPtr buffer = exporter.Export(1))
 		return EngineTest::Instance().Test(*buffer);
 
 	return false;
+}
+
+bool Controller::ExportPolyTest()
+{
+	if (!DoExport(16))
+		return false;
+
+	_view->UploadData(*MIDIExporter().ExportSetAllNotesOn());
+	return true;
 }
 
 bool Controller::ExportMIDIFile(const std::wstring& path) const

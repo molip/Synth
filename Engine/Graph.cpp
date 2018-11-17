@@ -39,6 +39,12 @@ void Graph::ResetMIDI()
 		_midiModule->ResetMIDI();
 }
 
+void Graph::SetAllNotesOn()
+{
+	if (_midiModule)
+		_midiModule->SetAllNotesOn();
+}
+
 void Graph::Update()
 {
 	for (int i = 0; i < _updateModules.GetSize(); ++i)

@@ -24,6 +24,7 @@ public:
 
 	void ProcessMIDI(byte data);
 	void ResetMIDI();
+	void SetAllNotesOn();
 	void Update();
 
 	static Graph* GetActive() { return _active; }

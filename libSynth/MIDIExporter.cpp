@@ -82,3 +82,10 @@ BufferPtr MIDIExporter::ExportStopMIDI()
 	Add((byte)Engine::CommandType::StopMIDIPlayback);
 	return std::move(_buffer);
 }
+
+BufferPtr MIDIExporter::ExportSetAllNotesOn()
+{
+	_buffer = std::make_unique<Buffer>();
+	Add((byte)Engine::CommandType::SetAllNotesOn);
+	return std::move(_buffer);
+}

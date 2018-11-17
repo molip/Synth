@@ -76,6 +76,14 @@ void MIDIModule::ResetMIDI()
 	}
 }
 
+void MIDIModule::SetAllNotesOn()
+{
+	ResetMIDI();
+
+	for (byte i = 0; i < _notes.GetSize(); ++i)
+		StartNote(60 + i);
+}
+
 void MIDIModule::StartNote(int8_t midiNote)
 {
 	int index = FindNote(midiNote); // The controller shouldn't start a note twice, but we should handle it anyway. 

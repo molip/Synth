@@ -56,6 +56,7 @@ namespace Synth
 
 		bool Export() const;
 		bool TestGraph() const;
+		bool ExportPolyTest();
 		bool ExportMIDIFile(const std::wstring& path) const;
 		void StopMIDIFilePlayback() const;
 		bool Save(const std::wstring& path) const;
@@ -74,6 +75,7 @@ namespace Synth
 
 	private:
 		Selection HitTest(Model::Point point, Model::Rect* elementRect = nullptr) const;
+		bool DoExport(byte polyphony) const;
 
 		View* _view = nullptr;
 

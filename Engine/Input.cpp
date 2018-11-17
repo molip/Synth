@@ -64,6 +64,11 @@ void Process(byte data)
 			MIDIData::Instance().ResetData();
 			Graph::GetActive()->ResetMIDI();
 			break;
+		case CommandType::SetAllNotesOn:
+			SERIAL_PRINTLN("CommandType::SetAllNotesOn");
+			MIDIData::Instance().ResetData();
+			Graph::GetActive()->SetAllNotesOn();
+			break;
 			
 		// Can be either.
 		case CommandType::SetUnsignedValue: 

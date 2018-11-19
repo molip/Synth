@@ -70,6 +70,7 @@ class Module
 {
 public:
 	virtual ~Module() = default;
+	virtual void Initialise() {}
 	virtual void Update() {}
 	virtual bool WantUpdate() const { return false; }
 

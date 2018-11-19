@@ -58,6 +58,9 @@ void Graph::Activate()
 
 	delete _active;
 	_active = this;
+
+	for (int i = 0; i < _modules.GetSize(); ++i)
+		_modules[i]->Initialise();
 }
 
 void Graph::AddModule(ModuleType type)

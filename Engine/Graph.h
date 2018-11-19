@@ -9,6 +9,7 @@ namespace Engine
 {
 class Module;
 class MIDIModule;
+class KnobModule;
 
 class Graph
 {
@@ -26,6 +27,9 @@ public:
 	void ResetMIDI();
 	void SetAllNotesOn();
 	void Update();
+	
+	int GetKnobCount() const { return _knobModules.GetSize(); }
+	void UpdateKnob(int index, uint16_t val);
 
 	static Graph* GetActive() { return _active; }
 	void Activate();
@@ -39,6 +43,7 @@ private:
 	Array<uint16_t> _polyModIndices; // Indices of first instance.
 	PtrArray<Module> _modules;
 	Array<Module*> _updateModules;
+	Array<KnobModule*> _knobModules;
 	byte _polyphony = 0;
 	MIDIModule* _midiModule = nullptr;
 };

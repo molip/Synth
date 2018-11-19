@@ -31,6 +31,7 @@ public:
 		uint16ToFloat = 1.0f / 0xffff;
 		uint16ToFloat2 = 2.0f / 0xffff;
 		uint32ToFloat = 1.0f / 0xffffffff;
+		analogInToFloat = 1.0f / 0x3ff;
 	}
 
 	static const int pitchStepsPerSemitone = 16;
@@ -44,6 +45,7 @@ public:
 	static float uint16ToFloat;
 	static float uint16ToFloat2;
 	static float uint32ToFloat;
+	static float analogInToFloat;
 
 	static float freqs[pitchStepsPerOctave];
 	static float freqFactors[12];

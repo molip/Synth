@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Maths, LFO, Delay, Arpeggiator, Multiply, _Count };
+enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Maths, LFO, Delay, Arpeggiator, Multiply, Knob, _Count };
 
 namespace Pin
 {
@@ -64,6 +64,11 @@ namespace Pin
 		namespace Input { enum Type { Period, Octaves, _Count }; }
 		namespace MultiInput { enum Type { Gate, Pitch, _Count }; }
 		namespace MultiOutput { enum Type { Gate, Pitch, _Count }; }
+	}
+	namespace Knob
+	{
+		namespace Input { enum Type { Index, _Count }; }
+		namespace Output { enum Type { Value, _Count }; }
 	}
 }
 enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetInputParams, SetMIDIData, SetAllNotesOn, StopMIDIPlayback };

@@ -87,6 +87,10 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, Engine::Pin::Arpeggiator::MultiInput::Pitch));
 	_types.back().AddOutput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, Engine::Pin::Arpeggiator::MultiOutput::Gate));
 	_types.back().AddOutput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, Engine::Pin::Arpeggiator::MultiOutput::Pitch));
+
+	_types.emplace_back("knob", "Knob", Engine::ModuleType::Knob);
+	_types.back().AddInput(std::make_unique<PinType>("indx", "Index", PinType::ConnectionType::Single, Engine::Pin::Knob::Input::Index)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 7));
+	_types.back().AddOutput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, Engine::Pin::Knob::Output::Value));
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

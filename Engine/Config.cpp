@@ -9,6 +9,7 @@ float Config::pitchStepsPerPitch;
 float Config::uint16ToFloat;
 float Config::uint16ToFloat2;
 float Config::uint32ToFloat;
+float Config::analogInToFloat;
 
 float Config::freqs[Config::pitchStepsPerOctave];
 float Config::freqFactors[12];

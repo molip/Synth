@@ -124,6 +124,9 @@
     <ClInclude Include="..\Engine\MultiplyModule.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Engine\KnobModule.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">
@@ -208,6 +211,9 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\Engine\MultiplyModule.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\KnobModule.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>

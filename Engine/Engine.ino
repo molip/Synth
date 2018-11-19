@@ -1,6 +1,7 @@
 #include <TimerOne.h>
 #include <SoftwareSerial.h>
 #include <limits.h>
+#include <ADC.h>
 
 #include <avr/pgmspace.h>
 
@@ -15,9 +16,12 @@ using namespace Engine;
 
 #define MIDISERIAL Serial2
 
-boolean gotTick;
+boolean _gotTick;
 
-uint32_t lastReport;
+uint32_t _lastReport;
+uint8_t _currentKnob;
+
+ADC* _adc = new ADC();
 
 void setup()
 {
@@ -29,6 +33,9 @@ void setup()
 	pinMode(7, INPUT_PULLUP);
 	
 	analogWriteResolution(12);
+
+	_adc->setAveraging(16);
+	_adc->startSingleRead(0);
 
 	const unsigned long interval = 1000000 / Config::sampleRate;
 	Timer1.initialize(interval); 
@@ -66,17 +73,17 @@ void loop()
 	        graph->ProcessMIDI(data);
 	}
 
-	if (gotTick)
+	if (_gotTick)
 	{
 		midiData.DoTick();
 
-		gotTick = false;
+		_gotTick = false;
 		unsigned long start = micros();
 		DoTick();
 		
-		if (start > lastReport + 1000000)
+		if (start > _lastReport + 1000000)
 		{	
-			lastReport = start;
+			_lastReport = start;
 			Serial.println(micros() - start);
 		}
 	}
@@ -84,11 +91,29 @@ void loop()
 
 void timer()
 {
-	gotTick = true;
+	_gotTick = true;
 }
 
 void DoTick()
 {
+	int16_t adcVal = -1;
+	if (_adc->isComplete())
+	{
+		adcVal = _adc->readSingle();
+		_adc->startSingleRead(0);
+	}
+
 	if (Graph* graph = Graph::GetActive())
+	{
+		if (adcVal >= 0)
+		{
+			if (const int knobCount = graph->GetKnobCount())
+			{
+				_currentKnob = _currentKnob % knobCount;
+				graph->UpdateKnob(_currentKnob++, adcVal);
+			}
+		}
+
 		graph->Update();
+	}
 }

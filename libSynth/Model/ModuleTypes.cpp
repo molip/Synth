@@ -59,6 +59,13 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("sig3", "Signal 3", PinType::ConnectionType::Single, Engine::Pin::Mixer::Input::Signal3));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Mixer::Output::Signal));
 
+	_types.emplace_back("mult", "Multiply", Engine::ModuleType::Multiply);
+	_types.back().AddInput(std::make_unique<PinType>("sig0", "Signal 0", PinType::ConnectionType::Single, Engine::Pin::Multiply::Input::Signal0));
+	_types.back().AddInput(std::make_unique<PinType>("sig1", "Signal 1", PinType::ConnectionType::Single, Engine::Pin::Multiply::Input::Signal1));
+	_types.back().AddInput(std::make_unique<PinType>("sig2", "Signal 2", PinType::ConnectionType::Single, Engine::Pin::Multiply::Input::Signal2));
+	_types.back().AddInput(std::make_unique<PinType>("sig3", "Signal 3", PinType::ConnectionType::Single, Engine::Pin::Multiply::Input::Signal3));
+	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Multiply::Output::Signal));
+
 	_types.emplace_back("lfo", "LFO", Engine::ModuleType::LFO);
 	_types.back().AddInput(std::make_unique<PinType>("trig", "Trigger", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Trigger));
 	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 3));

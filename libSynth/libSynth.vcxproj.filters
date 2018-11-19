@@ -121,6 +121,9 @@
     <ClInclude Include="..\Engine\MathsModule.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Engine\MultiplyModule.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">
@@ -202,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="EngineTest.cpp" />
     <ClCompile Include="..\Engine\MathsModule.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\MultiplyModule.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>

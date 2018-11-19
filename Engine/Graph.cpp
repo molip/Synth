@@ -5,6 +5,7 @@
 #include "OscillatorModule.h"
 #include "PolyMixerModule.h"
 #include "MixerModule.h"
+#include "MultiplyModule.h"
 #include "OutputModule.h"
 #include "FilterModule.h"
 #include "MathsModule.h"
@@ -72,6 +73,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::Oscillator: mod = new OscillatorModule; break;
 	case ModuleType::PolyMixer: mod = new PolyMixerModule(_polyphony); break;
 	case ModuleType::Mixer: mod = new MixerModule; break;
+	case ModuleType::Multiply: mod = new MultiplyModule; break;
 	case ModuleType::Target: mod = new OutputModule; break;
 	case ModuleType::Filter: mod = new FilterModule; break;
 	case ModuleType::Maths: mod = new MathsModule; break;

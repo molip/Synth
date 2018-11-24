@@ -75,18 +75,20 @@ void Exporter::WriteValues(const Module& mod, const PinType& input)
 {
 	if (input.GetValueType() && !mod.FindConnection(input.GetID()))
 	{
-		int val = *mod.FindValue(input.GetID());
+		union
+		{
+			float f;
+			uint32_t i;
+		} u;
 
-		// TODO: Fix properly. 
-		if (mod.GetDef().GetEngineID() == Engine::ModuleType::PitchShift)
-			if (input.GetEngineID() == Engine::Pin::PitchShift::Input::Shift)
-				val += 128; // See PitchShiftModule::Update().
+		u.f = input.GetValueType()->ToFloat(*mod.FindValue(input.GetID()));
+		const uint32_t bytes = u.i;
 
-		Add(input.IsSigned() ? Engine::CommandType::SetSignedValue : Engine::CommandType::SetUnsignedValue);
+		Add(Engine::CommandType::SetValue);
 		Add(mod.IsInstanced(_graph));
 		Add(_modIndices[mod.GetID()]);
 		Add(input.GetEngineID());
-		Add(val >> 8);
-		Add(val & 0xff);
+		for (int i = 3; i >= 0; --i)
+			Add(bytes >> i * 8 & 0xff);
 	}
 }

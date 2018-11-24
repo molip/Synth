@@ -52,9 +52,6 @@ namespace Model
 		void SetValue(Tag inputType, int value);
 		const int* FindValue(Tag type) const;
 
-		//void AddInput(const std::string& name, Pin::ConnectionType connType, Pin::DataType dataType, int id, int engineID);
-		//void AddOutput(const std::string& name, Pin::ConnectionType connType, Pin::DataType dataType, int id, int engineID);
-
 		bool IsInstanced(const Graph& graph) const;
 		bool IsDependentOn(int modID, const Graph& graph, bool recurse) const;
 

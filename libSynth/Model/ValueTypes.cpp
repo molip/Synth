@@ -32,6 +32,11 @@ int TimeValueType::AddDelta(int val, int delta) const
 }
 
 
+float PercentValueType::ToFloat(int val) const
+{
+	return val / float(0xffff);
+}
+
 std::string PercentValueType::ToString(int val) const
 {
 	std::ostringstream oss;

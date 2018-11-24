@@ -60,8 +60,7 @@ std::vector<PinRef> Graph::GetValidSourcePins(PinRef input)
 		if (mod->GetID() != input.moduleID) // Ignore this one. 
 			if (!mod->IsDependentOn(input.moduleID, *this, false)) // Found a candidate...
 				for (auto& outputDef : mod->GetDef().GetOutputs()) // So add its outputs. 
-					if (outputDef->GetDataType() == inputDef.GetDataType())
-						result.push_back(PinRef(mod->GetID(), outputDef->GetID()));
+					result.push_back(PinRef(mod->GetID(), outputDef->GetID()));
 
 	return result;		
 }
@@ -79,14 +78,6 @@ void Graph::Load(Serial::LoadNode& node)
 	for (auto& mod : _modules)
 	{
 		_nextModuleID = std::max(_nextModuleID, mod.GetID());
-
-		// Check connection data types.
-		for (auto& conn : mod.GetConnections())
-		{
-			const PinType& inputDef = mod.GetInputDef(conn.first);
-			const PinType& outputDef = mod.GetSourceOutputDef(conn.second, *this);
-			KERNEL_ASSERT(inputDef.GetDataType() == outputDef.GetDataType());
-		}
 	}
 
 	++_nextModuleID;

@@ -71,13 +71,9 @@ void Process(byte data)
 			break;
 			
 		// Can be either.
-		case CommandType::SetUnsignedValue: 
-			SERIAL_PRINTLN("CommandType::SetUnsignedValueCommand");
-			_command = new SetUnsignedValueCommand(graph);
-			break;
-		case CommandType::SetSignedValue: 
-			SERIAL_PRINTLN("CommandType::SetSignedValueCommand");
-			_command = new SetSignedValueCommand(graph);
+		case CommandType::SetValue: 
+			SERIAL_PRINTLN("CommandType::SetValueCommand");
+			_command = new SetValueCommand(graph);
 			break;
 
 		case CommandType::StartGraph: 

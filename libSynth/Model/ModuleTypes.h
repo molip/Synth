@@ -16,27 +16,23 @@ namespace Model
 	{
 	public:
 		enum class ConnectionType { Single, Multi };
-		enum class DataType { Signed, Unsigned};
 
-		PinType(Tag id, const std::string& name, ConnectionType connType, DataType dataType, int engineID) : _id(id), _name(name), _connType(connType), _dataType(dataType), _engineID(engineID) {}
+		PinType(Tag id, const std::string& name, ConnectionType connType, int engineID) : _id(id), _name(name), _connType(connType), _engineID(engineID) {}
 
 		void SetValueType(ValueTypePtr valtype) { _valType = std::move(valtype); }
 		const ValueType* GetValueType() const { return _valType.get(); }
 
 		bool IsMulti() const { return _connType == ConnectionType::Multi; }
-		bool IsSigned() const { return _dataType == DataType::Signed; }
 
 		Tag GetID() const { return _id; }
 		const std::string& GetName() const { return _name; }
 		ConnectionType GetConnectionType() const { return _connType; }
-		DataType GetDataType() const { return _dataType; }
 		int GetEngineID() const { return _engineID; }
 	
 	private:
 		Tag _id;
 		std::string _name;
 		ConnectionType _connType;
-		DataType _dataType;
 		ValueTypePtr _valType;
 		int _engineID;
 	};		

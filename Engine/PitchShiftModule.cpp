@@ -19,7 +19,7 @@ void PitchShiftModule::Update()
 		shiftInput.ResetChanged();
 		pitchInput.ResetChanged();
 
-		const int16_t shift = static_cast<int16_t>(shiftInput.GetValue()) - 128; // See Exporter::WriteValues.
+		const int16_t shift = static_cast<int16_t>(shiftInput.GetValue());
 		float pitch = pitchInput.GetValue() + shift * Config::pitchPerSemitone;
 		
 		_outputs[Pin::PitchShift::Output::Pitch].SetValue(pitch);

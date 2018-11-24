@@ -25,6 +25,24 @@ void TestInput()
 
 	Serial.println("Hello");
 
+	auto floatToBytes = [](float val)
+	{
+		union { float f; uint32_t i; } u;
+
+		u.f = val;
+		return u.i;
+	};
+
+	auto getByte = [](uint32_t val, int byte)
+	{
+		return static_cast<uint8_t>(val >> byte * 8 & 0xff);
+	};
+
+	uint32_t attack = floatToBytes(100);
+	uint32_t decay = floatToBytes(1000);
+	uint32_t sustain = floatToBytes(0.5f);
+	uint32_t release = floatToBytes(1000);
+
 	byte inputData[] = 
 	{
 		(byte)CommandType::StartGraph,
@@ -35,10 +53,10 @@ void TestInput()
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::PolyMixer,	// 1
 		(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
 
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::Input::Attack, 100 >> 8, 100 & 0xff, 
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::Input::Decay, 1000 >> 8, 1000 & 0xff,
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::Input::Sustain, 0x8000 >> 8, 0x8000 & 0xff,
-		(byte)CommandType::SetUnsignedValue, true, 0, Pin::Envelope::Input::Release, 1000 >> 8, 1000 & 0xff, 
+		(byte)CommandType::SetValue, true, 0, Pin::Envelope::Input::Attack, getByte(attack, 3), getByte(attack, 2), getByte(attack, 1), getByte(attack, 0),
+		(byte)CommandType::SetValue, true, 0, Pin::Envelope::Input::Decay, getByte(decay, 3), getByte(decay, 2), getByte(decay, 1), getByte(decay, 0),
+		(byte)CommandType::SetValue, true, 0, Pin::Envelope::Input::Sustain, getByte(sustain, 3), getByte(sustain, 2), getByte(sustain, 1), getByte(sustain, 0),
+		(byte)CommandType::SetValue, true, 0, Pin::Envelope::Input::Release, getByte(release, 3), getByte(release, 2), getByte(release, 1), getByte(release, 0),
 
 		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
 			(byte)InstanceType::Poly, 1, Pin::Oscillator::Input::Level,

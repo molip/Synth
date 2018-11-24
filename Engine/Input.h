@@ -131,7 +131,7 @@ namespace RemoteInput
 	class SetValueCommand : public Command
 	{
 	public:
-		SetValueCommand(Graph* graph, float multiplier) : Command(graph), _multiplier(multiplier) {}
+		SetValueCommand(Graph* graph) : Command(graph) {}
 		virtual Error AddData(byte data) override
 		{
 			if (_poly < 0)
@@ -153,15 +153,24 @@ namespace RemoteInput
 			if (!_val.IsFinished())
 				return false;
 
-			const float val = _val * _multiplier;
+			static_assert(sizeof(float) == 4, "Wrong float size");
+			
+			union 
+			{
+				float f;
+				uint32_t i;
+			} u;
+			
+			u.i = _val;
+			const float floatVal = u.f;
 
 			if (_poly)
 			{
 				for (int i = 0; i < _graph->GetPolyphony(); ++i)
-					_graph->GetPolyModule(_modIndex, i)->GetPins<Input>()[_pinIndex].SetValue(val);
+					_graph->GetPolyModule(_modIndex, i)->GetPins<Input>()[_pinIndex].SetValue(floatVal);
 			}
 			else
-				_graph->GetMonoModule(_modIndex)->GetPins<Input>()[_pinIndex].SetValue(val);
+				_graph->GetMonoModule(_modIndex)->GetPins<Input>()[_pinIndex].SetValue(floatVal);
 
 			return true;
 		}
@@ -170,20 +179,7 @@ namespace RemoteInput
 		int _poly = -1;
 		int _modIndex = -1;
 		int _pinIndex = -1;
-		Value<uint16_t> _val;
-		float _multiplier;
-	};
-
-	class SetUnsignedValueCommand : public SetValueCommand
-	{
-	public:
-		SetUnsignedValueCommand(Graph* graph) : SetValueCommand(graph, 1.0f) {}
-	};
-
-	class SetSignedValueCommand : public SetValueCommand
-	{
-	public:
-		SetSignedValueCommand(Graph* graph) : SetValueCommand(graph, Config::uint16ToFloat) {}
+		Value<uint32_t> _val;
 	};
 
 	class SetMIDIDataCommand : public Command

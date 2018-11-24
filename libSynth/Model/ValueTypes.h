@@ -17,6 +17,7 @@ namespace Model
 
 		ValueType(DisplayType type, int default) : _default(default) {}
 
+		virtual float ToFloat(int val) const { return static_cast<float>(val); }
 		virtual std::string ToString(int val) const = 0;
 		virtual int FromString(const std::string& str) const = 0;
 		virtual int AddDelta(int val, int delta) const = 0;
@@ -44,6 +45,7 @@ namespace Model
 	{
 	public:
 		PercentValueType(int default) : ValueType(DisplayType::Number, default) {}
+		virtual float ToFloat(int val) const override;
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
 		virtual int AddDelta(int val, int delta) const override;

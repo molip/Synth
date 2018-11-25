@@ -1,13 +1,19 @@
 #include "stdafx.h"
 #include "ValueTypes.h"
 #include <algorithm>
+#include <iomanip>
 #include <sstream>
 
 using namespace Synth::Model;
 
 int ValueType::Clamp(int value) const
 {
-	return std::max(std::min(value, 0xffff), 0);
+	return std::max(std::min(_max, value), _min);
+}
+
+int ValueType::AddDelta(int val, int delta) const
+{
+	return Clamp(val + delta * _deltaMult);
 }
 
 
@@ -26,21 +32,16 @@ int TimeValueType::FromString(const std::string& str) const
 	return Clamp(val);
 }
 
-int TimeValueType::AddDelta(int val, int delta) const
-{
-	return Clamp(val + delta * 10);
-}
-
 
 float PercentValueType::ToFloat(int val) const
 {
-	return val / float(0xffff);
+	return val * 0.01f;
 }
 
 std::string PercentValueType::ToString(int val) const
 {
 	std::ostringstream oss;
-	oss << int(std::round(100.0 * val / 0xffff)) << "%";
+	oss << val / 100 << '.' << std::setfill('0') << std::setw(2) << val % 100;
 	return oss.str();
 }
 
@@ -50,12 +51,7 @@ int PercentValueType::FromString(const std::string& str) const
 	double val = 0;
 	iss >> val;
 
-	return Clamp(int(0xffff * val / 100.0));
-}
-
-int PercentValueType::AddDelta(int val, int delta) const
-{
-	return Clamp(val + (int)std::round(delta * 0xffff / 100.0));
+	return Clamp(static_cast<int>(std::round(val * 100)));
 }
 
 
@@ -72,10 +68,5 @@ int IntValueType::FromString(const std::string& str) const
 	int val = 0;
 	iss >> val;
 
-	return std::min(_max, std::max(_min, val));
-}
-
-int IntValueType::AddDelta(int val, int delta) const
-{
-	return std::min(_max, std::max(_min, val + delta));
+	return Clamp(val);
 }

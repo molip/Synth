@@ -94,8 +94,7 @@ void MIDIModule::StartNote(int8_t midiNote)
 
 	Note& note = _notes[index];
 	note.midiNote = midiNote;
-	const float pitch = MidiNoteToPitch(midiNote);
-	_multiOutputs[Pin::MIDI::MultiOutput::Pitch][index].SetValue(pitch);
+	_multiOutputs[Pin::MIDI::MultiOutput::Pitch][index].SetValue(midiNote);
 	_multiOutputs[Pin::MIDI::MultiOutput::Gate][index].SetValue(1, true);
 	note.order = ++_startCount;
 }

@@ -47,15 +47,10 @@ inline extern float ClipUnipolar(float val)
 	return val;
 }
 
-// Converts midi note [0, 119] to 16 bit.
-inline extern float MidiNoteToPitch(byte midiNote)
-{
-	return (midiNote < Config::midiNoteCount ? midiNote : Config::midiNoteCount - 1) * Config::pitchPerSemitone;
-}
-
 inline extern uint16_t PitchToPhaseDelta(float pitch) 
 {
-	uint16_t pitchIndex = static_cast<uint16_t>(ClipUnipolar(pitch) * Config::pitchStepsPerSemitone * Config::midiNoteCount);
+	pitch = pitch < 0 ? 0 : pitch > 127 ? 127 : pitch;
+	uint16_t pitchIndex = static_cast<uint16_t>(pitch * Config::pitchStepsPerSemitone);
 
 	int octave = pitchIndex / Config::pitchStepsPerOctave;
 	int freqIndex = pitchIndex % Config::pitchStepsPerOctave;

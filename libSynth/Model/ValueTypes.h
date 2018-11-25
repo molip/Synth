@@ -15,51 +15,52 @@ namespace Model
 	public:
 		enum class DisplayType { Number, Select, };
 
-		ValueType(DisplayType type, int default) : _default(default) {}
+		ValueType(DisplayType type, int default, int min, int max, int deltaMult = 1) : _default(default), _min(min), _max(max), _deltaMult(deltaMult) {}
 
 		virtual float ToFloat(int val) const { return static_cast<float>(val); }
 		virtual std::string ToString(int val) const = 0;
 		virtual int FromString(const std::string& str) const = 0;
-		virtual int AddDelta(int val, int delta) const = 0;
-
+		
+		int AddDelta(int val, int delta) const;
 		const int& GetDefault() const { return _default; }
 
 	protected:
 		int Clamp(int value) const;
 
 	private:
-		int _default = 0;
+		int _default, _min, _max, _deltaMult;
 	};
 	using ValueTypePtr = std::unique_ptr<ValueType>;
 
 	class TimeValueType : public ValueType
 	{
 	public:
-		TimeValueType(int default) : ValueType(DisplayType::Number, default) {}
+		TimeValueType(int default) : ValueType(DisplayType::Number, default, 0, 100000, 10) {}
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
-		virtual int AddDelta(int val, int delta) const override;
 	};
 
 	class PercentValueType : public ValueType
 	{
 	public:
-		PercentValueType(int default) : ValueType(DisplayType::Number, default) {}
+		PercentValueType(int default, int min, int max, int deltaMult = 1) : ValueType(DisplayType::Number, default, min, max, deltaMult) {}
 		virtual float ToFloat(int val) const override;
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
-		virtual int AddDelta(int val, int delta) const override;
+	};
+
+	class PitchValueType : public PercentValueType
+	{
+	public:
+		PitchValueType() : PercentValueType(6000, 0, 12700, 100) {}
 	};
 
 	class IntValueType : public ValueType
 	{
 	public:
-		IntValueType(int default, int min, int max) : ValueType(DisplayType::Number, default), _min(min), _max(max) {}
+		IntValueType(int default, int min, int max) : ValueType(DisplayType::Number, default, min, max) {}
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
-		virtual int AddDelta(int val, int delta) const override;
-	private:
-		int _min, _max;
 	};
 
 	class BoolValueType : public IntValueType

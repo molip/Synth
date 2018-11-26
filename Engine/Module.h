@@ -35,8 +35,15 @@ public:
 
 	void SetValue(float val)
 	{
-		_value = val;
-		_changed = true; // It's up to the output to only call this when necessary. 
+		_rawValue = val;
+		Update();
+	}
+
+	void SetParams(float offset, float scale)
+	{
+		_offset = offset;
+		_scale = scale;
+		Update();
 	}
 
 	float GetValue() const { return _value; }
@@ -46,9 +53,18 @@ public:
 	void ResetChanged() { _changed = false; }
 
 private:
-	bool _changed = false;
+	void Update()
+	{
+		_value = _offset + _rawValue * _scale;
+		_changed = true; 
+	}
+
+	bool _changed = true;
 	bool _connected = false;
+	float _rawValue = 0;
 	float _value = 0;
+	float _offset = 0;
+	float _scale = 1;
 };
 
 inline void Output::SetValue(float val, bool forceChanged)

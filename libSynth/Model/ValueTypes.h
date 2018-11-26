@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Tag.h"
+#include "Module.h"
 
 #include <memory>
 #include <string>
@@ -15,27 +16,26 @@ namespace Model
 	public:
 		enum class DisplayType { Number, Select, };
 
-		ValueType(DisplayType type, int default, int min, int max, int deltaMult = 1) : _default(default), _min(min), _max(max), _deltaMult(deltaMult) {}
+		ValueType(DisplayType type, int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1) : _inputParams{ defaultOffset, defaultScale }, _min(min), _max(max), _deltaMult(deltaMult) {}
 
 		virtual float ToFloat(int val) const { return static_cast<float>(val); }
 		virtual std::string ToString(int val) const = 0;
 		virtual int FromString(const std::string& str) const = 0;
 		
 		int AddDelta(int val, int delta) const;
-		const int& GetDefault() const { return _default; }
-
-	protected:
+		const InputParams& GetDefault() const { return _inputParams; }
 		int Clamp(int value) const;
 
 	private:
-		int _default, _min, _max, _deltaMult;
+		int _min, _max, _deltaMult;
+		InputParams _inputParams;
 	};
 	using ValueTypePtr = std::unique_ptr<ValueType>;
 
 	class TimeValueType : public ValueType
 	{
 	public:
-		TimeValueType(int default) : ValueType(DisplayType::Number, default, 0, 100000, 10) {}
+		TimeValueType(int defaultOffset) : ValueType(DisplayType::Number, defaultOffset, defaultOffset, 0, 100000, 10) {}
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
 	};
@@ -43,7 +43,7 @@ namespace Model
 	class PercentValueType : public ValueType
 	{
 	public:
-		PercentValueType(int default, int min, int max, int deltaMult = 1) : ValueType(DisplayType::Number, default, min, max, deltaMult) {}
+		PercentValueType(int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1) : ValueType(DisplayType::Number, defaultOffset, defaultScale, min, max, deltaMult) {}
 		virtual float ToFloat(int val) const override;
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
@@ -52,13 +52,13 @@ namespace Model
 	class PitchValueType : public PercentValueType
 	{
 	public:
-		PitchValueType() : PercentValueType(6000, 0, 12700, 100) {}
+		PitchValueType() : PercentValueType(0, 100, -12700, 12700, 100) {}
 	};
 
 	class IntValueType : public ValueType
 	{
 	public:
-		IntValueType(int default, int min, int max) : ValueType(DisplayType::Number, default, min, max) {}
+		IntValueType(int defaultOffset, int defaultScale, int min, int max) : ValueType(DisplayType::Number, defaultOffset, defaultScale, min, max) {}
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
 	};
@@ -66,7 +66,7 @@ namespace Model
 	class BoolValueType : public IntValueType
 	{
 	public:
-		BoolValueType(bool default) : IntValueType(default, 0, 1) {}
+		BoolValueType(bool default) : IntValueType(default, 1, 0, 1) {}
 	};
 
 }

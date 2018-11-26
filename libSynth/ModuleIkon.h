@@ -36,13 +36,14 @@ namespace Synth
 			Model::Point GetConnectionPoint() const { return Model::Point(isOutput ? connectionRect.Right() : connectionRect.Left(), connectionRect.GetCentre().y); }
 
 			std::string name;
-			Model::Rect labelRect, connectionRect, valueRect;
+			Model::Rect labelRect, connectionRect, offsetRect, scaleRect;
 			bool isOutput = false;
 			Colour colour {};
 			Model::Tag id;
 			
-			bool showValue = false;
-			std::string value;
+			bool showOffset = false;
+			bool showScale = false;
+			std::string offset, scale;
 		};
 
 		const ModuleIkon::Pin* FindPin(Model::Tag id, bool output);

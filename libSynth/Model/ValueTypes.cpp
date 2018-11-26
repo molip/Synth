@@ -13,7 +13,7 @@ int ValueType::Clamp(int value) const
 
 int ValueType::AddDelta(int val, int delta) const
 {
-	return Clamp(val + delta * _deltaMult);
+	return val + delta * _deltaMult;
 }
 
 
@@ -29,7 +29,7 @@ int TimeValueType::FromString(const std::string& str) const
 	std::istringstream iss(str);
 	int val = 0;
 	iss >> val;
-	return Clamp(val);
+	return val;
 }
 
 
@@ -41,6 +41,11 @@ float PercentValueType::ToFloat(int val) const
 std::string PercentValueType::ToString(int val) const
 {
 	std::ostringstream oss;
+	if (val < 0)
+	{
+		oss << '-';
+		val = -val;
+	}
 	oss << val / 100 << '.' << std::setfill('0') << std::setw(2) << val % 100;
 	return oss.str();
 }
@@ -51,7 +56,7 @@ int PercentValueType::FromString(const std::string& str) const
 	double val = 0;
 	iss >> val;
 
-	return Clamp(static_cast<int>(std::round(val * 100)));
+	return static_cast<int>(std::round(val * 100));
 }
 
 
@@ -68,5 +73,5 @@ int IntValueType::FromString(const std::string& str) const
 	int val = 0;
 	iss >> val;
 
-	return Clamp(val);
+	return val;
 }

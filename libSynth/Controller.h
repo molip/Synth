@@ -16,6 +16,7 @@ namespace Synth
 	{
 		class Graph;
 		class Module;
+		class ValueType;
 	}
 	class CommandStack;
 
@@ -67,7 +68,7 @@ namespace Synth
 		public:
 			int moduleID = 0;
 			Model::Tag pinID;
-			enum class Element { None, Input, Output, Value } element {};
+			enum class Element { None, Input, Output, Offset, Scale } element {};
 		};
 
 		// GraphObserver 
@@ -76,6 +77,8 @@ namespace Synth
 	private:
 		Selection HitTest(Model::Point point, Model::Rect* elementRect = nullptr) const;
 		bool DoExport(byte polyphony) const;
+		int& GetInputParamsValue(Model::InputParams& params, Selection::Element element) const;
+		void SetInputParams(Selection& sel, std::function<int(const Model::ValueType&, int)> fn);
 
 		View* _view = nullptr;
 

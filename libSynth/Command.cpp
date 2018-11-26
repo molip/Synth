@@ -68,17 +68,17 @@ void SetPositionCommand::Undo()
 }
 
 
-void SetValueCommand::Do()
+void SetInputParamsCommand::Do()
 {
 	Module* mod = _graph.FindModule(_modID);
-	_oldValue = *mod->FindValue(_pinID);
-	mod->SetValue(_pinID, _value);
+	_oldValue = *mod->FindInputParams(_pinID);
+	mod->SetInputParams(_pinID, _value);
 	_graph.SendNotification(ValueChangedNotification(_modID, _pinID));
 }
 
-void SetValueCommand::Undo()
+void SetInputParamsCommand::Undo()
 {
 	Module* mod = _graph.FindModule(_modID);
-	mod->SetValue(_pinID, _oldValue);
+	mod->SetInputParams(_pinID, _oldValue);
 	_graph.SendNotification(ValueChangedNotification(_modID, _pinID));
 }

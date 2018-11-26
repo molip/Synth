@@ -29,14 +29,21 @@ namespace Model
 		Tag type;
 	};
 
+	struct InputParams
+	{
+		int offset = 0;
+		int scale = 0;
+
+		bool operator ==(const InputParams& rhs) const;
+		void Save(Serial::SaveNode& node) const;
+		void Load(Serial::LoadNode& node);
+	};
+
 	class Module
 	{
 	public:
 		using ConnectionMap = std::map<Tag, PinRef>;
-		using ValueMap = std::map<Tag, int>;
-
-		using ConnectionPair = std::pair<Tag, PinRef>;
-		using ValuePair = std::pair<Tag, int>;
+		using InputParamsMap = std::map<Tag, InputParams>;
 
 		Module(Tag type = "");
 
@@ -49,8 +56,8 @@ namespace Model
 		const ConnectionMap& GetConnections() const { return _connections; }
 		const PinRef* FindConnection(Tag type) const;
 		
-		void SetValue(Tag inputType, int value);
-		const int* FindValue(Tag type) const;
+		void SetInputParams(Tag inputType, InputParams params);
+		const InputParams* FindInputParams(Tag type) const;
 
 		bool IsInstanced(const Graph& graph) const;
 		bool IsDependentOn(int modID, const Graph& graph, bool recurse) const;
@@ -75,10 +82,12 @@ namespace Model
 		const Point& GetPosition() const { return _position; }
 
 	protected:
+		const InputParams* GetDefaultInputParams(Tag type) const;
+
 		int _id;
 		Tag _type;
 		ConnectionMap _connections;
-		ValueMap _values; 
+		InputParamsMap _inputParams;
 		Point _position;
 	};
 }

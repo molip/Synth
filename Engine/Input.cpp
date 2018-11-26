@@ -71,9 +71,9 @@ void Process(byte data)
 			break;
 			
 		// Can be either.
-		case CommandType::SetValue: 
-			SERIAL_PRINTLN("CommandType::SetValueCommand");
-			_command = new SetValueCommand(graph);
+		case CommandType::SetInputParams: 
+			SERIAL_PRINTLN("CommandType::SetInputParamsCommand");
+			_command = new SetInputParamsCommand(graph);
 			break;
 
 		case CommandType::StartGraph: 

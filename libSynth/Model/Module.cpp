@@ -20,6 +20,24 @@ void PinRef::Load(Serial::LoadNode& node)
 }
 
 
+void InputParams::Save(Serial::SaveNode& node) const
+{
+	node.SaveType("offset", offset);
+	node.SaveType("scale", scale);
+}
+
+void InputParams::Load(Serial::LoadNode& node)
+{
+	node.LoadType("offset", offset);
+	node.LoadType("scale", scale);
+}
+
+bool InputParams::operator ==(const InputParams& rhs) const
+{
+	return rhs.offset == offset && rhs.scale == scale;
+}
+
+
 Module::Module(Tag type) : _type(type)
 {
 }
@@ -55,25 +73,33 @@ const PinRef* Module::FindConnection(Tag type) const
 	return it == _connections.end() ? nullptr : &it->second;
 }
 
-void Module::SetValue(Tag inputType, int value)
+void Module::SetInputParams(Tag inputType, InputParams params)
 {
 	auto* valDef = GetInputDef(inputType).GetValueType();
 	KERNEL_VERIFY(valDef);
-
-	if (valDef->GetDefault() == value) // TODO: What if the default changes? 
-		_values.erase(inputType);
+	
+	if (valDef->GetDefault() == params) // TODO: What if the default changes?
+		_inputParams.erase(inputType);
 	else
-		_values[inputType] = value;
+		_inputParams[inputType] = params;
 }
 
-const int* Module::FindValue(Tag type) const
+const InputParams* Module::FindInputParams(Tag type) const
 {
-	auto it = _values.find(type);
-	if (it != _values.end())
+	auto it = _inputParams.find(type);
+	if (it != _inputParams.end())
 		return &it->second;
 
-	auto* valDef = GetInputDef(type).GetValueType();
-	return valDef ? &valDef->GetDefault() : nullptr;
+	return GetDefaultInputParams(type);
+}
+
+const InputParams* Module::GetDefaultInputParams(Tag type) const
+{
+	if (const auto* pinType = GetDef().GetInput(type))
+		if (const auto* valDef = pinType->GetValueType())
+			return &valDef->GetDefault();
+
+	return nullptr;
 }
 
 bool Module::IsInstanced(const Graph& graph) const
@@ -116,7 +142,23 @@ void Module::Load(Serial::LoadNode& node)
 	node.LoadType("type", _type);
 	node.LoadType("position", _position);
 	node.LoadMap("connections", _connections, Serial::TypeLoader(), Serial::ClassLoader());
-	node.LoadMap("values", _values, Serial::TypeLoader(), Serial::TypeLoader());
+	
+	if (!node.LoadMap("input_params", _inputParams, Serial::TypeLoader(), Serial::ClassLoader()))
+	{
+		std::map<Tag, int> values;
+		node.LoadMap("values", values, Serial::TypeLoader(), Serial::TypeLoader());
+
+		for (auto& input : GetDef().GetInputs())
+		{
+			if (const InputParams* defaults = GetDefaultInputParams(input->GetID()))
+			{
+				bool connected = !!FindConnection(input->GetID());
+				auto& it = values.find(input->GetID());
+				if (connected || it != values.end())
+					_inputParams[input->GetID()] = { connected ? 0 : it->second, defaults->scale };
+			}
+		}
+	}
 }
 
 void Module::Save(Serial::SaveNode& node) const
@@ -125,7 +167,7 @@ void Module::Save(Serial::SaveNode& node) const
 	node.SaveType("type", _type);
 	node.SaveType("position", _position);
 	node.SaveMap("connections", _connections, Serial::TypeSaver(), Serial::ClassSaver());
-	node.SaveMap("values", _values, Serial::TypeSaver(), Serial::TypeSaver());
+	node.SaveMap("input_params", _inputParams, Serial::TypeSaver(), Serial::ClassSaver());
 }
 
 Module::ConnectionUndo Module::AddConnection(Tag inputType, PinRef outputPin)

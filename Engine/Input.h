@@ -128,10 +128,10 @@ namespace RemoteInput
 		Connection _input, _output;
 	};
 
-	class SetValueCommand : public Command
+	class SetInputParamsCommand : public Command
 	{
 	public:
-		SetValueCommand(Graph* graph) : Command(graph) {}
+		SetInputParamsCommand(Graph* graph) : Command(graph) {}
 		virtual Error AddData(byte data) override
 		{
 			if (_poly < 0)
@@ -140,8 +140,10 @@ namespace RemoteInput
 				_modIndex = data;
 			else if (_pinIndex < 0)
 				_pinIndex = data;
-			else if (!_val.IsFinished())
-				_val.AddData(data);
+			else if (!_offset.IsFinished())
+				_offset.AddData(data);
+			else if (!_scale.IsFinished())
+				_scale.AddData(data);
 			else
 				return Error::TooManyParameters;
 
@@ -150,27 +152,28 @@ namespace RemoteInput
 
 		virtual bool Execute() const override
 		{
-			if (!_val.IsFinished())
+			if (!_scale.IsFinished())
 				return false;
 
 			static_assert(sizeof(float) == 4, "Wrong float size");
 			
-			union 
+			auto bytesToFloat = [](uint32_t bytes)
 			{
-				float f;
-				uint32_t i;
-			} u;
-			
-			u.i = _val;
-			const float floatVal = u.f;
+				union { float f; uint32_t i; } u;
+				u.i = bytes;
+				return u.f;
+			};
+
+			float offset = bytesToFloat(_offset);
+			float scale = bytesToFloat(_scale);
 
 			if (_poly)
 			{
 				for (int i = 0; i < _graph->GetPolyphony(); ++i)
-					_graph->GetPolyModule(_modIndex, i)->GetPins<Input>()[_pinIndex].SetValue(floatVal);
+					_graph->GetPolyModule(_modIndex, i)->GetPins<Input>()[_pinIndex].SetParams(offset, scale);
 			}
 			else
-				_graph->GetMonoModule(_modIndex)->GetPins<Input>()[_pinIndex].SetValue(floatVal);
+				_graph->GetMonoModule(_modIndex)->GetPins<Input>()[_pinIndex].SetParams(offset, scale);
 
 			return true;
 		}
@@ -179,7 +182,7 @@ namespace RemoteInput
 		int _poly = -1;
 		int _modIndex = -1;
 		int _pinIndex = -1;
-		Value<uint32_t> _val;
+		Value<uint32_t> _offset, _scale;
 	};
 
 	class SetMIDIDataCommand : public Command

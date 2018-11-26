@@ -97,10 +97,10 @@ namespace Synth
 		bool _relative;
 	};
 	
-	class SetValueCommand : public GraphCommand
+	class SetInputParamsCommand : public GraphCommand
 	{
 	public:
-		SetValueCommand(int modID, Model::Tag pinID, int value, Model::Graph& graph) : GraphCommand(graph), _modID(modID), _pinID(pinID), _value(value) {}
+		SetInputParamsCommand(int modID, Model::Tag pinID, Model::InputParams value, Model::Graph& graph) : GraphCommand(graph), _modID(modID), _pinID(pinID), _value(value) {}
 
 		virtual void Do();
 		virtual void Undo();
@@ -108,7 +108,7 @@ namespace Synth
 	protected:
 		int _modID;
 		Model::Tag _pinID;
-		int _value;
-		int _oldValue = 0;
+		Model::InputParams _value;
+		Model::InputParams _oldValue;
 	};
 }

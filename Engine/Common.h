@@ -66,7 +66,7 @@ namespace Pin
 		namespace MultiOutput { enum Type { Gate, Pitch, _Count }; }
 	}
 }
-enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetValue, SetMIDIData, SetAllNotesOn, StopMIDIPlayback };
+enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, EndGraph, SetInputParams, SetMIDIData, SetAllNotesOn, StopMIDIPlayback };
 enum class Error { None, UnknownCommandType, InvalidParameter, TooManyParameters, PinTypeMismatch, GraphAlreadyStarted };
 
 enum class ConnectionType { None, Single, Multi, _Count };

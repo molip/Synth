@@ -73,22 +73,23 @@ BufferPtr Exporter::ExportValues(int moduleID, Tag pinID)
 
 void Exporter::WriteValues(const Module& mod, const PinType& input)
 {
-	if (input.GetValueType() && !mod.FindConnection(input.GetID()))
+	if (input.GetValueType())
 	{
-		union
+		auto addFloat = [&](int val)
 		{
-			float f;
-			uint32_t i;
-		} u;
+			union { float f; uint32_t i; } u;
+			u.f = input.GetValueType()->ToFloat(val);
+			for (int i = 3; i >= 0; --i)
+				Add(u.i >> i * 8 & 0xff);
+		};
 
-		u.f = input.GetValueType()->ToFloat(*mod.FindValue(input.GetID()));
-		const uint32_t bytes = u.i;
-
-		Add(Engine::CommandType::SetValue);
+		Add(Engine::CommandType::SetInputParams);
 		Add(mod.IsInstanced(_graph));
 		Add(_modIndices[mod.GetID()]);
 		Add(input.GetEngineID());
-		for (int i = 3; i >= 0; --i)
-			Add(bytes >> i * 8 & 0xff);
+
+		const InputParams params = *mod.FindInputParams(input.GetID());
+		addFloat(params.offset);
+		addFloat(params.scale);
 	}
 }

@@ -16,7 +16,7 @@ namespace
 	const int LabelWidth = 50;
 	const int ValueWidth = 50;
 	const int MinHeight = 50;
-	const int Width = 200;
+	const int Width = 252;
 	const int LabelHeight = 30;
 }
 
@@ -86,30 +86,35 @@ void ModuleIkon::CreatePins(bool outputs) const
 
 		Model::Rect connectionRect(modRect.Left() + 1 - ConnectionWidth, top, modRect.Left(), top + PinHeight);
 		Model::Rect labelRect(modRect.Left(), top, modRect.Left() + LabelWidth, top + PinHeight);
-		Model::Rect valueRect(labelRect.Right(), top, labelRect.Right() + ValueWidth, top + PinHeight);
+		Model::Rect offsetRect(labelRect.Right(), top, labelRect.Right() + ValueWidth, top + PinHeight);
+		Model::Rect scaleRect(offsetRect.Right() + PinGap, top, offsetRect.Right() + PinGap + ValueWidth, top + PinHeight);
 		
 		if (outputs)
 		{
 			connectionRect.MirrorX(modRect.GetCentre().x);
 			labelRect.MirrorX(modRect.GetCentre().x);
-			valueRect = Model::Rect();
+			offsetRect = scaleRect = Model::Rect();
 		}
 		
 		for (auto& pinDef : pinDefs)
 		{
-			Pin pin{ pinDef->GetName(), labelRect, connectionRect, valueRect, outputs, pinDef->IsMulti() ? Colour::Red : Colour::Blue, pinDef->GetID() };
+			Pin pin{ pinDef->GetName(), labelRect, connectionRect, offsetRect, scaleRect, outputs, pinDef->IsMulti() ? Colour::Red : Colour::Blue, pinDef->GetID() };
 			
-			if (!outputs && !_module.FindConnection(pin.id))
+			if (!outputs)
 				if (const auto* valType = pinDef->GetValueType())
 				{
-					pin.value = valType->ToString(*_module.FindValue(pin.id));
-					pin.showValue = true;
+					Model::InputParams params = *_module.FindInputParams(pin.id);
+					pin.offset = valType->ToString(params.offset);
+					pin.scale = valType->ToString(params.scale);
+					pin.showOffset = true;
+					pin.showScale = _module.FindConnection(pin.id);
 				}
 
 			pins.push_back(pin);
 			connectionRect.Offset(0, PinHeight + PinGap);
 			labelRect.Offset(0, PinHeight + PinGap);
-			valueRect.Offset(0, PinHeight + PinGap);
+			offsetRect.Offset(0, PinHeight + PinGap);
+			scaleRect.Offset(0, PinHeight + PinGap);
 		}
 	}
 }

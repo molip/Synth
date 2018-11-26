@@ -121,9 +121,10 @@ void Controller::OnLButtonDown(Model::Point point)
 		}
 		else
 		{
-			KERNEL_ASSERT(_selection.element == Selection::Element::Value);
-			
-			std::string str = module.GetInputDef(_selection.pinID).GetValueType()->ToString(*module.FindValue(_selection.pinID));
+			Model::InputParams params = *module.FindInputParams(_selection.pinID);
+			const int value = GetInputParamsValue(params, _selection.element);
+
+			std::string str = module.GetInputDef(_selection.pinID).GetValueType()->ToString(value);
 			_view->StartValueEdit(elementRect, str);
 
 			return;
@@ -168,32 +169,45 @@ void Controller::OnLButtonUp(Model::Point point)
 	_view->SetCapture(false);
 }
 
+void Synth::UI::Controller::SetInputParams(Selection& sel, std::function<int(const Model::ValueType&, int)> fn)
+{
+	KERNEL_ASSERT(sel.element == Selection::Element::Offset || sel.element == Selection::Element::Scale);
+
+	auto& module = *_graph->FindModule(sel.moduleID);
+	const auto* valDef = module.GetInputDef(sel.pinID).GetValueType();
+
+	Model::InputParams params = *module.FindInputParams(sel.pinID);
+	int& oldVal = GetInputParamsValue(params, sel.element);
+	int newVal = fn(*valDef, oldVal);
+	if (sel.element == Selection::Element::Offset)
+		newVal = valDef->Clamp(newVal);
+
+	if (newVal != oldVal) // TODO: Command::IsNull.
+	{
+		oldVal = newVal;
+		_commandStack->Do(std::make_unique<SetInputParamsCommand>(sel.moduleID, sel.pinID, params, *_graph)); // TODO: Consolidate.
+	}
+}
+
 void Synth::UI::Controller::OnMouseWheel(Model::Point point, bool negative, bool coarse)
 {
 	auto sel = HitTest(point);
-	if (sel.element != Selection::Element::Value)
+	if (sel.element != Selection::Element::Offset && sel.element != Selection::Element::Scale)
 		return;
 
-	auto& module = *_graph->FindModule(sel.moduleID);
-	const auto& valDef = module.GetInputDef(sel.pinID).GetValueType();
-
-	const int oldVal = *module.FindValue(sel.pinID);
-	const int newVal = valDef->AddDelta(oldVal, (coarse ? 10 : 1) * (negative ? -1 : 1));
-	
-	if (newVal != oldVal) // TODO: Command::IsNull.
+	// TODO: Consolidate.
+	SetInputParams(sel, [&](const Model::ValueType& valDef, int oldVal) 
 	{
-		_commandStack->Do(std::make_unique<SetValueCommand>(sel.moduleID, sel.pinID, newVal, *_graph)); // TODO: Consolidate.
-	}
+		return valDef.AddDelta(oldVal, (coarse ? 10 : 1) * (negative ? -1 : 1)); 
+	});
 }
 
 void Synth::UI::Controller::CommitValueEdit(const std::string& text)
 {
-	KERNEL_ASSERT(_selection.element == Selection::Element::Value);
-	auto& module = *_graph->FindModule(_selection.moduleID);
-
-	int val = module.GetInputDef(_selection.pinID).GetValueType()->FromString(text);
-	if (val != *module.FindValue(_selection.pinID)) // TODO: Command::IsNull.
-		_commandStack->Do(std::make_unique<SetValueCommand>(_selection.moduleID, _selection.pinID, val, *_graph));
+	SetInputParams(_selection, [&](const Model::ValueType& valDef, int oldVal)
+	{
+		return valDef.FromString(text);
+	});
 
 	_view->InvalidateAll();
 }
@@ -207,23 +221,30 @@ Controller::Selection Controller::HitTest(Model::Point point, Model::Rect* eleme
 		{
 			for (auto& pin : output ? ikon.GetOutputPins() : ikon.GetInputPins())
 			{
-				if (pin.connectionRect.Contains(point))
-				{
-					sel.pinID = pin.id;
-					sel.element = output ? Selection::Element::Output : Selection::Element::Input;
-					sel.moduleID = ikon.GetModuleID();
-					if (elementRect)
-						*elementRect = pin.connectionRect;
-					return true;
-				}
+				const bool conn = pin.connectionRect.Contains(point);
+				const bool offset = pin.showOffset && pin.offsetRect.Contains(point);
+				const bool scale = pin.showScale && pin.scaleRect.Contains(point);
 
-				if (!output && pin.showValue && pin.valueRect.Contains(point))
+				if (conn || offset || scale)
 				{
 					sel.pinID = pin.id;
-					sel.element = Selection::Element::Value;
 					sel.moduleID = ikon.GetModuleID();
+
+					Model::Rect rect;
+					if (conn)
+					{
+						sel.element = output ? Selection::Element::Output : Selection::Element::Input;
+						rect = pin.connectionRect;
+					}
+					else
+					{
+						sel.element = offset ? Selection::Element::Offset : Selection::Element::Scale;
+						rect = offset ? pin.offsetRect : pin.scaleRect;
+					}
+
 					if (elementRect)
-						*elementRect = pin.valueRect;
+						*elementRect = rect;
+
 					return true;
 				}
 			}
@@ -367,4 +388,10 @@ void Controller::OnGraphNotification(const Model::Notification& notification)
 				_inSync = false;
 		}
 	}
+}
+
+int& Controller::GetInputParamsValue(Model::InputParams& params, Selection::Element element) const 
+{
+	KERNEL_ASSERT(element == Selection::Element::Offset || element == Selection::Element::Scale);
+	return element == Selection::Element::Offset ? params.offset : params.scale;
 }

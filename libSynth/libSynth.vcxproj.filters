@@ -102,9 +102,6 @@
     <ClInclude Include="..\Engine\OutputModule.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\Engine\PitchShiftModule.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\Engine\PolyMixerModule.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -192,9 +189,6 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\Engine\OutputModule.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Engine\PitchShiftModule.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\Engine\PolyMixerModule.cpp">

@@ -113,7 +113,6 @@
     <ClInclude Include="..\Engine\Module.h" />
     <ClInclude Include="..\Engine\OscillatorModule.h" />
     <ClInclude Include="..\Engine\OutputModule.h" />
-    <ClInclude Include="..\Engine\PitchShiftModule.h" />
     <ClInclude Include="..\Engine\Platform.h" />
     <ClInclude Include="..\Engine\PolyMixerModule.h" />
     <ClInclude Include="..\Engine\RangeModule.h" />
@@ -204,10 +203,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Engine\OutputModule.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Engine\PitchShiftModule.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

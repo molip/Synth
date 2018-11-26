@@ -7,7 +7,7 @@
 #include "MixerModule.h"
 #include "OutputModule.h"
 #include "FilterModule.h"
-#include "RangeModule.h"
+#include "MathsModule.h"
 #include "LFOModule.h"
 #include "DelayModule.h"
 #include "ArpeggiatorModule.h"
@@ -74,7 +74,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::Mixer: mod = new MixerModule; break;
 	case ModuleType::Target: mod = new OutputModule; break;
 	case ModuleType::Filter: mod = new FilterModule; break;
-	case ModuleType::Range: mod = new RangeModule; break;
+	case ModuleType::Maths: mod = new MathsModule; break;
 	case ModuleType::LFO: mod = new LFOModule; break;
 	case ModuleType::Delay: mod = new DelayModule; break;
 	case ModuleType::Arpeggiator: mod = new ArpeggiatorModule(_polyphony); break;

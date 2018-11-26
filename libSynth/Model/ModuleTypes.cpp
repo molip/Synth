@@ -46,11 +46,11 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Filter::Input::Signal));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Filter::Output::Signal));
 
-	_types.emplace_back("rang", "Range", Engine::ModuleType::Range);
-	_types.back().AddInput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, Engine::Pin::Range::Input::Value));
-	_types.back().AddInput(std::make_unique<PinType>("mini", "Minimum", PinType::ConnectionType::Single, Engine::Pin::Range::Input::Minimum)).SetValueType(std::make_unique<PercentValueType>(0, 100, 0, 100));
-	_types.back().AddInput(std::make_unique<PinType>("maxi", "Maximum", PinType::ConnectionType::Single, Engine::Pin::Range::Input::Maximum)).SetValueType(std::make_unique<PercentValueType>(100, 100, 0, 100));
-	_types.back().AddOutput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, Engine::Pin::Range::Output::Value));
+	_types.emplace_back("math", "Maths", Engine::ModuleType::Maths);
+	_types.back().AddInput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, Engine::Pin::Maths::Input::Value));
+	_types.back().AddInput(std::make_unique<PinType>("add_", "Add", PinType::ConnectionType::Single, Engine::Pin::Maths::Input::Add)).SetValueType(std::make_unique<PercentValueType>(0, 100, -100000000, 100000000));
+	_types.back().AddInput(std::make_unique<PinType>("mult", "Multiply", PinType::ConnectionType::Single, Engine::Pin::Maths::Input::Multiply)).SetValueType(std::make_unique<PercentValueType>(0, 100, -100000000, 100000000));
+	_types.back().AddOutput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, Engine::Pin::Maths::Output::Value));
 
 	_types.emplace_back("mixr", "Mixer", Engine::ModuleType::Mixer);
 	_types.back().AddInput(std::make_unique<PinType>("sig0", "Signal 0", PinType::ConnectionType::Single, Engine::Pin::Mixer::Input::Signal0));

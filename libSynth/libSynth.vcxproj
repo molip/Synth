@@ -115,7 +115,7 @@
     <ClInclude Include="..\Engine\OutputModule.h" />
     <ClInclude Include="..\Engine\Platform.h" />
     <ClInclude Include="..\Engine\PolyMixerModule.h" />
-    <ClInclude Include="..\Engine\RangeModule.h" />
+    <ClInclude Include="..\Engine\MathsModule.h" />
     <ClInclude Include="..\Engine\Sine.h" />
     <ClInclude Include="..\Engine\Types.h" />
     <ClInclude Include="..\Engine\Util.h" />
@@ -214,7 +214,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Engine\RangeModule.cpp">
+    <ClCompile Include="..\Engine\MathsModule.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

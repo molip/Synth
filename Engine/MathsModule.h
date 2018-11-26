@@ -3,10 +3,10 @@
 
 namespace Engine
 {
-class RangeModule : public Module
+class MathsModule : public Module
 {
 public:
-	RangeModule();
+	MathsModule();
 	virtual void Update() override;
 	virtual bool WantUpdate() const override { return true; }
 };

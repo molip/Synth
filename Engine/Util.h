@@ -29,10 +29,10 @@ inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t du
 
 inline extern float ClipBipolar(float val)
 {
-	if (val > 0.5f)
-		val = 0.5f;
-	else if (val < -0.5f)
-		val = -0.5f;
+	if (val > 1.0f)
+		val = 1.0f;
+	else if (val < -1.0f)
+		val = -1.0f;
 
 	return val;
 }

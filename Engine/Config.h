@@ -29,6 +29,7 @@ public:
 		pitchPerOctave = pitchPerSemitone * 12;
 
 		uint16ToFloat = 1.0f / 0xffff;
+		uint16ToFloat2 = 2.0f / 0xffff;
 		uint32ToFloat = 1.0f / 0xffffffff;
 	}
 
@@ -41,6 +42,7 @@ public:
 	static float pitchStepsPerPitch;
 
 	static float uint16ToFloat;
+	static float uint16ToFloat2;
 	static float uint32ToFloat;
 
 	static float freqs[pitchStepsPerOctave];

@@ -39,5 +39,5 @@ void OscillatorModule::Update()
 	const byte waveform = static_cast<byte>(_inputs[Pin::Oscillator::Input::Waveform].GetValue());
 	uint16_t output = ::SampleWaveform(waveform, phase, 0x8000);
 
-	signalOutput.SetValue((output * Config::uint16ToFloat - 0.5f) * level);
+	signalOutput.SetValue((output * Config::uint16ToFloat2 - 1.0f) * level);
 }

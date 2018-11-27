@@ -19,69 +19,6 @@ boolean gotTick;
 
 uint32_t lastReport;
 
-void TestInput()
-{
-	delay(1000);
-
-	Serial.println("Hello");
-
-	auto floatToBytes = [](float val)
-	{
-		union { float f; uint32_t i; } u;
-
-		u.f = val;
-		return u.i;
-	};
-
-	auto getByte = [](uint32_t val, int byte)
-	{
-		return static_cast<uint8_t>(val >> byte * 8 & 0xff);
-	};
-
-	uint32_t attack = floatToBytes(100);
-	uint32_t decay = floatToBytes(1000);
-	uint32_t sustain = floatToBytes(0.5f);
-	uint32_t release = floatToBytes(1000);
-
-	byte inputData[] = 
-	{
-		(byte)CommandType::StartGraph,
-		(byte)CommandType::InitGraph, 7, 2, 16, 
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::MIDI, // 0			
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::Envelope,		// 0
-		(byte)CommandType::AddPolyModule, (byte)ModuleType::Oscillator,		// 1
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::PolyMixer,	// 1
-		(byte)CommandType::AddMonoModule, (byte)ModuleType::Target,	// 2
-
-		(byte)CommandType::SetValue, true, 0, Pin::Envelope::Input::Attack, getByte(attack, 3), getByte(attack, 2), getByte(attack, 1), getByte(attack, 0),
-		(byte)CommandType::SetValue, true, 0, Pin::Envelope::Input::Decay, getByte(decay, 3), getByte(decay, 2), getByte(decay, 1), getByte(decay, 0),
-		(byte)CommandType::SetValue, true, 0, Pin::Envelope::Input::Sustain, getByte(sustain, 3), getByte(sustain, 2), getByte(sustain, 1), getByte(sustain, 0),
-		(byte)CommandType::SetValue, true, 0, Pin::Envelope::Input::Release, getByte(release, 3), getByte(release, 2), getByte(release, 1), getByte(release, 0),
-
-		(byte)CommandType::AddConnection, (byte)ConnectionType::Single, 
-			(byte)InstanceType::Poly, 1, Pin::Oscillator::Input::Level,
-			(byte)InstanceType::Poly, 0, Pin::Envelope::Output::Level,
-		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
-			(byte)InstanceType::Poly, 0, Pin::Envelope::Input::Gate,
-			(byte)InstanceType::Mono, 0, Pin::MIDI::MultiOutput::Gate,
-		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
-			(byte)InstanceType::Poly, 1, Pin::Oscillator::Input::Pitch,
-			(byte)InstanceType::Mono, 0, Pin::MIDI::MultiOutput::Pitch,
-
-		(byte)CommandType::AddConnection, (byte)ConnectionType::Multi, 
-			(byte)InstanceType::Mono, 1, Pin::PolyMixer::MultiInput::Signal,
-			(byte)InstanceType::Poly, 1, Pin::Oscillator::Output::Signal,
-		(byte)CommandType::AddConnection,  (byte)ConnectionType::Single,  
-			(byte)InstanceType::Mono, 2, Pin::Target::Input::Signal,
-			(byte)InstanceType::Mono, 1, Pin::PolyMixer::Output::Signal,
-
-		(byte)CommandType::EndGraph,
-	};
-
-	for (size_t i = 0; i < sizeof inputData; ++i)
-		RemoteInput::Process(inputData[i]);
-}
-
 void setup()
 {
 	Config::Init();
@@ -100,8 +37,6 @@ void setup()
 	Serial.begin(57600);
 
 	MIDISERIAL.begin(31250);
-
-	//TestInput();
 }
 
 

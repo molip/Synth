@@ -8,7 +8,7 @@ class Config
 public:
 	static void Init()
 	{
-		const float baseFreq = 16.35f; // C0
+		const float baseFreq = 8.175799f;
 		const float pitchMult = ::pow(2.0f, 1.0f / pitchStepsPerOctave);
 		float freq = baseFreq;
 		for (int i = 0; i < pitchStepsPerOctave; ++i)

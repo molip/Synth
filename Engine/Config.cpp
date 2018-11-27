@@ -2,10 +2,6 @@
 
 using namespace Engine;
 
-float Config::pitchPerSemitone;
-float Config::pitchPerOctave;
-float Config::pitchStepsPerPitch;
-
 float Config::uint16ToFloat;
 float Config::uint16ToFloat2;
 float Config::uint32ToFloat;

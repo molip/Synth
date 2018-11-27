@@ -25,9 +25,6 @@ public:
 			freq *= pitchMult12;
 		}
 
-		pitchPerSemitone = 1.0f / midiNoteCount;
-		pitchPerOctave = pitchPerSemitone * 12;
-
 		uint16ToFloat = 1.0f / 0xffff;
 		uint16ToFloat2 = 2.0f / 0xffff;
 		uint32ToFloat = 1.0f / 0xffffffff;
@@ -38,8 +35,6 @@ public:
 	static const int pitchStepsPerOctave = 12 * pitchStepsPerSemitone;
 	static const int midiNoteCount = 120; 
 
-	static float pitchPerSemitone;
-	static float pitchPerOctave;
 	static float pitchStepsPerPitch;
 
 	static float uint16ToFloat;

@@ -3,6 +3,8 @@
 
 using namespace Engine;
 
+Array<float> DelayModule::_buffer;
+
 DelayModule::DelayModule()
 {
 	_inputs.SetSize(Pin::Delay::Input::_Count);
@@ -17,6 +19,8 @@ void DelayModule::Update()
 	Output& signalOutput = _outputs[Pin::Delay::Output::Signal];
 	Input& feedbackInput = _inputs[Pin::Delay::Input::Feedback];
 	Input& periodInput = _inputs[Pin::Delay::Input::Period];
+	Input& wetInput = _inputs[Pin::Delay::Input::Wet];
+	Input& dryInput = _inputs[Pin::Delay::Input::Dry];
 
 	if (feedbackInput.HasChanged())
 	{
@@ -34,15 +38,17 @@ void DelayModule::Update()
 		
 		newPeriod *= Config::sampleRateMS;
 
-		_clear = newPeriod > _period;
+		_clear = newPeriod > _period; // Ignore invalid data from here to end of buffer.
 		_period = newPeriod;
 	}
 
-	float val = signalInput.GetValue();
-	if (!_clear)
-		val = ClipBipolar(val + _buffer[_current]);
+	const float wet = wetInput.GetValue();
+	const float dry = dryInput.GetValue();
+	const float val = signalInput.GetValue();
+	const float oldVal = _clear ? 0 : _buffer[_current];
 
-	_buffer[_current++] = val * _feedback;
+	// Feedback = 0 should produce a single, full volume echo.
+	_buffer[_current++] = val + oldVal * _feedback;
 
 	if (_current >= _period)
 	{
@@ -50,5 +56,5 @@ void DelayModule::Update()
 		_current = 0;
 	}
 
-	signalOutput.SetValue(val);
+	signalOutput.SetValue(val * dry + oldVal * wet);
 }

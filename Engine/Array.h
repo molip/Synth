@@ -13,8 +13,12 @@ public:
 
 	void Reserve(int size)
 	{
-		delete [] _items;
-		_items = new T[size];
+		if (size > _reserved)
+		{
+			delete[] _items;
+			_items = new T[size];
+			_reserved = size;
+		}
 	}
 
 	void SetSize(int size)
@@ -35,6 +39,7 @@ public:
 
 protected:
 	int _size = 0;
+	int _reserved = 0;
 	T* _items = nullptr;
 };
 

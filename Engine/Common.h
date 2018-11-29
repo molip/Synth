@@ -56,7 +56,7 @@ namespace Pin
 	}
 	namespace Delay
 	{
-		namespace Input { enum Type { Feedback, Signal, Period, _Count }; }
+		namespace Input { enum Type { Feedback, Signal, Period, Wet, Dry, _Count }; }
 		namespace Output { enum Type { Signal, _Count }; }
 	}
 	namespace Arpeggiator

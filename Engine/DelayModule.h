@@ -11,7 +11,7 @@ public:
 	virtual bool WantUpdate() const override { return true; }
 
 private:
-	Array<float> _buffer;
+	static Array<float> _buffer; // TODO: Allow polyphony.
 	float _feedback = 0;
 	uint32_t _current = 0;
 	uint16_t _period = 0;

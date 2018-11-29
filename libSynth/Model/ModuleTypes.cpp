@@ -77,7 +77,9 @@ ModuleTypes::ModuleTypes()
 	_types.emplace_back("dely", "Delay", Engine::ModuleType::Delay);
 	_types.back().AddInput(std::make_unique<PinType>("peri", "Period", PinType::ConnectionType::Single, Engine::Pin::Delay::Input::Period)).SetValueType(std::make_unique<TimeValueType>(250));
 	_types.back().AddInput(std::make_unique<PinType>("fbck", "Feedback", PinType::ConnectionType::Single, Engine::Pin::Delay::Input::Feedback)).SetValueType(std::make_unique<PercentValueType>(50, 50, 0, 100));
-	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Delay::Input::Signal));
+	_types.back().AddInput(std::make_unique<PinType>("wet_", "Wet", PinType::ConnectionType::Single, Engine::Pin::Delay::Input::Wet)).SetValueType(std::make_unique<PercentValueType>(100, 100, 0, 100));
+	_types.back().AddInput(std::make_unique<PinType>("dry_", "Dry", PinType::ConnectionType::Single, Engine::Pin::Delay::Input::Dry)).SetValueType(std::make_unique<PercentValueType>(100, 100, 0, 100));
+	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Delay::Input::Signal)).SetValueType(std::make_unique<PercentValueType>(0, 100, -100, 100));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Delay::Output::Signal));
 
 	_types.emplace_back("arpe", "Arpeggiator", Engine::ModuleType::Arpeggiator);

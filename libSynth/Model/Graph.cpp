@@ -29,21 +29,58 @@ void Graph::SortModules(bool notify)
 	std::set<int> done;
 	_sorted.clear();
 
-	auto WantDefer = [&](const Module& mod)
+	auto AllSourcesDone = [&](const Module& mod)
 	{
 		for (auto& pair : mod.GetConnections())
-			if (done.count(pair.second.moduleID) == 0) // Source not done yet. 
+			if (done.count(pair.second.moduleID) == 0)
+				return false;
+		return true;
+	};
+
+	auto AnySourcesDone = [&](const Module& mod)
+	{
+		for (auto& pair : mod.GetConnections())
+			if (done.count(pair.second.moduleID) > 0)
 				return true;
 		return false;
 	};
-	
+
 	while (done.size() < _modules.size())
+	{
+		bool found = false;
 		for (auto& mod : _modules)
-			if (done.count(mod.GetID()) == 0 && !WantDefer(mod))
+		{
+			if (done.count(mod.GetID()) == 0 && AllSourcesDone(mod))
 			{
 				_sorted.push_back(&mod);
 				done.insert(mod.GetID());
+				found = true;
 			}
+		}
+
+		if (!found) 
+		{
+			// Must be a feedback loop - try to break the deadlock. 
+
+			auto tryDeadlocked = [&](bool force)
+			{
+				for (auto& mod : _modules)
+				{
+					if (done.count(mod.GetID()) == 0 && mod.IsDependentOn(mod.GetID(), *this) && (force || AnySourcesDone(mod)))
+					{
+						_sorted.push_back(&mod);
+						done.insert(mod.GetID());
+						return true;
+					}
+				}
+				return false;
+			};
+
+			if (!tryDeadlocked(false))
+				if (!tryDeadlocked(true))
+					KERNEL_VERIFY(false);
+		}
+	}
 
 	if (notify)
 		SendNotification(StructureChangedNotification());
@@ -57,10 +94,8 @@ std::vector<PinRef> Graph::GetValidSourcePins(PinRef input)
 	std::vector<PinRef> result;
 		
 	for (auto& mod : _sorted)
-		if (mod->GetID() != input.moduleID) // Ignore this one. 
-			if (!mod->IsDependentOn(input.moduleID, *this, false)) // Found a candidate...
-				for (auto& outputDef : mod->GetDef().GetOutputs()) // So add its outputs. 
-					result.push_back(PinRef(mod->GetID(), outputDef->GetID()));
+		for (auto& outputDef : mod->GetDef().GetOutputs()) // So add its outputs. 
+			result.push_back(PinRef(mod->GetID(), outputDef->GetID()));
 
 	return result;		
 }

@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <map>
+#include <set>
 
 namespace Synth
 {
@@ -60,7 +61,7 @@ namespace Model
 		const InputParams* FindInputParams(Tag type) const;
 
 		bool IsInstanced(const Graph& graph) const;
-		bool IsDependentOn(int modID, const Graph& graph, bool recurse) const;
+		bool IsDependentOn(int modID, const Graph& graph) const;
 
 		void SetID(int id) { _id = id; }
 		int GetID() const { return _id; }
@@ -83,6 +84,8 @@ namespace Model
 
 	protected:
 		const InputParams* GetDefaultInputParams(Tag type) const;
+		bool IsInstanced(const Graph& graph, std::set<int>& done) const;
+		bool IsDependentOn(int modID, const Graph& graph, std::set<int>& done) const;
 
 		int _id;
 		Tag _type;

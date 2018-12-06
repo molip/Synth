@@ -104,6 +104,17 @@ const InputParams* Module::GetDefaultInputParams(Tag type) const
 
 bool Module::IsInstanced(const Graph& graph) const
 {
+	std::set<int> done;
+	return IsInstanced(graph, done);
+}
+
+bool Module::IsInstanced(const Graph& graph, std::set<int>& done) const
+{
+	if (done.count(_id))
+		return false;
+
+	done.insert(_id);
+
 	for (auto& pair : _connections)
 	{
 		if (!GetInputDef(pair.first).IsMulti())
@@ -111,7 +122,7 @@ bool Module::IsInstanced(const Graph& graph) const
 			if (GetSourceOutputDef(pair.second, graph).IsMulti())
 				return true;
 
-			if (GetSourceModule(pair.second, graph).IsInstanced(graph))
+			if (GetSourceModule(pair.second, graph).IsInstanced(graph, done))
 				return true;
 		}
 	}
@@ -119,19 +130,26 @@ bool Module::IsInstanced(const Graph& graph) const
 	return false;
 }
 
-bool Module::IsDependentOn(int modID, const Graph& graph, bool recurse) const
+bool Module::IsDependentOn(int modID, const Graph& graph) const
 {
-	if (modID == _id)
+	std::set<int> done;
+	return IsDependentOn(modID, graph, done);
+}
+
+bool Module::IsDependentOn(int modID, const Graph& graph, std::set<int>& done) const
+{
+	if (done.count(_id))
 		return false;
+
+	done.insert(_id);
 
 	for (auto& pair: _connections)
 		if (pair.second.moduleID == modID)
 			return true;
 
-	if (recurse)
-		for (auto& pair: _connections)
-			if (GetSourceModule(pair.second, graph).IsDependentOn(modID, graph, true))
-				return true;
+	for (auto& pair: _connections)
+		if (GetSourceModule(pair.second, graph).IsDependentOn(modID, graph, done))
+			return true;
 
 	return false;
 }

@@ -23,8 +23,4 @@ void Engine::SerialPrintLn(const int val)
 	Kernel::Debug::Trace << val << std::endl;
 }
 
-void Engine::OutputAudio(const int val)
-{
-	Kernel::Debug::Trace << "Output: " << val << std::endl;
-}
 #endif

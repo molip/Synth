@@ -47,10 +47,12 @@ void Graph::SetAllNotesOn()
 		_midiModule->SetAllNotesOn();
 }
 
-void Graph::Update()
+float Graph::Update()
 {
 	for (int i = 0; i < _updateModules.GetSize(); ++i)
 		_updateModules[i]->Update();
+
+	return _outputModule ? _outputModule->GetLevel() : 0;
 }
 
 void Graph::UpdateKnob(int index, uint16_t val)
@@ -93,7 +95,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::PolyMixer: mod = new PolyMixerModule(_polyphony); break;
 	case ModuleType::Mixer: mod = new MixerModule; break;
 	case ModuleType::Multiply: mod = new MultiplyModule; break;
-	case ModuleType::Target: mod = new OutputModule; break;
+	case ModuleType::Target: mod = _outputModule = new OutputModule; break;
 	case ModuleType::Filter: mod = new FilterModule; break;
 	case ModuleType::Maths: mod = new MathsModule; break;
 	case ModuleType::LFO: mod = new LFOModule; break;

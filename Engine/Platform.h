@@ -22,11 +22,9 @@ using byte = uint8_t;
 
 	#define SERIAL_PRINT(val) SerialPrint(val)
 	#define SERIAL_PRINTLN(val) SerialPrintLn(val)
-	#define OUTPUT_AUDIO(val) OutputAudio(val)
 	#define delay(val)
 #else
 	#define SERIAL_PRINT(val) Serial.print(val)
 	#define SERIAL_PRINTLN(val) Serial.println(val)
-	#define OUTPUT_AUDIO(val) analogWrite(A21, val)
 #endif
 }

@@ -114,6 +114,7 @@ void DoTick()
 			}
 		}
 
-		graph->Update();
+		const float level = graph->Update();
+		analogWrite(A21, 0x800 + static_cast<int16_t>(level * 0x7ff)); // 12 bit.
 	}
 }

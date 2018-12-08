@@ -10,6 +10,7 @@ namespace Engine
 class Module;
 class MIDIModule;
 class KnobModule;
+class OutputModule;
 
 class Graph
 {
@@ -26,7 +27,7 @@ public:
 	void ProcessMIDI(byte data);
 	void ResetMIDI();
 	void SetAllNotesOn();
-	void Update();
+	float Update();
 	
 	int GetKnobCount() const { return _knobModules.GetSize(); }
 	void UpdateKnob(int index, uint16_t val);
@@ -46,6 +47,7 @@ private:
 	Array<KnobModule*> _knobModules;
 	byte _polyphony = 0;
 	MIDIModule* _midiModule = nullptr;
+	OutputModule* _outputModule = nullptr;
 };
 
 }

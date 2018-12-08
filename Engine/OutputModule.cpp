@@ -11,5 +11,5 @@ OutputModule::OutputModule()
 void OutputModule::Update()
 {
 	const Input& signal = _inputs[Pin::Target::Input::Signal];
-	OUTPUT_AUDIO(0x800 + static_cast<int16_t>(ClipBipolar(signal.GetValue()) * 0x7ff)); // 12 bit.
+	_result = ClipBipolar(signal.GetValue());
 }

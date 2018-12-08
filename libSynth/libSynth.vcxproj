@@ -124,7 +124,6 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandStack.h" />
     <ClInclude Include="Controller.h" />
-    <ClInclude Include="EngineTest.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Exporter.h" />
     <ClInclude Include="Model\Notification.h" />
@@ -231,7 +230,6 @@
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandStack.cpp" />
     <ClCompile Include="Controller.cpp" />
-    <ClCompile Include="EngineTest.cpp" />
     <ClCompile Include="Exporter.cpp" />
     <ClCompile Include="MIDIExporter.cpp" />
     <ClCompile Include="Model\Geometry.cpp" />

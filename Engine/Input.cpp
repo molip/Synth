@@ -119,9 +119,6 @@ Error InitGraphCommand::AddData(byte data)
 {
 	if (_modCount < 0)
 	{
-		if (data == 0)
-			return Error::InvalidParameter;
-
 		_modCount = data;
 	}
 	else if (_polyModCount < 0)

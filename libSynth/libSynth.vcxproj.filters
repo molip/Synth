@@ -126,6 +126,7 @@
     <ClInclude Include="..\Engine\KnobModule.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">
@@ -214,5 +215,6 @@
     <ClCompile Include="..\Engine\KnobModule.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
 </Project>

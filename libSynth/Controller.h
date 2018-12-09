@@ -19,6 +19,7 @@ namespace Synth
 		class ValueType;
 	}
 	class CommandStack;
+	class Player;
 
 	namespace UI
 	{
@@ -31,6 +32,9 @@ namespace Synth
 
 		void SetView(View* view) { _view = view; }
 		View* GetView() { return _view; }
+
+		void SetPlayer(Player* player) { _player = player; }
+		Player* GetPlayer() { return _player; }
 
 		bool CanUndo() const;
 		bool CanRedo() const;
@@ -75,11 +79,13 @@ namespace Synth
 
 	private:
 		Selection HitTest(Model::Point point, Model::Rect* elementRect = nullptr) const;
+		bool SendData(const Buffer& buffer) const;
 		bool DoExport(byte polyphony) const;
 		int& GetInputParamsValue(Model::InputParams& params, Selection::Element element) const;
 		void SetInputParams(Selection& sel, std::function<int(const Model::ValueType&, int)> fn);
 
 		View* _view = nullptr;
+		Player* _player = nullptr;
 
 		std::unique_ptr<Model::Graph> _graph;
 		std::unique_ptr<CommandStack> _commandStack;
@@ -89,7 +95,8 @@ namespace Synth
 
 		std::unique_ptr<Connection> _liveConnection;
 
-		mutable bool _inSync = false;
+		enum class SyncState { None, Local, All };
+		mutable SyncState _syncState = SyncState::None;
 	};
 	}
 }

@@ -4,6 +4,7 @@
 #include "CommandStack.h"
 #include "Exporter.h"
 #include "MIDIExporter.h"
+#include "Player.h"
 #include "View.h"
 
 #include "Model/Module.h"
@@ -299,6 +300,14 @@ std::vector<Controller::Connection> Controller::GetConnections() const
 	return connections;
 }
 
+bool Controller::SendData(const Buffer& buffer) const
+{
+	if (_player)
+		_player->ProcessData(buffer);
+
+	return _view->UploadData(buffer);
+}
+
 bool Controller::Export() const
 {
 	return DoExport(4);
@@ -306,17 +315,15 @@ bool Controller::Export() const
 
 bool Controller::DoExport(byte polyphony) const
 {
+	_syncState = SyncState::None;
+
 	Model::Exporter exporter(*_graph);
 	if (BufferPtr buffer = exporter.Export(polyphony))
 	{
-		if (_view->UploadData(*buffer))
-		{
-			_inSync = true;
-			return true;
-		}
+		_syncState = SendData(*buffer) ? SyncState::All : SyncState::Local;
 	}
 
-	return false;
+	return _syncState == SyncState::All;
 }
 
 bool Controller::ExportPolyTest()
@@ -324,15 +331,14 @@ bool Controller::ExportPolyTest()
 	if (!DoExport(16))
 		return false;
 
-	_view->UploadData(*MIDIExporter().ExportSetAllNotesOn());
-	return true;
+	return SendData(*MIDIExporter().ExportSetAllNotesOn());
 }
 
 bool Controller::ExportMIDIFile(const std::wstring& path) const
 {
 	MIDIExporter exporter;
 	if (BufferPtr buffer = exporter.Export(path))
-		return _view->UploadData(*buffer);
+		return SendData(*buffer);
 	
 	return false;
 }
@@ -341,7 +347,7 @@ void Controller::StopMIDIFilePlayback() const
 {
 	MIDIExporter exporter;
 	if (BufferPtr buffer = exporter.ExportStopMIDI())
-		_view->UploadData(*buffer);
+		SendData(*buffer);
 }
 
 bool Controller::Save(const std::wstring& path) const
@@ -366,16 +372,21 @@ void Controller::OnGraphNotification(const Model::Notification& notification)
 
 	if (dynamic_cast<const Model::StructureChangedNotification*>(&notification))
 	{
-		_inSync = false;
+		_syncState = SyncState::None;
 	}
 	else if (auto* vcn = dynamic_cast<const Model::ValueChangedNotification*>(&notification))
 	{
-		if (_inSync)
+		if (_syncState != SyncState::None)
 		{
 			Model::Exporter exporter(*_graph);
 			BufferPtr buffer = exporter.ExportValues(vcn->modID, vcn->pinID);
-			if (!_view->UploadData(*buffer)) // Now out of sync! 
-				_inSync = false;
+			
+			if (_syncState == SyncState::All)
+				if (!_view->UploadData(*buffer))
+					_syncState = SyncState::Local;
+
+			if (_player)
+				_player->ProcessData(*buffer);
 		}
 	}
 }

@@ -18,6 +18,8 @@ namespace Synth
 
 		using AudioBuffer = std::vector<int16_t>;
 
+		const AudioBuffer* GetLastBuffer() const { return _lastBuffer; }
+
 	protected:
 		void Start();
 		void Stop();
@@ -42,5 +44,6 @@ namespace Synth
 		int _currentBuffer = 0;
 		int _submitted = 0;
 		AudioBuffer _buffers[BufferCount];
+		const AudioBuffer* _lastBuffer = nullptr;
 	};
 }

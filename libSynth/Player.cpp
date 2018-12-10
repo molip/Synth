@@ -113,5 +113,6 @@ void Player::DoBuffer()
 
 	Submit(buffer);
 
+	_lastBuffer = &buffer;
 	_currentBuffer = (_currentBuffer + 1) % BufferCount;
 }

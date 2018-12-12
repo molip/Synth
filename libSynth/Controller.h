@@ -3,6 +3,7 @@
 #include "Model/Geometry.h"
 #include "Model/Graph.h"
 #include "Types.h"
+#include "MIDIKeyboard.h"
 #include "ModuleIkon.h"
 
 #include "../libKernel/IndexRange.h"
@@ -27,7 +28,7 @@ namespace Synth
 	class Controller : private Model::GraphObserver
 	{
 	public:
-		Controller();
+		Controller(const MIDIKeyboard::KeyCodes& keyCodes);
 		~Controller();
 
 		void SetView(View* view) { _view = view; }
@@ -49,6 +50,9 @@ namespace Synth
 		void OnLButtonDown(Model::Point point);
 		void OnLButtonUp(Model::Point point);
 		void OnMouseWheel(Model::Point point, bool negative, bool coarse);
+
+		void OnKeyDown(char key);
+		void OnKeyUp(char key);
 
 		void CommitValueEdit(const std::string& text);
 
@@ -97,6 +101,8 @@ namespace Synth
 
 		enum class SyncState { None, Local, All };
 		mutable SyncState _syncState = SyncState::None;
+
+		MIDIKeyboard _midiKeyboard;
 	};
 	}
 }

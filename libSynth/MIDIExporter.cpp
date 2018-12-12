@@ -9,6 +9,12 @@
 
 using namespace Synth;
 
+void MIDIExporter::AddNumber(uint32_t val, int bytes)
+{
+	for (int i = bytes - 1; i >= 0; --i)
+		Add(byte(val >> i * 8));
+}
+
 BufferPtr MIDIExporter::Export(const std::wstring& path)
 {
 	_buffer = std::make_unique<Buffer>();
@@ -59,12 +65,6 @@ BufferPtr MIDIExporter::Export(const std::wstring& path)
 	if ((long)file.tellg() + trackLength > size)
 		throw Exception("Invalid MIDI file; track data truncated.");
 
-	auto AddNumber = [&](long val, int bytes)
-	{
-		for (int i = bytes - 1; i >= 0; --i)
-			Add(byte(val >> i * 8));
-	};
-
 	Add((byte)Engine::CommandType::SetMIDIData);
 	AddNumber(division, 2);
 	AddNumber(trackLength, 4);
@@ -87,5 +87,18 @@ BufferPtr MIDIExporter::ExportSetAllNotesOn()
 {
 	_buffer = std::make_unique<Buffer>();
 	Add((byte)Engine::CommandType::SetAllNotesOn);
+	return std::move(_buffer);
+}
+
+BufferPtr MIDIExporter::ExportNote(byte note, bool on)
+{
+	_buffer = std::make_unique<Buffer>();
+
+	Add((byte)Engine::CommandType::MIDIInput);
+	AddNumber(3, 4);		// 3 bytes.
+	Add(on ? 144 : 128);	// Note on.
+	Add(note);				// Pitch.
+	Add(on ? 100 : 0);		// Velocity.
+
 	return std::move(_buffer);
 }

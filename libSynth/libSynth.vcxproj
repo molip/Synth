@@ -124,6 +124,7 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandStack.h" />
     <ClInclude Include="Controller.h" />
+    <ClInclude Include="MIDIKeyboard.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Exporter.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="CommandStack.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="MIDIKeyboard.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Exporter.cpp" />
     <ClCompile Include="MIDIExporter.cpp" />

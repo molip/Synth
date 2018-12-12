@@ -1,3 +1,5 @@
+#include "Controller.h"
+#include "Controller.h"
 #include "stdafx.h"
 #include "Controller.h"
 #include "Command.h"
@@ -17,7 +19,7 @@
 using namespace Synth;
 using namespace Synth::UI;
 
-Controller::Controller()
+Controller::Controller(const MIDIKeyboard::KeyCodes& keyCodes) : _midiKeyboard(keyCodes)
 {
 	_graph = std::make_unique<Model::Graph>();
 	_commandStack = std::make_unique<CommandStack>();
@@ -200,6 +202,18 @@ void Synth::UI::Controller::OnMouseWheel(Model::Point point, bool negative, bool
 	{
 		return valDef.AddDelta(oldVal, (coarse ? 10 : 1) * (negative ? -1 : 1)); 
 	});
+}
+
+void Synth::UI::Controller::OnKeyDown(char key)
+{
+	if (BufferPtr buffer = _midiKeyboard.OnKeyStateChanged(key, true))
+		SendData(*buffer);
+}
+
+void Synth::UI::Controller::OnKeyUp(char key)
+{
+	if (BufferPtr buffer = _midiKeyboard.OnKeyStateChanged(key, false))
+		SendData(*buffer);
 }
 
 void Synth::UI::Controller::CommitValueEdit(const std::string& text)

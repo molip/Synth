@@ -89,10 +89,6 @@ void Player::DoBuffer()
 	auto& buffer = _buffers[_currentBuffer];
 	if (Engine::Graph* graph = Engine::Graph::GetActive())
 	{
-		graph->ProcessMIDI(144); //Note on.
-		graph->ProcessMIDI(64); //Note.
-		graph->ProcessMIDI(100); //Velocity.
-
 		for (int i = 0; i < graph->GetKnobCount(); ++i)
 			graph->UpdateKnob(i, 512);
 

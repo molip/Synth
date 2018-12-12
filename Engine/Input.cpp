@@ -69,6 +69,11 @@ void Process(byte data)
 			MIDIData::Instance().ResetData();
 			Graph::GetActive()->SetAllNotesOn();
 			break;
+		case CommandType::MIDIInput:
+			SERIAL_PRINTLN("CommandType::MIDIInput");
+			_command = new MIDIInputCommand(Graph::GetActive());
+			break;
+
 			
 		// Can be either.
 		case CommandType::SetInputParams: 
@@ -241,6 +246,31 @@ bool SetMIDIDataCommand::Execute() const
 
 	MIDIData::Instance().SetData(_data, _dataSize, _division); // MIDIData now owns _data.
 	_graph->ResetMIDI();
+
+	return true;
+}
+
+
+Error MIDIInputCommand::AddData(byte data)
+{
+	if (!_dataSize.IsFinished())
+		_dataSize.AddData(data);
+	else
+	{
+		if (_dataRead++ == _dataSize)
+			return Error::TooManyParameters;
+
+		if (_graph)
+			_graph->ProcessMIDI(data);
+	}
+		
+	return Error::None;
+}
+
+bool MIDIInputCommand::Execute() const
+{
+	if (!_dataSize.IsFinished() || _dataRead < _dataSize)
+		return false;
 
 	return true;
 }

@@ -200,5 +200,19 @@ namespace RemoteInput
 		bool _gotError = false;
 	};
 
+	class MIDIInputCommand : public Command
+	{
+	public:
+		MIDIInputCommand(Graph* graph) : Command(graph) {}
+		virtual Error AddData(byte data) override;
+		virtual bool Execute() const override;
+
+	protected:
+		Value<uint32_t> _dataSize;
+		byte* _data = nullptr;
+		uint32_t _dataRead = 0;
+		bool _gotError = false;
+	};
+
 }
 }

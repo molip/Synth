@@ -127,6 +127,9 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Player.h" />
+    <ClInclude Include="MIDIKeyboard.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">
@@ -216,5 +219,8 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="MIDIKeyboard.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

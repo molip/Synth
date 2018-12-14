@@ -89,8 +89,7 @@ void Player::DoBuffer()
 	auto& buffer = _buffers[_currentBuffer];
 	if (Engine::Graph* graph = Engine::Graph::GetActive())
 	{
-		for (int i = 0; i < graph->GetKnobCount(); ++i)
-			graph->UpdateKnob(i, 512);
+		graph->UpdateKnobsRemote();
 
 		for (auto& sample : buffer)
 		{

@@ -31,6 +31,7 @@ public:
 	
 	int GetKnobCount() const { return _knobModules.GetSize(); }
 	void UpdateKnob(int index, uint16_t val);
+	void UpdateKnobsRemote();
 
 	static Graph* GetActive() { return _active; }
 	void Activate();

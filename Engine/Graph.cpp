@@ -61,6 +61,12 @@ void Graph::UpdateKnob(int index, uint16_t val)
 		_knobModules[index]->SetValue(val);
 }
 
+void Graph::UpdateKnobsRemote()
+{
+	for (int i = 0; i < _knobModules.GetSize(); ++i)
+		_knobModules[i]->UpdateRemote();
+}
+
 void Graph::Activate()
 {
 	if (_active == this)

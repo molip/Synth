@@ -9,6 +9,8 @@ public:
 	KnobModule();
 	void SetValue(uint16_t val);
 	int GetIndex() const;
+	void UpdateRemote();
+
 private:
 	virtual void Initialise() override;
 	void UpdateValue();

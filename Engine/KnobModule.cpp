@@ -19,6 +19,14 @@ void KnobModule::UpdateValue()
 	_outputs[Pin::Knob::Output::Value].SetValue(_value * Config::analogInToFloat);
 }
 
+void KnobModule::UpdateRemote()
+{
+	auto& remote = _inputs[Pin::Knob::Input::Remote];
+
+	if (remote.HasChanged())
+		_outputs[Pin::Knob::Output::Value].SetValue(remote.GetValue());
+}
+
 void KnobModule::SetValue(uint16_t val)
 {
 	if (_value != val)

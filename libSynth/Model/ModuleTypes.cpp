@@ -92,6 +92,7 @@ ModuleTypes::ModuleTypes()
 
 	_types.emplace_back("knob", "Knob", Engine::ModuleType::Knob);
 	_types.back().AddInput(std::make_unique<PinType>("indx", "Index", PinType::ConnectionType::Single, Engine::Pin::Knob::Input::Index)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 7));
+	_types.back().AddInput(std::make_unique<PinType>("remo", "Remote", PinType::ConnectionType::Single, Engine::Pin::Knob::Input::Remote)).SetValueType(std::make_unique<PercentValueType>(0, 0, 0, 100, 5));
 	_types.back().AddOutput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, Engine::Pin::Knob::Output::Value));
 }
 	

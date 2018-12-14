@@ -67,7 +67,7 @@ namespace Pin
 	}
 	namespace Knob
 	{
-		namespace Input { enum Type { Index, _Count }; }
+		namespace Input { enum Type { Index, Remote, _Count }; }
 		namespace Output { enum Type { Value, _Count }; }
 	}
 }

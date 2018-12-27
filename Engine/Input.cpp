@@ -73,6 +73,10 @@ void Process(byte data)
 			SERIAL_PRINTLN("CommandType::MIDIInput");
 			_command = new MIDIInputCommand(Graph::GetActive());
 			break;
+		case CommandType::Settings:
+			SERIAL_PRINTLN("CommandType::Settings");
+			_command = new SettingsCommand(Graph::GetActive());
+			break;
 
 			
 		// Can be either.
@@ -271,6 +275,31 @@ bool MIDIInputCommand::Execute() const
 {
 	if (!_dataSize.IsFinished() || _dataRead < _dataSize)
 		return false;
+
+	return true;
+}
+
+
+Error SettingsCommand::AddData(byte data)
+{
+	if (!_arpEnabled.IsFinished())
+		_arpEnabled.AddData(data);
+	else if (!_arpPeriod.IsFinished())
+		_arpPeriod.AddData(data);
+	else if (!_arpOctaves.IsFinished())
+		_arpOctaves.AddData(data);
+	else
+		return Error::TooManyParameters;
+
+	return Error::None;
+}
+
+bool SettingsCommand::Execute() const
+{
+	if (!_arpOctaves.IsFinished())
+		return false;
+
+	_graph->SetSettings({ _arpEnabled, _arpPeriod, _arpOctaves });
 
 	return true;
 }

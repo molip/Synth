@@ -3,14 +3,19 @@
 
 namespace Engine
 {
-class ArpeggiatorModule : public Module
+class ArpeggiatorModule
 {
 public:
-	ArpeggiatorModule(int polyphony);
-	virtual void Update() override;
-	virtual bool WantUpdate() const override { return true; }
+	ArpeggiatorModule(int polyphony, Array<MultiOutput>& outputs);
+	void Update();
+	void Connect(Array<MultiOutput>& midiOutputs);
+	void SetPeriod(uint16_t period);
+	void SetOctaves(uint16_t octaves);
 
 private:
+	Array<MultiInput> _midiInputs;
+	Array<MultiOutput>& _outputs;
+
 	Array<float> _pitches;
 	const int _polyphony;
 	int _noteCount = 0;

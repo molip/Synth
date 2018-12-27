@@ -19,6 +19,8 @@
 using namespace Synth;
 using namespace Synth::UI;
 
+Settings Controller::_settings;
+
 Controller::Controller(const MIDIKeyboard::KeyCodes& keyCodes) : _midiKeyboard(keyCodes)
 {
 	_graph = std::make_unique<Model::Graph>();
@@ -324,18 +326,20 @@ bool Controller::SendData(const Buffer& buffer) const
 
 bool Controller::Export() const
 {
-	return DoExport(4);
+	return DoExport(_settings.polyphony);
 }
 
 bool Controller::DoExport(byte polyphony) const
 {
 	_syncState = SyncState::None;
 
-	Model::Exporter exporter(*_graph);
+	Model::GraphExporter exporter(*_graph);
 	if (BufferPtr buffer = exporter.Export(polyphony))
 	{
 		_syncState = SendData(*buffer) ? SyncState::All : SyncState::Local;
 	}
+
+	ExportSettings();
 
 	return _syncState == SyncState::All;
 }
@@ -361,6 +365,13 @@ void Controller::StopMIDIFilePlayback() const
 {
 	MIDIExporter exporter;
 	if (BufferPtr buffer = exporter.ExportStopMIDI())
+		SendData(*buffer);
+}
+
+void Controller::ExportSettings() const
+{
+	Model::Exporter exporter;
+	if (BufferPtr buffer = exporter.ExportSettings(_settings))
 		SendData(*buffer);
 }
 
@@ -392,7 +403,7 @@ void Controller::OnGraphNotification(const Model::Notification& notification)
 	{
 		if (_syncState != SyncState::None)
 		{
-			Model::Exporter exporter(*_graph);
+			Model::GraphExporter exporter(*_graph);
 			BufferPtr buffer = exporter.ExportValues(vcn->modID, vcn->pinID);
 			
 			if (_syncState == SyncState::All)
@@ -409,4 +420,16 @@ int& Controller::GetInputParamsValue(Model::InputParams& params, Selection::Elem
 {
 	KERNEL_ASSERT(element == Selection::Element::Offset || element == Selection::Element::Scale);
 	return element == Selection::Element::Offset ? params.offset : params.scale;
+}
+
+void Controller::SetSettings(const Settings& settings)
+{
+	const bool needExport = settings.polyphony != _settings.polyphony;
+
+	_settings = settings;
+
+	if (needExport)
+		Export();
+	else
+		ExportSettings();
 }

@@ -47,8 +47,16 @@ void Graph::SetAllNotesOn()
 		_midiModule->SetAllNotesOn();
 }
 
+void Graph::SetSettings(const Settings& settings)
+{
+	if (_midiModule)
+		_midiModule->SetSettings(settings);
+}
+
 float Graph::Update()
 {
+	_midiModule->UpdateArpeggiator();
+
 	for (int i = 0; i < _updateModules.GetSize(); ++i)
 		_updateModules[i]->Update();
 
@@ -106,7 +114,6 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::Maths: mod = new MathsModule; break;
 	case ModuleType::LFO: mod = new LFOModule; break;
 	case ModuleType::Delay: mod = new DelayModule; break;
-	case ModuleType::Arpeggiator: mod = new ArpeggiatorModule(_polyphony); break;
 	case ModuleType::Knob: mod = knobMod = new KnobModule(); break;
 	default: return;
 	}

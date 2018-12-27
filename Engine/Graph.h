@@ -27,6 +27,7 @@ public:
 	void ProcessMIDI(byte data);
 	void ResetMIDI();
 	void SetAllNotesOn();
+	void SetSettings(const Settings& settings);
 	float Update();
 	
 	int GetKnobCount() const { return _knobModules.GetSize(); }

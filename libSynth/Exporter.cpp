@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Exporter.h"
+#include "Settings.h"
 #include "Model/Graph.h"
 #include "Model/Module.h"
 #include "Model/ModuleTypes.h"
@@ -7,10 +8,36 @@
 using namespace Synth;
 using namespace Synth::Model;
 
-Exporter::Exporter(const Graph& graph) : _graph(graph)
+Exporter::Exporter()
 {
 	_buffer = std::make_unique<Buffer>();
+}
 
+void Exporter::AddFloat(float val)
+{
+	union { float f; uint32_t i; } u;
+	u.f = val;
+	AddInteger(u.i, 4);
+}
+
+void Exporter::AddInteger(uint32_t val, int bytes)
+{
+	for (int i = bytes - 1; i >= 0; --i)
+		Add(byte(val >> i * 8));
+}
+
+BufferPtr Exporter::ExportSettings(const Settings& settings)
+{
+	Add(Engine::CommandType::Settings);
+	Add(settings.arpEnabled);
+	AddInteger(settings.arpPeriod, 2);
+	AddInteger(settings.arpOctaves, 2);
+	return std::move(_buffer);
+}
+
+
+GraphExporter::GraphExporter(const Graph& graph) : _graph(graph)
+{
 	for (auto& mod : _graph.GetSorted())
 	{
 		byte& index = mod->IsInstanced(_graph) ? _polyModCount : _monoModCount;
@@ -18,7 +45,8 @@ Exporter::Exporter(const Graph& graph) : _graph(graph)
 	}
 }
 
-BufferPtr Exporter::Export(byte polyphony)
+
+BufferPtr GraphExporter::Export(byte polyphony)
 {
 	Add(Engine::CommandType::StartGraph);
 
@@ -64,32 +92,24 @@ BufferPtr Exporter::Export(byte polyphony)
 	return std::move(_buffer);
 }
 
-BufferPtr Exporter::ExportValues(int moduleID, Tag pinID)
+BufferPtr GraphExporter::ExportValues(int moduleID, Tag pinID)
 {
 	auto& mod = *_graph.FindModule(moduleID);
 	WriteValues(mod, mod.GetInputDef(pinID));
 	return std::move(_buffer);
 }
 
-void Exporter::WriteValues(const Module& mod, const PinType& input)
+void GraphExporter::WriteValues(const Module& mod, const PinType& input)
 {
 	if (input.GetValueType())
 	{
-		auto addFloat = [&](int val)
-		{
-			union { float f; uint32_t i; } u;
-			u.f = input.GetValueType()->ToFloat(val);
-			for (int i = 3; i >= 0; --i)
-				Add(u.i >> i * 8 & 0xff);
-		};
-
 		Add(Engine::CommandType::SetInputParams);
 		Add(mod.IsInstanced(_graph));
 		Add(_modIndices[mod.GetID()]);
 		Add(input.GetEngineID());
 
 		const InputParams params = *mod.FindInputParams(input.GetID());
-		addFloat(params.offset);
-		addFloat(params.scale);
+		AddFloat(input.GetValueType()->ToFloat(params.offset));
+		AddFloat(input.GetValueType()->ToFloat(params.scale));
 	}
 }

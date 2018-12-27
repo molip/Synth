@@ -130,6 +130,7 @@
     <ClInclude Include="Exporter.h" />
     <ClInclude Include="Model\Notification.h" />
     <ClInclude Include="Model\ValueTypes.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="MIDIExporter.h" />
     <ClInclude Include="Model\Defs.h" />

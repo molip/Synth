@@ -8,6 +8,15 @@
 
 namespace Engine
 {
+
+class Settings
+{
+public:
+	bool arpEnabled = false;
+	uint16_t arpPeriod = 0;
+	uint16_t arpOctaves = 0;
+};
+	
 class Input;
 
 class Output

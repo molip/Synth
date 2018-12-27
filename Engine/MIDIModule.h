@@ -1,6 +1,7 @@
 #pragma once 
 #include "Module.h"
 #include "Array.h"
+#include "ArpeggiatorModule.h"
 
 namespace Engine
 {
@@ -9,9 +10,12 @@ class MIDIModule : public Module
 public:
 	MIDIModule(int polyphony);
 
+	void UpdateArpeggiator();
+
 	void ProcessMIDI(int8_t midiByte);
 	void ResetMIDI();
 	void SetAllNotesOn();
+	void SetSettings(const Settings& settings);
 
 	class Note 
 	{
@@ -33,5 +37,11 @@ private:
 
 	unsigned long _startCount = 0;
 	unsigned long _endCount = 0;
+
+	Array<MultiOutput> _rawOutputs;
+	Array<MultiOutput>* _useOutputs;
+	ArpeggiatorModule _arpeggiator;
+
+	Settings _settings;
 };
 }

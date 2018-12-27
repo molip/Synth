@@ -3,35 +3,40 @@
 
 using namespace Engine;
 
-ArpeggiatorModule::ArpeggiatorModule(int polyphony) : _polyphony(polyphony)
+ArpeggiatorModule::ArpeggiatorModule(int polyphony, Array<MultiOutput>& outputs) :
+	_polyphony(polyphony), _outputs(outputs)
 {
-	_inputs.SetSize(Pin::Arpeggiator::Input::_Count);
-	_multiInputs.SetSize(Pin::Arpeggiator::MultiInput::_Count);
-	_multiOutputs.SetSize(Pin::Arpeggiator::MultiOutput::_Count);
-
 	_pitches.SetSize(polyphony);
+	_midiInputs.SetSize(Pin::MIDI::MultiOutput::_Count);
+
+	_octaves = 1;
 }
 
+void ArpeggiatorModule::Connect(Array<MultiOutput>& midiOutputs)
+{
+	for (int i = 0; i < _midiInputs.GetSize(); ++i)
+	{
+		_midiInputs[i].SetSize(_polyphony);
+		for (int j = 0; j < _polyphony; ++j)
+			_midiInputs[i][j].Connect(midiOutputs[i][j]);
+	}
+}
+
+void ArpeggiatorModule::SetPeriod(uint16_t period) 
+{ 
+	_period = period * Config::sampleRateMS;
+}
+
+void ArpeggiatorModule::SetOctaves(uint16_t octaves)
+{ 
+	_octaves = octaves;
+	if (_currentOctave >= octaves)
+		_currentOctave = 0;
+}
 void ArpeggiatorModule::Update()
 {
-	MultiInput& gateInputs = _multiInputs[Pin::Arpeggiator::MultiInput::Gate];
-	MultiInput& pitchInputs = _multiInputs[Pin::Arpeggiator::MultiInput::Pitch];
-	Input& periodInput = _inputs[Pin::Arpeggiator::Input::Period];
-	Input& octavesInput = _inputs[Pin::Arpeggiator::Input::Octaves];
-
-	if (periodInput.HasChanged())
-	{
-		periodInput.ResetChanged();
-		_period = static_cast<uint16_t>(periodInput.GetValue()) * Config::sampleRateMS;
-	}
-
-	if (octavesInput.HasChanged())
-	{
-		octavesInput.ResetChanged();
-		_octaves = static_cast<uint16_t>(octavesInput.GetValue());
-		if (_currentOctave >= _octaves)
-			_currentOctave = 0;
-	}
+	MultiInput& gateInputs = _midiInputs[Pin::MIDI::MultiOutput::Gate];
+	MultiInput& pitchInputs = _midiInputs[Pin::MIDI::MultiOutput::Pitch];
 
 	bool inputsChanged = false;
 	for (int i = 0; i < _polyphony; ++i)
@@ -76,7 +81,7 @@ void ArpeggiatorModule::Update()
 			_currentPitch = -1;
 
 		if (_currentOutput >= 0)  // Stop current output. 
-			_multiOutputs[Pin::Arpeggiator::MultiOutput::Gate][_currentOutput].SetValue(0);
+			_outputs[Pin::MIDI::MultiOutput::Gate][_currentOutput].SetValue(0);
 
 		_currentOutput = (_currentOutput + 1) % _polyphony;
 		
@@ -91,8 +96,8 @@ void ArpeggiatorModule::Update()
 		if (_noteCount)
 		{
 			float pitch = _pitches[_currentPitch] + _currentOctave * 12;
-			_multiOutputs[Pin::Arpeggiator::MultiOutput::Gate][_currentOutput].SetValue(1);
-			_multiOutputs[Pin::Arpeggiator::MultiOutput::Pitch][_currentOutput].SetValue(pitch);
+			_outputs[Pin::MIDI::MultiOutput::Gate][_currentOutput].SetValue(1);
+			_outputs[Pin::MIDI::MultiOutput::Pitch][_currentOutput].SetValue(pitch);
 			_waiting = false; // Don't sync until _noteCount == 0 again.
 		}
 		else

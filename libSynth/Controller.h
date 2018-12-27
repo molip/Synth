@@ -5,6 +5,7 @@
 #include "Types.h"
 #include "MIDIKeyboard.h"
 #include "ModuleIkon.h"
+#include "Settings.h"
 
 #include "../libKernel/IndexRange.h"
 
@@ -81,12 +82,16 @@ namespace Synth
 		// GraphObserver 
 		virtual void OnGraphNotification(const Model::Notification& notification) override;
 
+		static const Settings& GetSettings() { return _settings; }
+		void SetSettings(const Settings& settings);
+
 	private:
 		Selection HitTest(Model::Point point, Model::Rect* elementRect = nullptr) const;
 		bool SendData(const Buffer& buffer) const;
 		bool DoExport(byte polyphony) const;
 		int& GetInputParamsValue(Model::InputParams& params, Selection::Element element) const;
 		void SetInputParams(Selection& sel, std::function<int(const Model::ValueType&, int)> fn);
+		void ExportSettings() const;
 
 		View* _view = nullptr;
 		Player* _player = nullptr;
@@ -103,6 +108,8 @@ namespace Synth
 		mutable SyncState _syncState = SyncState::None;
 
 		MIDIKeyboard _midiKeyboard;
+
+		static Settings _settings;
 	};
 	}
 }

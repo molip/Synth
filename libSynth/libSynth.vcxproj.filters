@@ -130,6 +130,7 @@
     <ClInclude Include="MIDIKeyboard.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="Settings.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">

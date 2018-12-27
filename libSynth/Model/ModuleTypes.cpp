@@ -82,14 +82,6 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Delay::Input::Signal)).SetValueType(std::make_unique<PercentValueType>(0, 100, -100, 100));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Delay::Output::Signal));
 
-	_types.emplace_back("arpe", "Arpeggiator", Engine::ModuleType::Arpeggiator);
-	_types.back().AddInput(std::make_unique<PinType>("peri", "Period", PinType::ConnectionType::Single, Engine::Pin::Arpeggiator::Input::Period)).SetValueType(std::make_unique<TimeValueType>(250));
-	_types.back().AddInput(std::make_unique<PinType>("octa", "Octaves", PinType::ConnectionType::Single, Engine::Pin::Arpeggiator::Input::Octaves)).SetValueType(std::make_unique<IntValueType>(1, 1, 1, 8));
-	_types.back().AddInput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, Engine::Pin::Arpeggiator::MultiInput::Gate));
-	_types.back().AddInput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, Engine::Pin::Arpeggiator::MultiInput::Pitch));
-	_types.back().AddOutput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Multi, Engine::Pin::Arpeggiator::MultiOutput::Gate));
-	_types.back().AddOutput(std::make_unique<PinType>("pitc", "Pitch", PinType::ConnectionType::Multi, Engine::Pin::Arpeggiator::MultiOutput::Pitch));
-
 	_types.emplace_back("knob", "Knob", Engine::ModuleType::Knob);
 	_types.back().AddInput(std::make_unique<PinType>("indx", "Index", PinType::ConnectionType::Single, Engine::Pin::Knob::Input::Index)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 7));
 	_types.back().AddInput(std::make_unique<PinType>("remo", "Remote", PinType::ConnectionType::Single, Engine::Pin::Knob::Input::Remote)).SetValueType(std::make_unique<PercentValueType>(0, 0, 0, 100, 5));

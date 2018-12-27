@@ -214,5 +214,18 @@ namespace RemoteInput
 		bool _gotError = false;
 	};
 
+	class SettingsCommand : public Command
+	{
+	public:
+		SettingsCommand(Graph* graph) : Command(graph) {}
+		virtual Error AddData(byte data) override;
+		virtual bool Execute() const override;
+
+	protected:
+		Value<bool> _arpEnabled;
+		Value<uint16_t> _arpPeriod;
+		Value<uint16_t> _arpOctaves;
+	};
+
 }
 }

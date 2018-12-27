@@ -8,10 +8,23 @@ using namespace Engine;
 #define MIDI_NOTE_OFF 128
 #define MIDI_NOTE_ON 144
 
-MIDIModule::MIDIModule(int polyphony)
+MIDIModule::MIDIModule(int polyphony) : _arpeggiator(polyphony, _multiOutputs)
 {
 	_notes.SetSize(polyphony);
 	_multiOutputs.SetSize(Pin::MIDI::MultiOutput::_Count);
+	_rawOutputs.SetSize(Pin::MIDI::MultiOutput::_Count);
+
+	for (int i = 0; i < _rawOutputs.GetSize(); ++i)
+		_rawOutputs[i].SetSize(polyphony);
+
+	_arpeggiator.Connect(_rawOutputs);
+	_useOutputs = &_multiOutputs;
+}
+
+void MIDIModule::UpdateArpeggiator()
+{
+	if (_settings.arpEnabled)
+		_arpeggiator.Update();
 }
 
 void MIDIModule::ProcessMIDI(int8_t midiByte)
@@ -69,7 +82,7 @@ void MIDIModule::ResetMIDI()
 
 	for (int i = 0; i < _notes.GetSize(); ++i)
 	{
-		_multiOutputs[Pin::MIDI::MultiOutput::Gate][i].SetValue(0, true);
+		(*_useOutputs)[Pin::MIDI::MultiOutput::Gate][i].SetValue(0, true);
 		_notes[i].midiNote = -1;
 		_notes[i].order = 0;
 		_startCount = _endCount = 0;
@@ -84,6 +97,23 @@ void MIDIModule::SetAllNotesOn()
 		StartNote(60 + i);
 }
 
+void MIDIModule::SetSettings(const Settings& settings)
+{
+	if (_settings.arpEnabled != settings.arpEnabled)
+	{
+		_useOutputs = settings.arpEnabled ? &_rawOutputs : &_multiOutputs;
+		ResetMIDI();
+	}
+
+	if (settings.arpPeriod != _settings.arpPeriod)
+		_arpeggiator.SetPeriod(settings.arpPeriod);
+
+	if (settings.arpOctaves != _settings.arpOctaves)
+		_arpeggiator.SetOctaves(settings.arpOctaves);
+
+	_settings = settings;
+}
+
 void MIDIModule::StartNote(int8_t midiNote)
 {
 	int index = FindNote(midiNote); // The controller shouldn't start a note twice, but we should handle it anyway. 
@@ -94,8 +124,8 @@ void MIDIModule::StartNote(int8_t midiNote)
 
 	Note& note = _notes[index];
 	note.midiNote = midiNote;
-	_multiOutputs[Pin::MIDI::MultiOutput::Pitch][index].SetValue(midiNote);
-	_multiOutputs[Pin::MIDI::MultiOutput::Gate][index].SetValue(1, true);
+	(*_useOutputs)[Pin::MIDI::MultiOutput::Pitch][index].SetValue(midiNote);
+	(*_useOutputs)[Pin::MIDI::MultiOutput::Gate][index].SetValue(1, true);
 	note.order = ++_startCount;
 }
 
@@ -106,7 +136,7 @@ void MIDIModule::StopNote(int8_t midiNote)
 	{
 		//SERIAL_PRINT("Stopping note: "); SERIAL_PRINTLN(index);
 
-		_multiOutputs[Pin::MIDI::MultiOutput::Gate][index].SetValue(0, true);
+		(*_useOutputs)[Pin::MIDI::MultiOutput::Gate][index].SetValue(0, true);
 		_notes[index].midiNote = -1;
 		_notes[index].order = ++_endCount;
 	}

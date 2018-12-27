@@ -19,7 +19,7 @@ namespace Model
 
 		PinType(Tag id, const std::string& name, ConnectionType connType, int engineID) : _id(id), _name(name), _connType(connType), _engineID(engineID) {}
 
-		void SetValueType(ValueTypePtr valtype) { _valType = std::move(valtype); }
+		ValueType& SetValueType(ValueTypePtr valtype) { _valType = std::move(valtype); return *_valType; }
 		const ValueType* GetValueType() const { return _valType.get(); }
 
 		bool IsMulti() const { return _connType == ConnectionType::Multi; }

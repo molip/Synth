@@ -69,6 +69,8 @@ inline extern uint16_t FloatToFixed16(float val)
 
 inline extern uint32_t FloatToFixed32(float val)
 {
-	return static_cast<uint32_t>(val * 0xffffffff);
+	const uint32_t max = 0xffffffff;
+	const float overflow = 0.9999999f; // Prevent integer overflow.
+	return val > overflow ? max : static_cast<uint32_t>(val * max);
 }
 }

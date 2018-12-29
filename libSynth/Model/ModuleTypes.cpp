@@ -26,7 +26,7 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddOutput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, Engine::Pin::Envelope::Output::Level));
 		
 	_types.emplace_back("oscl", "Oscillator", Engine::ModuleType::Oscillator);
-	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, Engine::Pin::Oscillator::Input::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 3));
+	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, Engine::Pin::Oscillator::Input::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 4));
 	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, Engine::Pin::Oscillator::Input::Pitch)).SetValueType(std::make_unique<PitchValueType>());
 	_types.back().AddInput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, Engine::Pin::Oscillator::Input::Level)).SetValueType(std::make_unique<PercentValueType>(0, 100, 0, 1000));
 	_types.back().AddInput(std::make_unique<PinType>("pmod", "PhaseMod", PinType::ConnectionType::Single, Engine::Pin::Oscillator::Input::PhaseMod)).SetValueType(std::make_unique<PercentValueType>(0, 100, -100, 100));

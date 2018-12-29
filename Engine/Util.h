@@ -5,7 +5,14 @@
 
 namespace Engine
 {
-inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t duty)
+
+struct SampleWaveformContext 
+{
+	bool low = false;
+	uint16_t lastRandom = 0;
+};
+
+inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t duty, SampleWaveformContext* ctx)
 {
 	uint16_t output = 0;
 	switch (waveform)
@@ -23,6 +30,16 @@ inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t du
 	case 3: // Sine.
 		output = *(SineTable + (phase >> 3));
 		break;
+	case 4: // Noise.
+	{
+		bool low = (phase & 0x8000) == 0;
+		if (low && !ctx->low)
+			ctx->lastRandom = ::rand() << 1;
+
+		ctx->low = low;
+		output = ctx->lastRandom;
+		break;
+	}
 	}
 	return output;
 }

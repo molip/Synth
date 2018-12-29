@@ -37,7 +37,7 @@ void OscillatorModule::Update()
 	
 	uint16_t phase = _phase + phaseMod;
 	const byte waveform = static_cast<byte>(_inputs[Pin::Oscillator::Input::Waveform].GetValue());
-	uint16_t output = ::SampleWaveform(waveform, phase, 0x8000);
+	uint16_t output = ::SampleWaveform(waveform, phase, 0x8000, &_ctx);
 
 	signalOutput.SetValue((output * Config::uint16ToFloat2 - 1.0f) * level);
 }

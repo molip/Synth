@@ -60,7 +60,7 @@ void LFOModule::Update()
 
 	_phase += _phaseDelta;
 	
-	const uint16_t output = ::SampleWaveform(waveform, _phase + _phaseAdjust, _dutyFixed);
+	const uint16_t output = ::SampleWaveform(waveform, _phase + _phaseAdjust, _dutyFixed, nullptr);
 
 	signalOutput.SetValue(output * Config::uint16ToFloat * level);
 }

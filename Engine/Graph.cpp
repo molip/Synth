@@ -13,6 +13,7 @@
 #include "DelayModule.h"
 #include "ArpeggiatorModule.h"
 #include "KnobModule.h"
+#include "NoiseModule.h"
 
 using namespace Engine;
 
@@ -116,6 +117,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::LFO: mod = new LFOModule; break;
 	case ModuleType::Delay: mod = new DelayModule; break;
 	case ModuleType::Knob: mod = knobMod = new KnobModule(); break;
+	case ModuleType::Noise: mod = new NoiseModule(); break;
 	default: return;
 	}
 

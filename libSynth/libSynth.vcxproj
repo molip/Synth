@@ -113,6 +113,7 @@
     <ClInclude Include="..\Engine\MixerModule.h" />
     <ClInclude Include="..\Engine\Module.h" />
     <ClInclude Include="..\Engine\MultiplyModule.h" />
+    <ClInclude Include="..\Engine\NoiseModule.h" />
     <ClInclude Include="..\Engine\OscillatorModule.h" />
     <ClInclude Include="..\Engine\OutputModule.h" />
     <ClInclude Include="..\Engine\Platform.h" />
@@ -207,6 +208,10 @@
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)Module2.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="..\Engine\MultiplyModule.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Engine\NoiseModule.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

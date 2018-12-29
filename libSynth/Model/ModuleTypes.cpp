@@ -86,6 +86,11 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("indx", "Index", PinType::ConnectionType::Single, Engine::Pin::Knob::Input::Index)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 7));
 	_types.back().AddInput(std::make_unique<PinType>("remo", "Remote", PinType::ConnectionType::Single, Engine::Pin::Knob::Input::Remote)).SetValueType(std::make_unique<PercentValueType>(0, 0, 0, 100, 5));
 	_types.back().AddOutput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, Engine::Pin::Knob::Output::Value));
+
+	_types.emplace_back("nois", "Noise", Engine::ModuleType::Noise);
+	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, Engine::Pin::Noise::Input::Pitch)).SetValueType(std::make_unique<PitchValueType>());
+	_types.back().AddInput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, Engine::Pin::Noise::Input::Level)).SetValueType(std::make_unique<PercentValueType>(0, 100, 0, 1000));
+	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Noise::Output::Signal));
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

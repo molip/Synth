@@ -55,7 +55,8 @@ void Graph::SetSettings(const Settings& settings)
 
 float Graph::Update()
 {
-	_midiModule->UpdateArpeggiator();
+	if (_midiModule)
+		_midiModule->UpdateArpeggiator();
 
 	for (int i = 0; i < _updateModules.GetSize(); ++i)
 		_updateModules[i]->Update();

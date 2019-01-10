@@ -223,6 +223,7 @@ namespace RemoteInput
 
 	protected:
 		Value<bool> _arpEnabled;
+		Value<bool> _arpHold;
 		Value<uint16_t> _arpPeriod;
 		Value<uint16_t> _arpOctaves;
 	};

@@ -6,7 +6,7 @@ using namespace Engine;
 ArpeggiatorModule::ArpeggiatorModule(int polyphony, Array<MultiOutput>& outputs) :
 	_polyphony(polyphony), _outputs(outputs)
 {
-	_pitches.SetSize(polyphony);
+	_pitches.Reserve(polyphony);
 	_midiInputs.SetSize(Pin::MIDI::MultiOutput::_Count);
 
 	_octaves = 1;
@@ -22,7 +22,13 @@ void ArpeggiatorModule::Connect(Array<MultiOutput>& midiOutputs)
 	}
 }
 
-void ArpeggiatorModule::SetPeriod(uint16_t period) 
+void ArpeggiatorModule::SetHold(bool hold)
+{
+	_hold = hold;
+	_forceUpdate |= !hold;
+}
+
+void ArpeggiatorModule::SetPeriod(uint16_t period)
 { 
 	_period = period * Config::sampleRateMS;
 }
@@ -39,43 +45,69 @@ void ArpeggiatorModule::Update()
 	MultiInput& pitchInputs = _midiInputs[Pin::MIDI::MultiOutput::Pitch];
 
 	bool inputsChanged = false;
-	for (int i = 0; i < _polyphony; ++i)
-		if ((inputsChanged = gateInputs[i].HasChanged()))
-			break;
 
-	bool sync = false;
+	if (_forceUpdate)
+	{
+		inputsChanged = true;
+		_forceUpdate = false;
+	}
+	else
+	{
+		for (int i = 0; i < _polyphony; ++i)
+			if ((inputsChanged = gateInputs[i].HasChanged()))
+				break;
+	}
+
+	bool updateNotes = false;
+	
 	if (inputsChanged)
 	{
-		int newNoteCount = 0;
+		int pressedCount = 0;
+
+		if (_hold)
+		{
+			for (int i = 0; i < _polyphony; ++i)
+			{
+				gateInputs[i].ResetChanged();
+				pressedCount += gateInputs[i].GetValue() > 0;
+			}
+
+			updateNotes = pressedCount > _pressedCount;
+		}
+		else
+			updateNotes = true;
+
+		_pressedCount = pressedCount;
+	}
+
+	bool sync = false;
+
+	if (updateNotes)
+	{
+		_pitches.Clear();
+
 		for (int i = 0; i < _polyphony; ++i)
 		{
 			gateInputs[i].ResetChanged();
 			if (gateInputs[i].GetValue())
-				_pitches[newNoteCount++] = pitchInputs[i].GetValue();
+				_pitches.Push(pitchInputs[i].GetValue());
 		}
 
-		if (!_noteCount && newNoteCount)
+		if (!_noteCount && !_pitches.IsEmpty())
 		{
 			sync = _waiting;
 			_currentOctave = 0;
 			_currentPitch = -1;
 		}
-		_noteCount = newNoteCount;
+		
+		_noteCount = _pitches.GetSize();
+		
+		_pitches.Sort();
 	}
 
 	if (sync || ++_phase >= _period)
 	{
 		_phase = 0;
-
-		for (int i = 0; i < _noteCount - 1; ++i)
-			for (int j = 0; j < _noteCount - i - 1; ++j)
-				if (_pitches[j] > _pitches[j + 1])
-				{
-					float temp = _pitches[j + 1];
-					_pitches[j + 1] = _pitches[j];
-					_pitches[j] = temp;
-				}
-
 
 		if (_currentPitch >= _noteCount)
 			_currentPitch = -1;

@@ -7,6 +7,7 @@ namespace Synth
 	public:
 		unsigned int polyphony = 4;
 		bool arpEnabled = false;
+		bool arpHold = false;
 		uint16_t arpPeriod = 100;
 		uint16_t arpOctaves = 1;
 	};

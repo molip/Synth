@@ -111,6 +111,9 @@ void MIDIModule::SetSettings(const Settings& settings)
 	if (settings.arpOctaves != _settings.arpOctaves)
 		_arpeggiator.SetOctaves(settings.arpOctaves);
 
+	if (settings.arpHold != _settings.arpHold)
+		_arpeggiator.SetHold(settings.arpHold);
+
 	_settings = settings;
 }
 

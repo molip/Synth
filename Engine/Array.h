@@ -27,15 +27,46 @@ public:
 		_size = size;
 	}
 
+	void Clear()
+	{
+		_size = 0;
+	}
+
 	void Push(const T& item)
 	{
 		_items[_size++] = item;
+	}
+
+	void Sort()
+	{
+		for (int i = 0; i < _size - 1; ++i)
+			for (int j = 0; j < _size - i - 1; ++j)
+				if (_items[j] > _items[j + 1])
+				{
+					float temp = _items[j + 1];
+					_items[j + 1] = _items[j];
+					_items[j] = temp;
+				}
 	}
 
 	T& operator [] (int i) { return _items[i]; }
 	const T& operator [] (int i) const { return _items[i]; }
 	
 	int GetSize() const { return _size; }
+
+	bool IsEmpty() const
+	{
+		return _size == 0;
+	}
+
+	bool Contains(const T& item) const
+	{
+		for (int i = 0; i < _size; ++i)
+			if (_items[i] == item)
+				return true;
+		
+		return false;
+	}
 
 protected:
 	int _size = 0;

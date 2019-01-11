@@ -301,7 +301,8 @@ bool SettingsCommand::Execute() const
 	if (!_arpOctaves.IsFinished())
 		return false;
 
-	_graph->SetSettings({ _arpEnabled, _arpHold, _arpPeriod, _arpOctaves });
+	if (_graph)
+		_graph->SetSettings({ _arpEnabled, _arpHold, _arpPeriod, _arpDuty, _arpOctaves });
 
 	return true;
 }

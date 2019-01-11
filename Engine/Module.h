@@ -15,6 +15,7 @@ public:
 	bool arpEnabled = false;
 	bool arpHold = false;
 	uint16_t arpPeriod = 0;
+	uint16_t arpDuty = 0;
 	uint16_t arpOctaves = 0;
 };
 	

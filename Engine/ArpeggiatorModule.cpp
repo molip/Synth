@@ -33,12 +33,18 @@ void ArpeggiatorModule::SetPeriod(uint16_t period)
 	_period = period * Config::sampleRateMS;
 }
 
+void ArpeggiatorModule::SetDuty(float duty)
+{
+	_duty = duty;
+}
+
 void ArpeggiatorModule::SetOctaves(uint16_t octaves)
 { 
 	_octaves = octaves;
 	if (_currentOctave >= octaves)
 		_currentOctave = 0;
 }
+
 void ArpeggiatorModule::Update()
 {
 	MultiInput& gateInputs = _midiInputs[Pin::MIDI::MultiOutput::Gate];
@@ -105,15 +111,18 @@ void ArpeggiatorModule::Update()
 		_pitches.Sort();
 	}
 
-	if (sync || ++_phase >= _period)
+	++_phase;
+
+	if (_phase >= _periodOn && _currentOutput >= 0)
+		_outputs[Pin::MIDI::MultiOutput::Gate][_currentOutput].SetValue(0);
+
+	if (sync || _phase >= _period)
 	{
 		_phase = 0;
+		_periodOn = static_cast<uint32_t>(_duty * 0.01f * _period);
 
 		if (_currentPitch >= _noteCount)
 			_currentPitch = -1;
-
-		if (_currentOutput >= 0)  // Stop current output. 
-			_outputs[Pin::MIDI::MultiOutput::Gate][_currentOutput].SetValue(0);
 
 		_currentOutput = (_currentOutput + 1) % _polyphony;
 		

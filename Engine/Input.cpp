@@ -288,6 +288,8 @@ Error SettingsCommand::AddData(byte data)
 		_arpHold.AddData(data);
 	else if (!_arpPeriod.IsFinished())
 		_arpPeriod.AddData(data);
+	else if (!_arpDuty.IsFinished())
+		_arpDuty.AddData(data);
 	else if (!_arpOctaves.IsFinished())
 		_arpOctaves.AddData(data);
 	else

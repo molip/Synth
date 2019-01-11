@@ -11,6 +11,7 @@ public:
 	void Connect(Array<MultiOutput>& midiOutputs);
 	void SetHold(bool hold);
 	void SetPeriod(uint16_t period);
+	void SetDuty(float duty);
 	void SetOctaves(uint16_t octaves);
 
 private:
@@ -26,7 +27,9 @@ private:
 	int _currentOutput = -1;
 	uint16_t _phase = 0;
 	uint16_t _period = 0;
+	uint16_t _periodOn = 0;
 	uint16_t _octaves = 0;
+	float _duty = 0;
 	bool _waiting = true;
 	bool _hold = false;
 	bool _forceUpdate = false;

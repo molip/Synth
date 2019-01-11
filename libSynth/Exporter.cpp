@@ -32,6 +32,7 @@ BufferPtr Exporter::ExportSettings(const Settings& settings)
 	Add(settings.arpEnabled);
 	Add(settings.arpHold);
 	AddInteger(settings.arpPeriod, 2);
+	AddInteger(settings.arpDuty, 2);
 	AddInteger(settings.arpOctaves, 2);
 	return std::move(_buffer);
 }

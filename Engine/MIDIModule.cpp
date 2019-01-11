@@ -108,6 +108,9 @@ void MIDIModule::SetSettings(const Settings& settings)
 	if (settings.arpPeriod != _settings.arpPeriod)
 		_arpeggiator.SetPeriod(settings.arpPeriod);
 
+	if (settings.arpDuty != _settings.arpDuty)
+		_arpeggiator.SetDuty(settings.arpDuty);
+
 	if (settings.arpOctaves != _settings.arpOctaves)
 		_arpeggiator.SetOctaves(settings.arpOctaves);
 

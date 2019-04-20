@@ -14,7 +14,7 @@ namespace Synth
 	public:
 		Player();
 		~Player();
-		bool ProcessData(const Buffer& buffer);
+		void ProcessData(const Buffer& buffer);
 
 		using AudioBuffer = std::vector<int16_t>;
 
@@ -27,7 +27,6 @@ namespace Synth
 
 	private:
 		void Go();
-		void GoData();
 		void DoBuffer();
 
 		virtual void Submit(const AudioBuffer& buffer) = 0;

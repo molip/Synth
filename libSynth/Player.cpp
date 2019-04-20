@@ -41,19 +41,10 @@ void Player::Stop()
 	}
 }
 
-bool Player::ProcessData(const Buffer& buffer)
+void Player::ProcessData(const Buffer& buffer)
 {
 	std::lock_guard<std::mutex> lock(_dataMutex);
 	_dataQueue.insert(_dataQueue.end(), buffer.begin(), buffer.end());
-
-	while (!_dataQueue.empty())
-	{
-		const byte data = _dataQueue.front();
-		_dataQueue.pop_front();
-		Engine::RemoteInput::Process(data);
-	}
-
-	return true;
 }
 
 void Player::OnBufferFinished()
@@ -84,22 +75,28 @@ void Player::Go()
 
 void Player::DoBuffer()
 {
-	std::lock_guard<std::mutex> lock(_dataMutex);
-
 	auto& buffer = _buffers[_currentBuffer];
-	if (Engine::Graph* graph = Engine::Graph::GetActive())
-	{
-		graph->UpdateKnobsRemote();
 
-		for (auto& sample : buffer)
+	for (auto& sample : buffer)
+	{
+		if (Engine::Graph* graph = Engine::Graph::GetActive())
 		{
+			graph->UpdateKnobsRemote();
+
 			const float level = graph->Update();
 			sample = static_cast<int16_t>(level * 0x7fff);
 		}
-	}
-	else
-		for (auto& sample : buffer)
+		else
 			sample = 0;
+
+		std::lock_guard<std::mutex> lock(_dataMutex);
+		if (!_dataQueue.empty())
+		{
+			const byte data = _dataQueue.front();
+			_dataQueue.pop_front();
+			Engine::RemoteInput::Process(data);
+		}
+	}
 
 	{
 		std::lock_guard<std::mutex> lock(_bufferMutex);

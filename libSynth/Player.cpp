@@ -13,10 +13,10 @@ using namespace Synth;
 
 bool Player::_initialised;
 
-Player::Player()
+Player::Player(int sampleRate)
 {
 	if (!_initialised)
-		Engine::Config::Init();
+		Engine::Config::Init(sampleRate);
 
 	for (int i = 0; i < BufferCount; ++i)
 		_buffers[i].resize(Engine::Config::sampleRate / 100); // 10ms per buffer.

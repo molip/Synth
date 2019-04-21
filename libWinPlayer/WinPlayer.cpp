@@ -8,8 +8,12 @@ void WinPlayer::VoiceCallback::OnBufferEnd(void* pBufferContext)
 	_player.OnBufferEnd(pBufferContext);
 }
 
+namespace 
+{
+	const int SampleRate = 48000;
+}
 
-WinPlayer::WinPlayer() : _callback(*this)
+WinPlayer::WinPlayer() : Player(SampleRate), _callback(*this)
 {
 	HRESULT hr = Init();
 	KERNEL_ASSERT(SUCCEEDED(hr));
@@ -41,8 +45,8 @@ HRESULT WinPlayer::Init()
 	WAVEFORMATEX wfx{};
 	wfx.wFormatTag = WAVE_FORMAT_PCM;
 	wfx.nChannels = 1;
-	wfx.nSamplesPerSec = 48000;
-	wfx.nAvgBytesPerSec = 96000;
+	wfx.nSamplesPerSec = SampleRate;
+	wfx.nAvgBytesPerSec = SampleRate * 2;
 	wfx.nBlockAlign = 2;
 	wfx.wBitsPerSample = 16;
 	wfx.cbSize = 0;

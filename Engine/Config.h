@@ -6,7 +6,7 @@ namespace Engine
 class Config
 {
 public:
-	static void Init()
+	static void Init(uint32_t _sampleRate)
 	{
 		const float baseFreq = 8.175799f;
 		const float pitchMult = ::pow(2.0f, 1.0f / pitchStepsPerOctave);
@@ -29,6 +29,10 @@ public:
 		uint16ToFloat2 = 2.0f / 0xffff;
 		uint32ToFloat = 1.0f / 0xffffffff;
 		analogInToFloat = 1.0f / 0x3ff;
+
+		sampleRate = _sampleRate;
+		sampleRateMS = _sampleRate / 1000;
+		freqToDeltaScale = (1 << 16) / (float)_sampleRate;
 	}
 
 	static const int pitchStepsPerSemitone = 16;
@@ -45,7 +49,7 @@ public:
 	static float freqs[pitchStepsPerOctave];
 	static float freqFactors[12];
 
-	static const uint32_t sampleRate, sampleRateMS;
+	static uint32_t sampleRate, sampleRateMS;
 	static float freqToDeltaScale;
 };
 }

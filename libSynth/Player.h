@@ -12,7 +12,7 @@ namespace Synth
 	class Player
 	{
 	public:
-		Player();
+		Player(int sampleRate);
 		~Player();
 		void ProcessData(const Buffer& buffer);
 

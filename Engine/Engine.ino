@@ -25,7 +25,7 @@ ADC* _adc = new ADC();
 
 void setup()
 {
-	Config::Init();
+	Config::Init(40000); // 25us / sample.
 
 	pinMode(4, INPUT_PULLUP);
 	pinMode(5, INPUT_PULLUP);

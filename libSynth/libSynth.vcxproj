@@ -101,6 +101,7 @@
     <ClInclude Include="..\Engine\Array.h" />
     <ClInclude Include="..\Engine\Common.h" />
     <ClInclude Include="..\Engine\Config.h" />
+    <ClInclude Include="..\Engine\CrushModule.h" />
     <ClInclude Include="..\Engine\DelayModule.h" />
     <ClInclude Include="..\Engine\EnvelopeModule.h" />
     <ClInclude Include="..\Engine\FilterModule.h" />
@@ -149,6 +150,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Engine\Config.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Engine\CrushModule.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

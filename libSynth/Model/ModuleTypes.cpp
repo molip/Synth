@@ -74,6 +74,12 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("duty", "Duty", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Duty)).SetValueType(std::make_unique<PercentValueType>(50, 25, 0, 100));
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::LFO::Output::Signal));
 
+	_types.emplace_back("crsh", "Crush", Engine::ModuleType::Crush);
+	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Crush::Input::Signal));
+	_types.back().AddInput(std::make_unique<PinType>("freq", "Frequency", PinType::ConnectionType::Single, Engine::Pin::Crush::Input::Frequency)).SetValueType(std::make_unique<PercentValueType>(100, 100, 1, 100));
+	_types.back().AddInput(std::make_unique<PinType>("ampl", "Amplitude", PinType::ConnectionType::Single, Engine::Pin::Crush::Input::Amplitude)).SetValueType(std::make_unique<PercentValueType>(100, 100, 1, 100));
+	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Crush::Output::Signal));
+
 	_types.emplace_back("dely", "Delay", Engine::ModuleType::Delay);
 	_types.back().AddInput(std::make_unique<PinType>("peri", "Period", PinType::ConnectionType::Single, Engine::Pin::Delay::Input::Period)).SetValueType(std::make_unique<TimeValueType>(250));
 	_types.back().AddInput(std::make_unique<PinType>("fbck", "Feedback", PinType::ConnectionType::Single, Engine::Pin::Delay::Input::Feedback)).SetValueType(std::make_unique<PercentValueType>(50, 50, 0, 100));

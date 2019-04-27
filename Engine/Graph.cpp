@@ -10,6 +10,7 @@
 #include "FilterModule.h"
 #include "MathsModule.h"
 #include "LFOModule.h"
+#include "CrushModule.h"
 #include "DelayModule.h"
 #include "ArpeggiatorModule.h"
 #include "KnobModule.h"
@@ -114,6 +115,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::Filter: mod = new FilterModule; break;
 	case ModuleType::Maths: mod = new MathsModule; break;
 	case ModuleType::LFO: mod = new LFOModule; break;
+	case ModuleType::Crush: mod = new CrushModule; break;
 	case ModuleType::Delay: mod = new DelayModule; break;
 	case ModuleType::Knob: mod = knobMod = new KnobModule(); break;
 	default: return;

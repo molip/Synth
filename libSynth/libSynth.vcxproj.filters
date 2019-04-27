@@ -131,6 +131,9 @@
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="..\Engine\CrushModule.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">
@@ -222,6 +225,9 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="MIDIKeyboard.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\CrushModule.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

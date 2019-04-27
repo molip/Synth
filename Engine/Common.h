@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Maths, LFO, Delay, Multiply, Knob, _Count };
+enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Maths, LFO, Crush, Delay, Multiply, Knob, _Count };
 
 namespace Pin
 {
@@ -52,6 +52,11 @@ namespace Pin
 	namespace LFO
 	{
 		namespace Input { enum Type { Pitch, Trigger, Duty, Level, Waveform, _Count }; }
+		namespace Output { enum Type { Signal, _Count }; }
+	}
+	namespace Crush
+	{
+		namespace Input { enum Type { Signal, Frequency, Amplitude, _Count }; }
 		namespace Output { enum Type { Signal, _Count }; }
 	}
 	namespace Delay

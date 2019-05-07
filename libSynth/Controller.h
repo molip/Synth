@@ -68,6 +68,8 @@ namespace Synth
 		bool ExportPolyTest();
 		bool ExportMIDIFile(const std::wstring& path) const;
 		void StopMIDIFilePlayback() const;
+		void ExportRawMIDI(Buffer&& buffer);
+			
 		bool Save(const std::wstring& path) const;
 		bool Load(const std::wstring& path);
 

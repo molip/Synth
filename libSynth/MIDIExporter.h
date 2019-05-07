@@ -11,5 +11,6 @@ namespace Synth
 		BufferPtr ExportStopMIDI();
 		BufferPtr ExportSetAllNotesOn();
 		BufferPtr ExportNote(byte note, bool on);
+		BufferPtr ExportRawMIDI(Buffer&& buffer);
 	};
 }

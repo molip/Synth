@@ -92,3 +92,14 @@ BufferPtr MIDIExporter::ExportNote(byte note, bool on)
 
 	return std::move(_buffer);
 }
+
+BufferPtr MIDIExporter::ExportRawMIDI(Buffer&& buffer)
+{
+	_buffer = std::make_unique<Buffer>();
+
+	Add((byte)Engine::CommandType::MIDIInput);
+	AddInteger(buffer.size(), 4);
+	_buffer->insert(_buffer->end(), buffer.begin(), buffer.end());
+
+	return std::move(_buffer);
+}

@@ -218,6 +218,11 @@ void Synth::UI::Controller::OnKeyUp(char key)
 		SendData(*buffer);
 }
 
+void Controller::ExportRawMIDI(Buffer&& buffer)
+{
+	SendData(*MIDIExporter().ExportRawMIDI(std::move(buffer)));
+}
+
 void Synth::UI::Controller::CommitValueEdit(const std::string& text)
 {
 	SetInputParams(_selection, [&](const Model::ValueType& valDef, int oldVal)

@@ -16,13 +16,31 @@ void OscillatorModule::Update()
 	Input& phaseModInput = _inputs[Pin::Oscillator::Input::PhaseMod];
 	Output& signalOutput = _outputs[Pin::Oscillator::Output::Signal];
 
-	const float level = levelInput.GetValue();
+	const float maxLevelDelta = 0.1f; // 1ms 1.0 release at 40kHz: delta = 0.025 / sample. 
 
-	if (level == 0)
+	const float thisLevel = levelInput.GetValue();
+	
+	float level;
+	if (_hold) // Continue hold.
 	{
-		signalOutput.SetValue(0);
-		_phase = 0;
-		return;
+		level = _lastLevel;
+	}
+	else if (_lastLevel - thisLevel > maxLevelDelta) // Start hold.
+	{
+		_hold = true;
+		level = _lastLevel;
+	}
+	else
+	{
+		if (thisLevel == 0)
+		{
+			signalOutput.SetValue(0);
+			_lastLevel = 0;
+			_phase = 0;
+			return;
+		}
+
+		level = thisLevel;
 	}
 
 	if (pitchInput.HasChanged())
@@ -39,5 +57,14 @@ void OscillatorModule::Update()
 	const byte waveform = static_cast<byte>(_inputs[Pin::Oscillator::Input::Waveform].GetValue());
 	uint16_t output = ::SampleWaveform(waveform, phase, 0x8000, &_ctx);
 
+	const bool positive = output & 0x8000;
+	if (_hold && positive != _positive) // Crossed zero, good time to cancel hold and change level. 
+	{
+		_hold = false;
+		level = thisLevel;
+	}
+
 	signalOutput.SetValue((output * Config::uint16ToFloat2 - 1.0f) * level);
+	_positive = positive;
+	_lastLevel = level;
 }

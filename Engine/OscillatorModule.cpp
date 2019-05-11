@@ -16,7 +16,15 @@ void OscillatorModule::Update()
 	Input& phaseModInput = _inputs[Pin::Oscillator::Input::PhaseMod];
 	Output& signalOutput = _outputs[Pin::Oscillator::Output::Signal];
 
-	const float level = levelInput.GetValue();
+	float level = levelInput.GetValue();
+	float delta = level - _lastLevel;
+	const float minDecTime = 10.0f; // ms for 1 -> 0 level change.
+	const float maxDec = 1 / (minDecTime * 40);
+	
+	if (delta < -maxDec)
+		level = _lastLevel - maxDec;
+
+	_lastLevel = level;
 
 	if (level == 0)
 	{

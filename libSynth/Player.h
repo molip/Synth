@@ -20,6 +20,11 @@ namespace Synth
 
 		const AudioBuffer* GetLastBuffer() const { return _lastBuffer; }
 
+		void StartCapture();
+		void StopCapture();
+		AudioBuffer HarvestCapture();
+		bool IsCapturing() const { return _capturing; }
+
 	protected:
 		void Start();
 		void Stop();
@@ -34,7 +39,7 @@ namespace Synth
 		static bool _initialised;
 		std::deque<byte> _dataQueue;
 		std::thread _bufferThread;
-		std::mutex _bufferMutex, _dataMutex;
+		std::mutex _bufferMutex, _dataMutex, _captureMutex;
 		std::condition_variable _cvBuffer, _cvData;
 		bool _abort = false;
 		//bool _request = false;
@@ -44,5 +49,8 @@ namespace Synth
 		int _submitted = 0;
 		AudioBuffer _buffers[BufferCount];
 		const AudioBuffer* _lastBuffer = nullptr;
+		
+		AudioBuffer _capture;
+		bool _capturing = false;
 	};
 }

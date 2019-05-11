@@ -57,6 +57,25 @@ void Player::OnBufferFinished()
 	_cvBuffer.notify_one();
 }
 
+void Player::StartCapture()
+{
+	std::lock_guard<std::mutex> lock(_captureMutex);
+	_capture.clear();
+	_capturing = true;
+}
+
+void Player::StopCapture()
+{
+	std::lock_guard<std::mutex> lock(_captureMutex);
+	_capturing = false;
+}
+
+Player::AudioBuffer Player::HarvestCapture()
+{
+	KERNEL_ASSERT(!_capturing);
+	return std::move(_capture);
+}
+
 void Player::Go()
 {
 	while (!_abort)
@@ -107,4 +126,8 @@ void Player::DoBuffer()
 
 	_lastBuffer = &buffer;
 	_currentBuffer = (_currentBuffer + 1) % BufferCount;
+
+	std::lock_guard<std::mutex> lock(_captureMutex);
+	if (_capturing)
+		_capture.insert(_capture.end(), buffer.begin(), buffer.end());
 }

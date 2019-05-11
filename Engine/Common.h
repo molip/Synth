@@ -12,7 +12,7 @@ namespace Pin
 	}
 	namespace Envelope 
 	{
-		namespace Input { enum Type { Gate, Sustain, Attack, Decay, Release, _Count }; }
+		namespace Input { enum Type { Gate, Sustain, Attack, Hold, Decay, Release, Latch, _Count }; }
 		namespace Output { enum Type { Level, _Count }; }
 	}
 	namespace Oscillator 

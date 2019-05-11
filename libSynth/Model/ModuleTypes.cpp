@@ -20,9 +20,11 @@ ModuleTypes::ModuleTypes()
 	_types.emplace_back("envl", "Envelope", Engine::ModuleType::Envelope);
 	_types.back().AddInput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Single, Engine::Pin::Envelope::Input::Gate));
 	_types.back().AddInput(std::make_unique<PinType>("atck", "Attack", PinType::ConnectionType::Single, Engine::Pin::Envelope::Input::Attack)).SetValueType(std::make_unique<TimeValueType>(50));
+	_types.back().AddInput(std::make_unique<PinType>("hold", "Hold", PinType::ConnectionType::Single, Engine::Pin::Envelope::Input::Hold)).SetValueType(std::make_unique<TimeValueType>(50));
 	_types.back().AddInput(std::make_unique<PinType>("decy", "Decay", PinType::ConnectionType::Single, Engine::Pin::Envelope::Input::Decay)).SetValueType(std::make_unique<TimeValueType>(50));
 	_types.back().AddInput(std::make_unique<PinType>("sust", "Sustain", PinType::ConnectionType::Single, Engine::Pin::Envelope::Input::Sustain)).SetValueType(std::make_unique<PercentValueType>(50, 50, 0, 100));
 	_types.back().AddInput(std::make_unique<PinType>("rels", "Release", PinType::ConnectionType::Single, Engine::Pin::Envelope::Input::Release)).SetValueType(std::make_unique<TimeValueType>(400));
+	_types.back().AddInput(std::make_unique<PinType>("latc", "Latch", PinType::ConnectionType::Single, Engine::Pin::Envelope::Input::Latch)).SetValueType(std::make_unique<BoolValueType>(0));
 	_types.back().AddOutput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, Engine::Pin::Envelope::Output::Level));
 		
 	_types.emplace_back("oscl", "Oscillator", Engine::ModuleType::Oscillator);

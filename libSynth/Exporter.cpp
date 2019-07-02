@@ -29,8 +29,8 @@ void Exporter::AddInteger(uint32_t val, int bytes)
 BufferPtr Exporter::ExportSettings(const Settings& settings)
 {
 	Add(Engine::CommandType::Settings);
+	Add(settings.hold);
 	Add(settings.arpEnabled);
-	Add(settings.arpHold);
 	AddInteger(settings.arpPeriod, 2);
 	AddInteger(settings.arpDuty, 2);
 	AddInteger(settings.arpOctaves, 2);

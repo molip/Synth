@@ -80,13 +80,7 @@ void MIDIModule::ResetMIDI()
 {
 	_midiCommand = _midiNote = 0;
 
-	for (int i = 0; i < _notes.GetSize(); ++i)
-	{
-		(*_useOutputs)[Pin::MIDI::MultiOutput::Gate][i].SetValue(0, true);
-		_notes[i].midiNote = -1;
-		_notes[i].order = 0;
-		_startCount = _endCount = 0;
-	}
+	StopAllNotes();
 }
 
 void MIDIModule::SetAllNotesOn()
@@ -114,19 +108,24 @@ void MIDIModule::SetSettings(const Settings& settings)
 	if (settings.arpOctaves != _settings.arpOctaves)
 		_arpeggiator.SetOctaves(settings.arpOctaves);
 
-	if (settings.arpHold != _settings.arpHold)
-		_arpeggiator.SetHold(settings.arpHold);
+	if (!settings.hold && _settings.hold)
+		StopAllNotes();
 
 	_settings = settings;
 }
 
 void MIDIModule::StartNote(int8_t midiNote)
 {
+	if (_pressedCount == 0 && _settings.hold) // Clear held notes
+		for (int i = 0; i < _notes.GetSize(); ++i)
+			StopNoteIndex(i);
+
 	int index = FindNote(midiNote); // The controller shouldn't start a note twice, but we should handle it anyway. 
 	if (index < 0)
+	{
 		index = FindOldestNote();
-
-	//SERIAL_PRINT("Starting note: "); SERIAL_PRINTLN(index);
+		++_pressedCount;
+	}
 
 	Note& note = _notes[index];
 	note.midiNote = midiNote;
@@ -140,12 +139,29 @@ void MIDIModule::StopNote(int8_t midiNote)
 	int index = FindNote(midiNote);
 	if (index >= 0)
 	{
-		//SERIAL_PRINT("Stopping note: "); SERIAL_PRINTLN(index);
+		if (!_settings.hold)
+			StopNoteIndex(index);
 
-		(*_useOutputs)[Pin::MIDI::MultiOutput::Gate][index].SetValue(0, true);
-		_notes[index].midiNote = -1;
-		_notes[index].order = ++_endCount;
+		--_pressedCount;
 	}
+}
+
+void MIDIModule::StopAllNotes()
+{
+	for (int i = 0; i < _notes.GetSize(); ++i)
+	{
+		(*_useOutputs)[Pin::MIDI::MultiOutput::Gate][i].SetValue(0, true);
+		_notes[i].midiNote = -1;
+		_notes[i].order = 0;
+		_startCount = _endCount = _pressedCount = 0;
+	}
+}
+
+void MIDIModule::StopNoteIndex(int index)
+{
+	(*_useOutputs)[Pin::MIDI::MultiOutput::Gate][index].SetValue(0, true);
+	_notes[index].midiNote = -1;
+	_notes[index].order = ++_endCount;
 }
 
 int MIDIModule::FindNote(int8_t midiNote) const

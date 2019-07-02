@@ -24,19 +24,22 @@ public:
 		unsigned long order = 0; // Start order if active, otherwise end order. 
 	};
 
-	Array<Note> _notes;
-
 private:
 	void StartNote(int8_t midiNote);
 	void StopNote(int8_t midiNote);
 	int FindNote(int8_t midiNote) const;
 	int FindOldestNote() const;
+	void StopNoteIndex(int index);
+	void StopAllNotes();
+
+	Array<Note> _notes;
 
 	byte _midiCommand = 0;
 	byte _midiNote = 0;
 
 	unsigned long _startCount = 0;
 	unsigned long _endCount = 0;
+	unsigned long _pressedCount = 0;
 
 	Array<MultiOutput> _rawOutputs;
 	Array<MultiOutput>* _useOutputs;

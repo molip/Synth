@@ -282,10 +282,10 @@ bool MIDIInputCommand::Execute() const
 
 Error SettingsCommand::AddData(byte data)
 {
-	if (!_arpEnabled.IsFinished())
+	if (!_hold.IsFinished())
+		_hold.AddData(data);
+	else if (!_arpEnabled.IsFinished())
 		_arpEnabled.AddData(data);
-	else if (!_arpHold.IsFinished())
-		_arpHold.AddData(data);
 	else if (!_arpPeriod.IsFinished())
 		_arpPeriod.AddData(data);
 	else if (!_arpDuty.IsFinished())
@@ -304,7 +304,7 @@ bool SettingsCommand::Execute() const
 		return false;
 
 	if (_graph)
-		_graph->SetSettings({ _arpEnabled, _arpHold, _arpPeriod, _arpDuty, _arpOctaves });
+		_graph->SetSettings({ _hold, _arpEnabled, _arpPeriod, _arpDuty, _arpOctaves });
 
 	return true;
 }

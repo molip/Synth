@@ -22,12 +22,6 @@ void ArpeggiatorModule::Connect(Array<MultiOutput>& midiOutputs)
 	}
 }
 
-void ArpeggiatorModule::SetHold(bool hold)
-{
-	_hold = hold;
-	_forceUpdate |= !hold;
-}
-
 void ArpeggiatorModule::SetPeriod(uint16_t period)
 { 
 	_period = period * Config::sampleRateMS;
@@ -51,44 +45,13 @@ void ArpeggiatorModule::Update()
 	MultiInput& pitchInputs = _midiInputs[Pin::MIDI::MultiOutput::Pitch];
 
 	bool inputsChanged = false;
-
-	if (_forceUpdate)
-	{
-		inputsChanged = true;
-		_forceUpdate = false;
-	}
-	else
-	{
-		for (int i = 0; i < _polyphony; ++i)
-			if ((inputsChanged = gateInputs[i].HasChanged()))
-				break;
-	}
-
-	bool updateNotes = false;
-	
-	if (inputsChanged)
-	{
-		int pressedCount = 0;
-
-		if (_hold)
-		{
-			for (int i = 0; i < _polyphony; ++i)
-			{
-				gateInputs[i].ResetChanged();
-				pressedCount += gateInputs[i].GetValue() > 0;
-			}
-
-			updateNotes = pressedCount > _pressedCount;
-		}
-		else
-			updateNotes = true;
-
-		_pressedCount = pressedCount;
-	}
+	for (int i = 0; i < _polyphony; ++i)
+		if ((inputsChanged = gateInputs[i].HasChanged()))
+			break;
 
 	bool sync = false;
 
-	if (updateNotes)
+	if (inputsChanged)
 	{
 		_pitches.Clear();
 

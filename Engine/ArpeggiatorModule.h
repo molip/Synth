@@ -9,7 +9,6 @@ public:
 	ArpeggiatorModule(int polyphony, Array<MultiOutput>& outputs);
 	void Update();
 	void Connect(Array<MultiOutput>& midiOutputs);
-	void SetHold(bool hold);
 	void SetPeriod(uint16_t period);
 	void SetDuty(float duty);
 	void SetOctaves(uint16_t octaves);
@@ -21,7 +20,6 @@ private:
 	Array<float> _pitches;
 	const int _polyphony;
 	int _noteCount = 0;
-	int _pressedCount = 0;
 	int _currentPitch = 0;
 	int _currentOctave = 0;
 	int _currentOutput = -1;
@@ -31,7 +29,5 @@ private:
 	uint16_t _octaves = 0;
 	float _duty = 0;
 	bool _waiting = true;
-	bool _hold = false;
-	bool _forceUpdate = false;
 };
 }

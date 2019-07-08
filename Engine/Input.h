@@ -75,6 +75,18 @@ namespace RemoteInput
 		AddPolyModuleCommand(Graph* graph) : AddModuleCommand(graph, true) {}
 	};
 
+	class Pin
+	{
+	public:
+		void AddData(byte data);
+		bool IsMono() const { return _modType == InstanceType::Mono; }
+
+		InstanceType _modType = InstanceType::None;
+		int _modIndex = -1;
+		int _pinIndex = -1;
+		bool _done = false;
+	};
+	
 	class AddConnectionCommand : public Command
 	{
 	public:
@@ -85,42 +97,39 @@ namespace RemoteInput
 		class Connection
 		{
 		public:
-			void AddData(byte data); // Returns true if data accepted. 
-			bool IsMono() const { return _modType == InstanceType::Mono; }
+			void AddData(byte data) { _pin.AddData(data); }
+			bool IsDone() const { return _pin._done; }
 
 			template <typename T> T& GetMonoSinglePin(Graph& graph) const
 			{
-				return graph.GetMonoModule(_modIndex)->GetPins<T>()[_pinIndex];
+				return graph.GetMonoModule(_pin._modIndex)->GetPins<T>()[_pin._pinIndex];
 			}
 
 			template <typename T> T& GetMonoMultiPin(Graph& graph, int i) const
 			{
-				return graph.GetMonoModule(_modIndex)->GetMultiPins<T>()[_pinIndex][i];
+				return graph.GetMonoModule(_pin._modIndex)->GetMultiPins<T>()[_pin._pinIndex][i];
 			}
 
 			template <typename T> T& GetPolySinglePin(Graph& graph, int i) const 
 			{
-				return graph.GetPolyModule(_modIndex, i)->GetPins<T>()[_pinIndex];
+				return graph.GetPolyModule(_pin._modIndex, i)->GetPins<T>()[_pin._pinIndex];
 			}
 
 			template <typename T> T& GetPin(Graph& graph, int i, bool multi) const 
 			{
-				return IsMono() ? multi ? GetMonoMultiPin<T>(graph, i) : GetMonoSinglePin<T>(graph) : GetPolySinglePin<T>(graph, i);
+				return _pin.IsMono() ? multi ? GetMonoMultiPin<T>(graph, i) : GetMonoSinglePin<T>(graph) : GetPolySinglePin<T>(graph, i);
 			}
 
 			void ConnectToOutput(Graph& graph, const Connection& output, bool multi) const
 			{
-				if (IsMono() && output.IsMono() && !multi)
+				if (_pin.IsMono() && output._pin.IsMono() && !multi)
 					GetMonoSinglePin<Input>(graph).Connect(output.GetMonoSinglePin<Output>(graph));
 				else
 					for (int i = 0; i < graph.GetPolyphony(); ++i)
 						GetPin<Input>(graph, i, multi).Connect(output.GetPin<Output>(graph, i, multi));
 			}
 
-			InstanceType _modType = InstanceType::None;
-			int _modIndex = -1;
-			int _pinIndex = -1;
-			bool _done = false;
+			Pin _pin;
 		};
 
 	private:

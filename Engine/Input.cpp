@@ -181,7 +181,7 @@ bool AddModuleCommand::Execute() const
 
 
 
-void AddConnectionCommand::Connection::AddData(byte data) 
+void Pin::AddData(byte data) 
 {
 	if (_modType == InstanceType::None)
 		_modType = (InstanceType)data;
@@ -197,14 +197,14 @@ Error AddConnectionCommand::AddData(byte data)
 {
 	if (_connType == ConnectionType::None)
 		_connType = (ConnectionType)data;
-	else if (!_input._done) 
+	else if (!_input.IsDone())
 		_input.AddData(data);
-	else if (!_output._done) 
+	else if (!_output.IsDone())
 		_output.AddData(data);
 	else
 		return Error::TooManyParameters;
 
-	if (_output._done)
+	if (_output.IsDone())
 	{
 		// TODO: Check pin indices exist in modules.
 	}
@@ -214,7 +214,7 @@ Error AddConnectionCommand::AddData(byte data)
 
 bool AddConnectionCommand::Execute() const
 {
-	if (!_output._done) 
+	if (!_output.IsDone())
 		return false;
 
 	_input.ConnectToOutput(*_graph, _output, _connType == ConnectionType::Multi);

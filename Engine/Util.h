@@ -25,7 +25,7 @@ inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t du
 		output = ((phase & 0x8000) ? 0xffff - phase : phase) << 1;
 		break;
 	case 2: // Square.
-		output = phase < uint16_t(~duty) ? 0 : 0xffff;
+		output = phase < duty ? 0xffff : 0;
 		break;
 	case 3: // Sine.
 		output = *(SineTable + (phase >> 3));

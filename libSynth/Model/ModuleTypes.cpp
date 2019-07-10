@@ -70,7 +70,7 @@ ModuleTypes::ModuleTypes()
 
 	_types.emplace_back("lfo", "LFO", Engine::ModuleType::LFO);
 	_types.back().AddInput(std::make_unique<PinType>("trig", "Trigger", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Trigger));
-	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 3));
+	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 4));
 	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Pitch)).SetValueType(std::make_unique<PitchValueType>());
 	_types.back().AddInput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Level)).SetValueType(std::make_unique<PercentValueType>(0, 100, 0, 1000));
 	_types.back().AddInput(std::make_unique<PinType>("duty", "Duty", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Duty)).SetValueType(std::make_unique<PercentValueType>(50, 25, 0, 100));

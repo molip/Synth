@@ -1,5 +1,6 @@
 #pragma once 
 #include "Module.h"
+#include "Util.h"
 
 namespace Engine
 {
@@ -16,5 +17,6 @@ private:
 	uint16_t _phaseDelta = 0;
 	uint16_t _divide = 0;
 	uint16_t _dutyFixed = 0;
+	SampleWaveformContext _ctx;
 };
 }

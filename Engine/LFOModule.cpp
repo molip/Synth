@@ -15,7 +15,10 @@ void LFOModule::Update()
 	if (triggerInput.HasChanged())
 	{
 		if (triggerInput.GetValue())
+		{
 			_phase = 0;
+			_ctx = {};
+		}
 		triggerInput.ResetChanged();
 	}
 
@@ -55,12 +58,17 @@ void LFOModule::Update()
 	if (waveformInput.HasChanged())
 	{
 		waveformInput.ResetChanged();
-		_phaseAdjust = waveform == 0 ? 0x8000 : waveform == 2 ? 0 : 0xc000;
+		if (waveform == 0)
+			_phaseAdjust = 0x8000;
+		else if (waveform == 2 || waveform == 4)
+			_phaseAdjust = 0;
+		else
+			_phaseAdjust = 0xc000;
 	}
 
 	_phase += _phaseDelta;
 	
-	const uint16_t output = ::SampleWaveform(waveform, _phase + _phaseAdjust, _dutyFixed, nullptr);
+	const uint16_t output = ::SampleWaveform(waveform, _phase + _phaseAdjust, _dutyFixed, &_ctx);
 
 	signalOutput.SetValue(output * Config::uint16ToFloat * level);
 }

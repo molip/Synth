@@ -16,18 +16,18 @@ namespace Model
 	public:
 		enum class DisplayType { Number, Select, };
 
-		ValueType(DisplayType type, int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1) : _inputParams{ defaultOffset, defaultScale }, _min(min), _max(max), _deltaMult(deltaMult) {}
+		ValueType(DisplayType type, int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1, int coarseSteps = 10) : _inputParams{ defaultOffset, defaultScale }, _min(min), _max(max), _deltaMult(deltaMult), _coarseSteps(coarseSteps) {}
 
 		virtual float ToFloat(int val) const { return static_cast<float>(val); }
 		virtual std::string ToString(int val) const = 0;
 		virtual int FromString(const std::string& str) const = 0;
 		
-		int AddDelta(int val, int delta) const;
+		int AddDelta(int val, int delta, bool coarse) const;
 		const InputParams& GetDefault() const { return _inputParams; }
 		int Clamp(int value) const;
 
 	private:
-		int _min, _max, _deltaMult;
+		int _min, _max, _deltaMult, _coarseSteps;
 		InputParams _inputParams;
 	};
 	using ValueTypePtr = std::unique_ptr<ValueType>;
@@ -42,8 +42,8 @@ namespace Model
 
 	class PercentValueType : public ValueType
 	{
-	public:
-		PercentValueType(int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1) : ValueType(DisplayType::Number, defaultOffset, defaultScale, min, max, deltaMult) {}
+	public:	
+		PercentValueType(int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1, int coarseSteps = 10) : ValueType(DisplayType::Number, defaultOffset, defaultScale, min, max, deltaMult, coarseSteps) {}
 		virtual float ToFloat(int val) const override;
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
@@ -52,7 +52,7 @@ namespace Model
 	class PitchValueType : public PercentValueType
 	{
 	public:
-		PitchValueType() : PercentValueType(0, 100, -12700, 12700, 100) {}
+		PitchValueType() : PercentValueType(0, 100, -12700, 12700, 100, 12) {}
 	};
 
 	class IntValueType : public ValueType

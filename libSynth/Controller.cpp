@@ -202,7 +202,7 @@ void Synth::UI::Controller::OnMouseWheel(Model::Point point, bool negative, bool
 	// TODO: Consolidate.
 	SetInputParams(sel, [&](const Model::ValueType& valDef, int oldVal) 
 	{
-		return valDef.AddDelta(oldVal, (coarse ? 10 : 1) * (negative ? -1 : 1)); 
+		return valDef.AddDelta(oldVal, negative ? -1 : 1, coarse); 
 	});
 }
 

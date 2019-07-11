@@ -58,7 +58,7 @@ namespace Synth
 		void CommitValueEdit(const std::string& text);
 
 		using ModuleIkonRange = Kernel::IndexRange<ModuleIkon>;
-		ModuleIkonRange GetModuleIkons() const;
+		ModuleIkonRange GetModuleIkons(bool reverse = false) const;
 
 		using Connection = std::pair<Model::Point, Model::Point>;
 		const Connection* GetLiveConnection() const { return _liveConnection.get(); }

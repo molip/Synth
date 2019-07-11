@@ -236,7 +236,7 @@ void Synth::UI::Controller::CommitValueEdit(const std::string& text)
 Controller::Selection Controller::HitTest(Model::Point point, Model::Rect* elementRect) const
 {
 	Selection sel;
-	for (auto& ikon : GetModuleIkons())
+	for (auto& ikon : GetModuleIkons(true))
 	{
 		auto HitTestPins = [&] (bool output)
 		{
@@ -288,14 +288,14 @@ Controller::Selection Controller::HitTest(Model::Point point, Model::Rect* eleme
 	return sel;
 }
 
-Controller::ModuleIkonRange Controller::GetModuleIkons() const
+Controller::ModuleIkonRange Controller::GetModuleIkons(bool reverse) const
 {
-	auto get = [&](size_t i) 
+	auto get = [=](size_t i) 
 	{
 		const Model::Module& mod = *_graph->GetSorted()[i];
 		return ModuleIkon(mod, mod.GetID() == _selection.moduleID, *_graph);
 	};
-	return ModuleIkonRange(get, _graph->GetSorted().size());
+	return ModuleIkonRange(get, _graph->GetSorted().size(), reverse);
 }
 
 std::vector<Controller::Connection> Controller::GetConnections() const

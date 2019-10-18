@@ -53,6 +53,10 @@ void Process(byte data)
 			SERIAL_PRINTLN("CommandType::AddConnectionCommand");
 			_command = new AddConnectionCommand(_newGraph);
 			break;
+		case CommandType::AddMonitor:
+			SERIAL_PRINTLN("CommandType::AddMonitorCommand");
+			_command = new AddMonitorCommand(_newGraph);
+			break;
 
 		// Always Graph::GetActive().
 		case CommandType::SetMIDIData: 

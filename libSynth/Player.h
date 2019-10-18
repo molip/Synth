@@ -25,6 +25,8 @@ namespace Synth
 		AudioBuffer HarvestCapture();
 		bool IsCapturing() const { return _capturing; }
 
+		std::vector<std::vector<float>> GetMonitorLevels() const;
+
 	protected:
 		void Start();
 		void Stop();
@@ -40,6 +42,7 @@ namespace Synth
 		std::deque<byte> _dataQueue;
 		std::thread _bufferThread;
 		std::mutex _bufferMutex, _dataMutex, _captureMutex;
+		mutable std::mutex _monitorMutex;
 		std::condition_variable _cvBuffer, _cvData;
 		bool _abort = false;
 		//bool _request = false;
@@ -52,5 +55,7 @@ namespace Synth
 		
 		AudioBuffer _capture;
 		bool _capturing = false;
+
+		std::vector<std::vector<float>> _monitorLevels;
 	};
 }

@@ -99,7 +99,18 @@ void ModuleIkon::CreatePins(bool outputs) const
 		for (auto& pinDef : pinDefs)
 		{
 			Pin pin{ pinDef->GetName(), labelRect, connectionRect, offsetRect, scaleRect, outputs, pinDef->IsMulti() ? Colour::Red : Colour::Blue, pinDef->GetID() };
-			
+
+			int pitch = PinHeight + PinGap;
+
+			if (pinDef->IsMonitor())
+			{
+				pin.monitorArea.rect = labelRect;
+				pin.monitorArea.rect.Offset(0, labelRect.Height());
+				pin.monitorArea.rect.Inflate(0, 0, -4, 0);
+				pin.monitorArea.pinRef.moduleID = _module.GetID();
+				pin.monitorArea.pinRef.type = pinDef->GetID();
+			}
+
 			if (!outputs)
 				if (const auto* valType = pinDef->GetValueType())
 				{
@@ -111,10 +122,11 @@ void ModuleIkon::CreatePins(bool outputs) const
 				}
 
 			pins.push_back(pin);
-			connectionRect.Offset(0, PinHeight + PinGap);
-			labelRect.Offset(0, PinHeight + PinGap);
-			offsetRect.Offset(0, PinHeight + PinGap);
-			scaleRect.Offset(0, PinHeight + PinGap);
+
+			connectionRect.Offset(0, pitch);
+			labelRect.Offset(0, pitch);
+			offsetRect.Offset(0, pitch);
+			scaleRect.Offset(0, pitch);
 		}
 	}
 }

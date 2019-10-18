@@ -37,8 +37,23 @@ public:
 	static Graph* GetActive() { return _active; }
 	void Activate();
 
+#ifdef _WIN32
+	using MonitorLevels = std::vector<std::vector<float>>;
+	MonitorLevels GetMonitorLevels() const;
+	void AddMonitor(bool mono, int modIndex, int pinIndex);
+#else
+	void AddMonitor(bool mono, int modIndex, int pinIndex) {}
+#endif
+
 private:
 	void AddModule(ModuleType type);
+
+	struct Monitor
+	{
+		bool mono;
+		int modIndex;
+		int pinIndex;
+	};
 
 	static Graph* _active;
 
@@ -47,6 +62,7 @@ private:
 	PtrArray<Module> _modules;
 	Array<Module*> _updateModules;
 	Array<KnobModule*> _knobModules;
+	Array<Monitor> _monitors;
 	byte _polyphony = 0;
 	MIDIModule* _midiModule = nullptr;
 	OutputModule* _outputModule = nullptr;

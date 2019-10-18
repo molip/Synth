@@ -59,6 +59,8 @@ public:
 		return _size == 0;
 	}
 
+	bool IsFull() const { return _size == _reserved; }
+
 	bool Contains(const T& item) const
 	{
 		for (int i = 0; i < _size; ++i)

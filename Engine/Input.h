@@ -137,6 +137,33 @@ namespace RemoteInput
 		Connection _input, _output;
 	};
 
+	class AddMonitorCommand : public Command
+	{
+	public:
+		AddMonitorCommand(Graph* graph) : Command(graph) {}
+		
+		virtual Error AddData(byte data) override
+		{
+			if (_pin._done)
+				return Error::TooManyParameters;
+
+			_pin.AddData(data);
+			return Error::None;
+		}
+
+		virtual bool Execute() const override
+		{
+			if (!_pin._done)
+				return false;
+
+			_graph->AddMonitor(_pin.IsMono(), _pin._modIndex, _pin._pinIndex);
+			return true;
+		}
+
+	protected:
+		Pin _pin;
+	};
+
 	class SetInputParamsCommand : public Command
 	{
 	public:

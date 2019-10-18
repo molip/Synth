@@ -118,6 +118,14 @@ void Player::DoBuffer()
 	}
 
 	{
+		std::lock_guard<std::mutex> lock(_monitorMutex);
+		if (Engine::Graph* graph = Engine::Graph::GetActive())
+			_monitorLevels = graph->GetMonitorLevels();
+		else
+			_monitorLevels.clear();
+	}
+
+	{
 		std::lock_guard<std::mutex> lock(_bufferMutex);
 		++_submitted;
 	}
@@ -130,4 +138,10 @@ void Player::DoBuffer()
 	std::lock_guard<std::mutex> lock(_captureMutex);
 	if (_capturing)
 		_capture.insert(_capture.end(), buffer.begin(), buffer.end());
+}
+
+std::vector<std::vector<float>> Player::GetMonitorLevels() const
+{ 
+	std::lock_guard<std::mutex> lock(_monitorMutex);
+	return _monitorLevels;
 }

@@ -298,6 +298,26 @@ Controller::ModuleIkonRange Controller::GetModuleIkons(bool reverse) const
 	return ModuleIkonRange(get, _graph->GetSorted().size(), reverse);
 }
 
+MonitorIkon Controller::GetMonitorIkon(const ModuleIkon::MonitorArea& monitorArea) const
+{
+	if (!_player)
+		return {};
+
+	for (size_t i = 0; i < _monitors.size(); ++i)
+	{
+		if (_monitors[i] == monitorArea.pinRef)
+		{
+			const auto levels = _player->GetMonitorLevels();
+			if (i >= levels.size())
+				return {};
+
+			const float level = levels[i].front(); // TODO: other polyphonic instances.
+			return { monitorArea.rect, int(monitorArea.rect.Width() * level) };
+		}
+	}
+	return {};
+}
+
 std::vector<Controller::Connection> Controller::GetConnections() const
 {
 	std::vector<Connection> connections;
@@ -342,6 +362,7 @@ bool Controller::DoExport(byte polyphony) const
 	if (BufferPtr buffer = exporter.Export(polyphony))
 	{
 		_syncState = SendData(*buffer) ? SyncState::All : SyncState::Local;
+		_monitors = exporter.GetMonitors();
 	}
 
 	ExportSettings();

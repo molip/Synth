@@ -87,6 +87,16 @@ BufferPtr GraphExporter::Export(byte polyphony)
 
 		for (auto& input : mod->GetDef().GetInputs())
 			WriteValues(*mod, *input);
+
+		for (auto& output : mod->GetDef().GetOutputs())
+		{
+			if (output->IsMonitor())
+			{
+				Add(Engine::CommandType::AddMonitor);
+				AddPin(*mod, *output);
+				_monitors.emplace_back(mod->GetID(), output->GetID());
+			}
+		}
 	}
 
 	Add(Engine::CommandType::EndGraph);

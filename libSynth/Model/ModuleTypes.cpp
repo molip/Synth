@@ -25,7 +25,7 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("sust", "Sustain", PinType::ConnectionType::Single, Engine::Pin::Envelope::Input::Sustain)).SetValueType(std::make_unique<PercentValueType>(50, 50, 0, 100));
 	_types.back().AddInput(std::make_unique<PinType>("rels", "Release", PinType::ConnectionType::Single, Engine::Pin::Envelope::Input::Release)).SetValueType(std::make_unique<TimeValueType>(400));
 	_types.back().AddInput(std::make_unique<PinType>("latc", "Latch", PinType::ConnectionType::Single, Engine::Pin::Envelope::Input::Latch)).SetValueType(std::make_unique<BoolValueType>(0));
-	_types.back().AddOutput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, Engine::Pin::Envelope::Output::Level));
+	_types.back().AddOutput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, Engine::Pin::Envelope::Output::Level)).SetMonitor();
 		
 	_types.emplace_back("oscl", "Oscillator", Engine::ModuleType::Oscillator);
 	_types.back().AddInput(std::make_unique<PinType>("wave", "Waveform", PinType::ConnectionType::Single, Engine::Pin::Oscillator::Input::Waveform)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 4));
@@ -74,7 +74,7 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Pitch)).SetValueType(std::make_unique<PitchValueType>());
 	_types.back().AddInput(std::make_unique<PinType>("levl", "Level", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Level)).SetValueType(std::make_unique<PercentValueType>(0, 100, 0, 1000));
 	_types.back().AddInput(std::make_unique<PinType>("duty", "Duty", PinType::ConnectionType::Single, Engine::Pin::LFO::Input::Duty)).SetValueType(std::make_unique<PercentValueType>(50, 25, 0, 100));
-	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::LFO::Output::Signal));
+	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::LFO::Output::Signal)).SetMonitor();
 
 	_types.emplace_back("crsh", "Crush", Engine::ModuleType::Crush);
 	_types.back().AddInput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Crush::Input::Signal));

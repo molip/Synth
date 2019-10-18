@@ -27,6 +27,7 @@ void Graph::Init(byte modCount, byte polyModCount, byte polyphony)
 	_knobModules.Reserve(8);
 	_modIndices.Reserve(modCount);
 	_polyModIndices.Reserve(instanceModCount);
+	_monitors.Reserve(10);
 	_polyphony = polyphony;
 }
 
@@ -160,3 +161,36 @@ Module * Graph::GetPolyModule(byte modIndex, byte instanceIndex)
 
 	return _modules[_polyModIndices[modIndex] + instanceIndex];
 }
+
+#ifdef _WIN32
+void Graph::AddMonitor(bool mono, int modIndex, int pinIndex)
+{
+	if (!_monitors.IsFull())
+		_monitors.Push({ mono, modIndex, pinIndex });
+}
+
+Graph::MonitorLevels Graph::GetMonitorLevels() const
+{
+	MonitorLevels levels;
+	for (int i = 0; i < _monitors.GetSize(); ++i)
+	{
+		auto& monitor = _monitors[i];
+
+		auto addLevel = [&](const Module* mod)
+		{
+			levels.back().push_back(mod->GetPins<Output>()[monitor.pinIndex].GetValue());
+		};
+
+		levels.push_back({});
+
+		if (monitor.mono)
+			addLevel(const_cast<Graph*>(this)->GetMonoModule(monitor.modIndex));
+		else
+			for (int i = 0; i < _polyphony; ++i)
+				addLevel(const_cast<Graph*>(this)->GetPolyModule(monitor.modIndex, i));
+	}
+
+	return levels;
+}
+
+#endif

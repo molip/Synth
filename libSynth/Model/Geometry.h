@@ -67,6 +67,7 @@ namespace Model
 
 		void Normalise();
 		void Inflate(int x, int y);
+		void Inflate(int l, int t, int r, int b);
 		void Offset(int x, int y);
 		void MirrorX(int x);
 		void MirrorY(int y);

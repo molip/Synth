@@ -3,7 +3,9 @@
 #include <cmath>
 #include <cstdint>
 
-#ifndef _WIN32
+#ifdef _WIN32
+#include <vector>
+#else
 #include "kinetis.h"
 #include "core_pins.h"
 #include "usb_serial.h"

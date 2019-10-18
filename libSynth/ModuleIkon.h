@@ -3,6 +3,7 @@
 #include "Enums.h"
 
 #include "Model/Geometry.h"
+#include "Model/Module.h"
 #include "Model/Tag.h"
 
 #include <vector>
@@ -31,6 +32,12 @@ namespace Synth
 		Colour GetColour() const;
 		bool IsSelected() const { return _selected; }
 
+		struct MonitorArea
+		{
+			Model::Rect rect;
+			Model::PinRef pinRef;
+		};
+
 		struct Pin
 		{
 			Model::Point GetConnectionPoint() const { return Model::Point(isOutput ? connectionRect.Right() : connectionRect.Left(), connectionRect.GetCentre().y); }
@@ -44,6 +51,7 @@ namespace Synth
 			bool showOffset = false;
 			bool showScale = false;
 			std::string offset, scale;
+			MonitorArea monitorArea;
 		};
 
 		const ModuleIkon::Pin* FindPin(Model::Tag id, bool output);
@@ -59,6 +67,12 @@ namespace Synth
 		const Model::Module& _module;
 		const Model::Graph& _graph;
 		const bool _selected;
+	};
+
+	struct MonitorIkon
+	{
+		Model::Rect rect;
+		int activeWidth{};
 	};
 	}
 }

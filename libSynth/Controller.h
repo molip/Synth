@@ -59,6 +59,7 @@ namespace Synth
 
 		using ModuleIkonRange = Kernel::IndexRange<ModuleIkon>;
 		ModuleIkonRange GetModuleIkons(bool reverse = false) const;
+		MonitorIkon GetMonitorIkon(const ModuleIkon::MonitorArea& monitorArea) const;
 
 		using Connection = std::pair<Model::Point, Model::Point>;
 		const Connection* GetLiveConnection() const { return _liveConnection.get(); }
@@ -108,7 +109,7 @@ namespace Synth
 
 		enum class SyncState { None, Local, All };
 		mutable SyncState _syncState = SyncState::None;
-
+		mutable std::vector<Model::PinRef> _monitors;
 		MIDIKeyboard _midiKeyboard;
 
 		static Settings _settings;

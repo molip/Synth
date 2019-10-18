@@ -61,10 +61,15 @@ void Rect::Normalise()
 
 void Rect::Inflate(int x, int y)
 {
-	_p0.x -= x;
-	_p0.y -= y;
-	_p1.x += x * 2;
-	_p1.y += y * 2;
+	Inflate(x, y, x, y);
+}
+
+void Rect::Inflate(int l, int t, int r, int b)
+{
+	_p0.x -= l;
+	_p0.y -= t;
+	_p1.x += r;
+	_p1.y += b;
 }
 
 void Rect::Offset(int x, int y)

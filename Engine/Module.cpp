@@ -16,6 +16,9 @@ namespace Engine
 template<> Array<Output>& Module::GetPins() { return _outputs; }
 template<> Array<Input>& Module::GetPins() { return _inputs; }
 
+template<> const Array<Output>& Module::GetPins() const { return _outputs; }
+template<> const Array<Input>& Module::GetPins() const { return _inputs; }
+
 template<> Array<MultiOutput>& Module::GetMultiPins() { return _multiOutputs; }
 template<> Array<MultiInput>& Module::GetMultiPins() { return _multiInputs; }
 }

@@ -32,6 +32,7 @@ public:
 	void AddDest(Input& input) { _dests.Push(&input); }
 
 	void SetValue(float val, bool forceChanged = false);
+	float GetValue() const { return _value; }
 
 private:
 	float _value = 0;
@@ -103,6 +104,7 @@ public:
 
 	void SetPolyphony(int polyphony);
 
+	template<typename T> const Array<T>& GetPins() const;
 	template<typename T> Array<T>& GetPins();
 	template<typename T> Array<Array<T>>& GetMultiPins();
 

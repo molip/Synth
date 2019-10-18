@@ -15,6 +15,7 @@ namespace Model
 	class Graph;
 	class Module;
 	class PinType;
+	struct PinRef;
 
 	class Exporter
 	{
@@ -36,6 +37,7 @@ namespace Model
 		GraphExporter(const Graph& graph);
 		BufferPtr Export(byte polyphony);
 		BufferPtr ExportValues(int moduleID, Tag pinID);
+		const std::vector<PinRef>& GetMonitors() { return _monitors; }
 
 	private:
 		using Exporter::Add;
@@ -49,6 +51,7 @@ namespace Model
 		byte _monoModCount = 0;
 		byte _polyModCount = 0;
 		std::map<int, byte> _modIndices; // id -> index;
+		std::vector<PinRef> _monitors;
 	};
 
 }

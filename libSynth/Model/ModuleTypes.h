@@ -22,6 +22,9 @@ namespace Model
 		ValueType& SetValueType(ValueTypePtr valtype) { _valType = std::move(valtype); return *_valType; }
 		const ValueType* GetValueType() const { return _valType.get(); }
 
+		void SetMonitor() { _monitor = true; }
+		bool IsMonitor() const { return _monitor; }
+
 		bool IsMulti() const { return _connType == ConnectionType::Multi; }
 
 		Tag GetID() const { return _id; }
@@ -35,6 +38,7 @@ namespace Model
 		ConnectionType _connType;
 		ValueTypePtr _valType;
 		int _engineID;
+		bool _monitor{};
 	};		
 	using PinTypePtr = std::unique_ptr<PinType>;
 
@@ -44,7 +48,7 @@ namespace Model
 		ModuleType(Tag id, const std::string& name, Engine::ModuleType engineID) : _id(id), _name(name), _engineID(engineID) {}
 	
 		PinType& AddInput(PinTypePtr input) { _inputs.push_back(std::move(input)); return *_inputs.back(); }
-		void AddOutput(PinTypePtr output) { _outputs.push_back(std::move(output)); }
+		PinType& AddOutput(PinTypePtr output) { _outputs.push_back(std::move(output));  return *_outputs.back(); }
 
 		Tag GetID() const { return _id; }
 		const std::string& GetName() const { return _name; }

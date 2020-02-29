@@ -9,7 +9,9 @@ namespace Engine
 struct SampleWaveformContext 
 {
 	bool low = false;
-	uint16_t lastRandom = 0;
+	uint16_t end = 0;
+	uint16_t start = 0;
+	float delta = 0;
 };
 
 inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t duty, SampleWaveformContext* ctx)
@@ -30,14 +32,31 @@ inline extern uint16_t SampleWaveform(byte waveform, uint16_t phase, uint16_t du
 	case 3: // Sine.
 		output = *(SineTable + (phase >> 3));
 		break;
-	case 4: // Noise.
+	case 4: // Square noise.
 	{
+		phase <<= 1; // 2 values per phase.
 		bool low = (phase & 0x8000) == 0;
 		if (low && !ctx->low)
-			ctx->lastRandom = ::rand() << 1;
+		{
+			ctx->start = ::rand() << 1;
+		}
 
 		ctx->low = low;
-		output = ctx->lastRandom;
+		output = ctx->start;
+		break;
+	}
+	case 5: // Interpolated noise.
+	{
+		phase <<= 1; // 2 values per phase.
+		bool low = (phase & 0x8000) == 0;
+		if (low && !ctx->low)
+		{
+			ctx->start = ctx->end;
+			ctx->end = ::rand() << 1;
+		}
+
+		ctx->low = low;
+		output = ctx->start + ((uint32_t(ctx->end - ctx->start) * phase) >> 16);
 		break;
 	}
 	}

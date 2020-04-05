@@ -311,8 +311,11 @@ MonitorIkon Controller::GetMonitorIkon(const ModuleIkon::MonitorArea& monitorAre
 			if (i >= levels.size())
 				return {};
 
-			const float level = levels[i].front(); // TODO: other polyphonic instances.
-			return { monitorArea.rect, int(monitorArea.rect.Width() * level) };
+			MonitorIkon ikon{ monitorArea.rect };
+			ikon.activeWidths.reserve(levels[i].size());
+			for (float level : levels[i])
+				ikon.activeWidths.push_back(int(monitorArea.rect.Width() * level));
+			return ikon;
 		}
 	}
 	return {};

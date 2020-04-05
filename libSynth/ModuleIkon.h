@@ -72,7 +72,7 @@ namespace Synth
 	struct MonitorIkon
 	{
 		Model::Rect rect;
-		int activeWidth{};
+		std::vector<int> activeWidths;
 	};
 	}
 }

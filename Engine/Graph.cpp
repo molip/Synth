@@ -172,22 +172,24 @@ void Graph::AddMonitor(bool mono, int modIndex, int pinIndex)
 Graph::MonitorLevels Graph::GetMonitorLevels() const
 {
 	MonitorLevels levels;
+	levels.resize(_monitors.GetSize());
 	for (int i = 0; i < _monitors.GetSize(); ++i)
 	{
 		auto& monitor = _monitors[i];
 
 		auto addLevel = [&](const Module* mod)
 		{
-			levels.back().push_back(mod->GetPins<Output>()[monitor.pinIndex].GetValue());
+			levels[i].push_back(mod->GetPins<Output>()[monitor.pinIndex].GetValue());
 		};
-
-		levels.push_back({});
 
 		if (monitor.mono)
 			addLevel(const_cast<Graph*>(this)->GetMonoModule(monitor.modIndex));
 		else
+		{
+			levels[i].reserve(_polyphony);
 			for (int i = 0; i < _polyphony; ++i)
 				addLevel(const_cast<Graph*>(this)->GetPolyModule(monitor.modIndex, i));
+		}
 	}
 
 	return levels;

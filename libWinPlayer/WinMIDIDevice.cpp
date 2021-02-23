@@ -4,6 +4,8 @@
 #include "../libSynth/Controller.h"
 
 #include "../libKernel/Debug.h"
+#include "../libKernel/FormatString.h"
+#include "../libKernel/Util.h"
 
 #include "teVirtualMIDI/teVirtualMIDI.h"
 
@@ -21,7 +23,11 @@ WinMIDIDevice::WinMIDIDevice()
 		reinterpret_cast<WinMIDIDevice*>(dwCallbackInstance)->ProcessMIDI(Synth::Buffer(midiDataBytes, midiDataBytes + length));
 	};
 
-	_port = ::virtualMIDICreatePortEx2(L"My Synth", callback, reinterpret_cast<DWORD_PTR>(this), MAX_SYSEX_BUFFER, TE_VM_FLAGS_PARSE_RX | TE_VM_FLAGS_INSTANTIATE_RX_ONLY);
+	for (int i = 0; i < 16 && !_port; ++i)
+	{
+		const std::wstring name = Kernel::StringToWString(Kernel::FormatString("My Synth %0", i));
+		_port = ::virtualMIDICreatePortEx2(name.c_str(), callback, reinterpret_cast<DWORD_PTR>(this), MAX_SYSEX_BUFFER, TE_VM_FLAGS_PARSE_RX | TE_VM_FLAGS_INSTANTIATE_RX_ONLY);
+	}
 }
 
 WinMIDIDevice::~WinMIDIDevice()

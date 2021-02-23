@@ -60,7 +60,8 @@ void Player::OnBufferFinished()
 void Player::StartCapture()
 {
 	std::lock_guard<std::mutex> lock(_captureMutex);
-	_capture.clear();
+	_capture.audio.clear();
+	_capture.monitors.clear();
 	_capturing = true;
 }
 
@@ -70,7 +71,7 @@ void Player::StopCapture()
 	_capturing = false;
 }
 
-Player::AudioBuffer Player::HarvestCapture()
+Player::Capture Player::HarvestCapture()
 {
 	KERNEL_ASSERT(!_capturing);
 	return std::move(_capture);
@@ -96,6 +97,8 @@ void Player::DoBuffer()
 {
 	auto& buffer = _buffers[_currentBuffer];
 
+	std::lock_guard<std::mutex> lock(_captureMutex);
+
 	for (auto& sample : buffer)
 	{
 		if (Engine::Graph* graph = Engine::Graph::GetActive())
@@ -104,6 +107,9 @@ void Player::DoBuffer()
 
 			const float level = graph->Update();
 			sample = static_cast<int16_t>(level * 0x7fff);
+
+			if (_capturing)
+				_capture.monitors.push_back(graph->GetMonitorLevels());
 		}
 		else
 			sample = 0;
@@ -135,9 +141,8 @@ void Player::DoBuffer()
 	_lastBuffer = &buffer;
 	_currentBuffer = (_currentBuffer + 1) % BufferCount;
 
-	std::lock_guard<std::mutex> lock(_captureMutex);
 	if (_capturing)
-		_capture.insert(_capture.end(), buffer.begin(), buffer.end());
+		_capture.audio.insert(_capture.audio.end(), buffer.begin(), buffer.end());
 }
 
 std::vector<std::vector<float>> Player::GetMonitorLevels() const

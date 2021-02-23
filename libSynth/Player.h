@@ -17,15 +17,22 @@ namespace Synth
 		void ProcessData(const Buffer& buffer);
 
 		using AudioBuffer = std::vector<int16_t>;
-
+		using MonitorLevels = std::vector<std::vector<float>>; // Values per channel per module.
+		using MonitorLevelsBuffer = std::vector<MonitorLevels>; // MonitorLevels per sample.
 		const AudioBuffer* GetLastBuffer() const { return _lastBuffer; }
+
+		struct Capture
+		{
+			AudioBuffer audio;
+			MonitorLevelsBuffer monitors;
+		};
 
 		void StartCapture();
 		void StopCapture();
-		AudioBuffer HarvestCapture();
+		Capture HarvestCapture();
 		bool IsCapturing() const { return _capturing; }
 
-		std::vector<std::vector<float>> GetMonitorLevels() const;
+		MonitorLevels GetMonitorLevels() const;
 
 	protected:
 		void Start();
@@ -53,9 +60,9 @@ namespace Synth
 		AudioBuffer _buffers[BufferCount];
 		const AudioBuffer* _lastBuffer = nullptr;
 		
-		AudioBuffer _capture;
+		Capture _capture;
 		bool _capturing = false;
 
-		std::vector<std::vector<float>> _monitorLevels;
+		MonitorLevels _monitorLevels;
 	};
 }

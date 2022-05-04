@@ -34,9 +34,13 @@ public:
 	void SetValue(float val, bool forceChanged = false);
 	float GetValue() const { return _value; }
 
+	void SetConnected() { _connected = true; }
+	bool IsConnected() const { return _connected; }
+
 private:
 	float _value = 0;
 	Array<Input*> _dests;
+	bool _connected = false;
 };
 
 class Input
@@ -61,7 +65,7 @@ public:
 	float GetValue() const { return _value; }
 	bool HasChanged() const { return _changed; }
 	bool IsConnected() const { return _connected; }
-	void Connect(Output& output) { output.AddDest(*this); _connected = true; }
+	void Connect(Output& output) { output.AddDest(*this); output.SetConnected();  _connected = true; }
 	void ResetChanged() { _changed = false; }
 
 private:

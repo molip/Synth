@@ -24,7 +24,6 @@ void Graph::Init(byte modCount, byte polyModCount, byte polyphony)
 	const int instanceModCount = polyModCount * polyphony;
 	_modules.Reserve(modCount + instanceModCount);
 	_updateModules.Reserve(modCount + instanceModCount); // Won't all be used. 
-	_knobModules.Reserve(8);
 	_modIndices.Reserve(modCount);
 	_polyModIndices.Reserve(instanceModCount);
 	_monitors.Reserve(10);
@@ -66,16 +65,20 @@ float Graph::Update()
 	return _outputModule ? _outputModule->GetLevel() : 0;
 }
 
+int Graph::GetKnobCount() const 
+{ 
+	return _knobModule ? _knobModule->GetActiveCount() : 0; 
+}
+
 void Graph::UpdateKnob(int index, uint16_t val)
 {
-	if (index < _knobModules.GetSize())
-		_knobModules[index]->SetValue(val);
+	_knobModule->SetValue(index, val);
 }
 
 void Graph::UpdateKnobsRemote()
 {
-	for (int i = 0; i < _knobModules.GetSize(); ++i)
-		_knobModules[i]->UpdateRemote();
+	if (_knobModule)
+		_knobModule->UpdateRemote();
 }
 
 void Graph::Activate()
@@ -88,16 +91,6 @@ void Graph::Activate()
 
 	for (int i = 0; i < _modules.GetSize(); ++i)
 		_modules[i]->Initialise();
-
-	// Sort knob modules by index.
-	for (int i = 0; i < _knobModules.GetSize() - 1; ++i)
-		for (int j = 0; j < _knobModules.GetSize() - j - 1; ++j)
-			if (_knobModules[j]->GetIndex() > _knobModules[j + 1]->GetIndex())
-			{
-				auto temp = _knobModules[j];
-				_knobModules[j] = _knobModules[j + 1];
-				_knobModules[j + 1] = temp;
-			}
 }
 
 void Graph::AddModule(ModuleType type)
@@ -127,7 +120,7 @@ void Graph::AddModule(ModuleType type)
 	_modules.Push(mod);
 
 	if (knobMod)
-		_knobModules.Push(knobMod);
+		_knobModule = knobMod;
 
 	if (mod->WantUpdate())
 		_updateModules.Push(mod);

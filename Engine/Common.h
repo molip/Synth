@@ -66,8 +66,8 @@ namespace Pin
 	}
 	namespace Knob
 	{
-		namespace Input { enum Type { Index, Remote, _Count }; }
-		namespace Output { enum Type { Value, _Count }; }
+		namespace Input { enum Type { _Count = 8 }; }
+		namespace Output { enum Type { _Count = 8 }; }
 	}
 }
 enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, AddMonitor, EndGraph, SetInputParams, SetMIDIData, SetAllNotesOn, StopMIDIPlayback, MIDIInput, Settings };

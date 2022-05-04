@@ -30,7 +30,7 @@ public:
 	void SetSettings(const Settings& settings);
 	float Update();
 	
-	int GetKnobCount() const { return _knobModules.GetSize(); }
+	int GetKnobCount() const;
 	void UpdateKnob(int index, uint16_t val);
 	void UpdateKnobsRemote();
 
@@ -61,11 +61,11 @@ private:
 	Array<uint16_t> _polyModIndices; // Indices of first instance.
 	PtrArray<Module> _modules;
 	Array<Module*> _updateModules;
-	Array<KnobModule*> _knobModules;
 	Array<Monitor> _monitors;
 	byte _polyphony = 0;
 	MIDIModule* _midiModule = nullptr;
 	OutputModule* _outputModule = nullptr;
+	KnobModule* _knobModule = nullptr;
 };
 
 }

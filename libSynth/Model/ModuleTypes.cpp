@@ -2,6 +2,7 @@
 #include "ModuleTypes.h"
 
 #include "../../libKernel/Debug.h"
+#include "../../libKernel/FormatString.h"
 
 using namespace Synth::Model;
 
@@ -91,9 +92,11 @@ ModuleTypes::ModuleTypes()
 	_types.back().AddOutput(std::make_unique<PinType>("sgnl", "Signal", PinType::ConnectionType::Single, Engine::Pin::Delay::Output::Signal));
 
 	_types.emplace_back("knob", "Knob", Engine::ModuleType::Knob);
-	_types.back().AddInput(std::make_unique<PinType>("indx", "Index", PinType::ConnectionType::Single, Engine::Pin::Knob::Input::Index)).SetValueType(std::make_unique<IntValueType>(0, 1, 0, 7));
-	_types.back().AddInput(std::make_unique<PinType>("remo", "Remote", PinType::ConnectionType::Single, Engine::Pin::Knob::Input::Remote)).SetValueType(std::make_unique<PercentValueType>(0, 0, 0, 100, 5));
-	_types.back().AddOutput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, Engine::Pin::Knob::Output::Value));
+	for (int i = 0; i < Engine::Pin::Knob::Output::_Count; ++i)
+	{
+		_types.back().AddInput(std::make_unique<PinType>(Kernel::FormatString("rem%0", i), Kernel::FormatString("Remote %0", i), PinType::ConnectionType::Single, i)).SetValueType(std::make_unique<PercentValueType>(0, 0, 0, 100, 5));
+		_types.back().AddOutput(std::make_unique<PinType>(Kernel::FormatString("val%0", i), Kernel::FormatString("Value %0", i), PinType::ConnectionType::Single, i));
+	}
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

@@ -7,14 +7,17 @@ class KnobModule : public Module
 {
 public:
 	KnobModule();
-	void SetValue(uint16_t val);
-	int GetIndex() const;
+	void SetValue(int iActive, uint16_t val);
 	void UpdateRemote();
+	int GetActiveCount() const { return _activeInputs.GetSize(); }
 
 private:
 	virtual void Initialise() override;
-	void UpdateValue();
+	void UpdateValue(int iActive);
 
-	uint16_t _value = 0;
+	const int KnobCount = Pin::Knob::Input::_Count;
+	Array <uint16_t> _values;
+	Array<Input*> _activeInputs;
+	Array<Output*> _activeOutputs;
 };
 }

@@ -3,40 +3,54 @@
 
 using namespace Engine;
 
-KnobModule::KnobModule()
+KnobModule::KnobModule() 
 {
-	_inputs.SetSize(Pin::Knob::Input::_Count);
-	_outputs.SetSize(Pin::Knob::Output::_Count);
+	_inputs.SetSize(KnobCount);
+	_outputs.SetSize(KnobCount);
+	_activeInputs.Reserve(KnobCount);
+	_activeOutputs.Reserve(KnobCount);
+	_values.Reserve(KnobCount);
 }
 
 void KnobModule::Initialise()
 {
-	UpdateValue();
+	for (int i = 0; i < KnobCount; ++i)
+	{
+		if (_outputs[i].IsConnected())
+		{
+			_activeInputs.Push(&_inputs[i]);
+			_activeOutputs.Push(&_outputs[i]);
+			_values.Push(0);
+		}
+	}
+
+	for (int i = 0; i < _activeInputs.GetSize(); ++i)
+		UpdateValue(i);
 }
 
-void KnobModule::UpdateValue()
+void KnobModule::UpdateValue(int iActive)
 {
-	_outputs[Pin::Knob::Output::Value].SetValue(_value * Config::analogInToFloat);
+	_activeOutputs[iActive]->SetValue(_values[iActive] * Config::analogInToFloat);
 }
 
 void KnobModule::UpdateRemote()
 {
-	auto& remote = _inputs[Pin::Knob::Input::Remote];
-
-	if (remote.HasChanged())
-		_outputs[Pin::Knob::Output::Value].SetValue(remote.GetValue());
-}
-
-void KnobModule::SetValue(uint16_t val)
-{
-	if (_value != val)
+	for (int i = 0; i < _activeInputs.GetSize(); ++i)
 	{
-		_value = val;
-		UpdateValue();
+		auto* remote = _activeInputs[i];
+		if (remote->HasChanged())
+		{
+			remote->ResetChanged();
+			_activeOutputs[i]->SetValue(remote->GetValue());
+		}
 	}
 }
 
-int KnobModule::GetIndex() const
+void KnobModule::SetValue(int iActive, uint16_t val)
 {
-	return static_cast<int>(_inputs[Pin::Knob::Input::Index].GetValue());
+	if (_values[iActive] != val)
+	{
+		_values[iActive] = val;
+		UpdateValue(iActive);
+	}
 }

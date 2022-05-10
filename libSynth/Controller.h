@@ -18,7 +18,7 @@ namespace Synth
 	{
 		class Graph;
 		class Module;
-		class ValueType;
+		class NumberValueType;
 	}
 	class CommandStack;
 	class Player;
@@ -93,7 +93,7 @@ namespace Synth
 		bool SendData(const Buffer& buffer) const;
 		bool DoExport(byte polyphony) const;
 		int& GetInputParamsValue(Model::InputParams& params, Selection::Element element) const;
-		void SetInputParams(Selection& sel, std::function<int(const Model::ValueType&, int)> fn);
+		void SetInputParams(Selection& sel, std::function<int(const Model::NumberValueType&, int)> fn);
 		void ExportSettings() const;
 
 		View* _view = nullptr;

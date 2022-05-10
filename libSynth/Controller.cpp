@@ -173,12 +173,14 @@ void Controller::OnLButtonUp(Model::Point point)
 	_view->SetCapture(false);
 }
 
-void Synth::UI::Controller::SetInputParams(Selection& sel, std::function<int(const Model::ValueType&, int)> fn)
+void Synth::UI::Controller::SetInputParams(Selection& sel, std::function<int(const Model::NumberValueType&, int)> fn)
 {
 	KERNEL_ASSERT(sel.element == Selection::Element::Offset || sel.element == Selection::Element::Scale);
 
 	auto& module = *_graph->FindModule(sel.moduleID);
-	const auto* valDef = module.GetInputDef(sel.pinID).GetValueType();
+	const auto* valDef = dynamic_cast<const Model::NumberValueType*>(module.GetInputDef(sel.pinID).GetValueType());
+	if (!valDef)
+		return;
 
 	Model::InputParams params = *module.FindInputParams(sel.pinID);
 	int& oldVal = GetInputParamsValue(params, sel.element);
@@ -200,7 +202,7 @@ void Synth::UI::Controller::OnMouseWheel(Model::Point point, bool negative, bool
 		return;
 
 	// TODO: Consolidate.
-	SetInputParams(sel, [&](const Model::ValueType& valDef, int oldVal) 
+	SetInputParams(sel, [&](const Model::NumberValueType& valDef, int oldVal)
 	{
 		return valDef.AddDelta(oldVal, negative ? -1 : 1, coarse); 
 	});
@@ -225,7 +227,7 @@ void Controller::ExportRawMIDI(Buffer&& buffer)
 
 void Synth::UI::Controller::CommitValueEdit(const std::string& text)
 {
-	SetInputParams(_selection, [&](const Model::ValueType& valDef, int oldVal)
+	SetInputParams(_selection, [&](const Model::NumberValueType& valDef, int oldVal)
 	{
 		return valDef.FromString(text);
 	});

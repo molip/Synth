@@ -6,12 +6,12 @@
 
 using namespace Synth::Model;
 
-int ValueType::Clamp(int value) const
+int NumberValueType::Clamp(int value) const
 {
 	return std::max(std::min(_max, value), _min);
 }
 
-int ValueType::AddDelta(int val, int delta, bool coarse) const
+int NumberValueType::AddDelta(int val, int delta, bool coarse) const
 {
 	return val + delta * _deltaMult * (coarse ? _coarseSteps : 1);
 }

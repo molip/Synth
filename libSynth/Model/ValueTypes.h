@@ -14,13 +14,21 @@ namespace Model
 	class ValueType
 	{
 	public:
-		enum class DisplayType { Number, Select, };
+		ValueType() {}
 
-		ValueType(DisplayType type, int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1, int coarseSteps = 10) : _inputParams{ defaultOffset, defaultScale }, _min(min), _max(max), _deltaMult(deltaMult), _coarseSteps(coarseSteps) {}
-
-		virtual float ToFloat(int val) const { return static_cast<float>(val); }
 		virtual std::string ToString(int val) const = 0;
 		virtual int FromString(const std::string& str) const = 0;
+	};
+	using ValueTypePtr = std::unique_ptr<ValueType>;
+
+	class NumberValueType : public ValueType
+	{
+	public:
+		enum class DisplayType { Number, Select, };
+
+		NumberValueType(DisplayType type, int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1, int coarseSteps = 10) : _inputParams{ defaultOffset, defaultScale }, _min(min), _max(max), _deltaMult(deltaMult), _coarseSteps(coarseSteps) {}
+
+		virtual float ToFloat(int val) const { return static_cast<float>(val); }
 		
 		int AddDelta(int val, int delta, bool coarse) const;
 		const InputParams& GetDefault() const { return _inputParams; }
@@ -30,20 +38,20 @@ namespace Model
 		int _min, _max, _deltaMult, _coarseSteps;
 		InputParams _inputParams;
 	};
-	using ValueTypePtr = std::unique_ptr<ValueType>;
+	using NumberValueTypePtr = std::unique_ptr<NumberValueType>;
 
-	class TimeValueType : public ValueType
+	class TimeValueType : public NumberValueType
 	{
 	public:
-		TimeValueType(int defaultOffset) : ValueType(DisplayType::Number, defaultOffset, defaultOffset, 0, 100000, 10) {}
+		TimeValueType(int defaultOffset) : NumberValueType(DisplayType::Number, defaultOffset, defaultOffset, 0, 100000, 10) {}
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
 	};
 
-	class PercentValueType : public ValueType
+	class PercentValueType : public NumberValueType
 	{
 	public:	
-		PercentValueType(int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1, int coarseSteps = 10) : ValueType(DisplayType::Number, defaultOffset, defaultScale, min, max, deltaMult, coarseSteps) {}
+		PercentValueType(int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1, int coarseSteps = 10) : NumberValueType(DisplayType::Number, defaultOffset, defaultScale, min, max, deltaMult, coarseSteps) {}
 		virtual float ToFloat(int val) const override;
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
@@ -55,10 +63,10 @@ namespace Model
 		PitchValueType() : PercentValueType(0, 100, -12700, 12700, 100, 12) {}
 	};
 
-	class IntValueType : public ValueType
+	class IntValueType : public NumberValueType
 	{
 	public:
-		IntValueType(int defaultOffset, int defaultScale, int min, int max) : ValueType(DisplayType::Number, defaultOffset, defaultScale, min, max) {}
+		IntValueType(int defaultOffset, int defaultScale, int min, int max) : NumberValueType(DisplayType::Number, defaultOffset, defaultScale, min, max) {}
 		virtual std::string ToString(int val) const override;
 		virtual int FromString(const std::string& str) const override;
 	};

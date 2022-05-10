@@ -113,7 +113,7 @@ BufferPtr GraphExporter::ExportValues(int moduleID, Tag pinID)
 
 void GraphExporter::WriteValues(const Module& mod, const PinType& input)
 {
-	if (input.GetValueType())
+	if (const auto* valDef = dynamic_cast<const Model::NumberValueType*>(input.GetValueType()))
 	{
 		Add(Engine::CommandType::SetInputParams);
 		Add(mod.IsInstanced(_graph));
@@ -121,7 +121,7 @@ void GraphExporter::WriteValues(const Module& mod, const PinType& input)
 		Add(input.GetEngineID());
 
 		const InputParams params = *mod.FindInputParams(input.GetID());
-		AddFloat(input.GetValueType()->ToFloat(params.offset));
-		AddFloat(input.GetValueType()->ToFloat(params.scale));
+		AddFloat(valDef->ToFloat(params.offset));
+		AddFloat(valDef->ToFloat(params.scale));
 	}
 }

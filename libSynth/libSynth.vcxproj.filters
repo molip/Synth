@@ -134,6 +134,9 @@
     <ClInclude Include="..\Engine\CrushModule.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Engine\SequenceModule.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Model\Module.cpp">
@@ -227,6 +230,9 @@
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Engine\CrushModule.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Engine\SequenceModule.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>

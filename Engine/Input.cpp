@@ -89,6 +89,11 @@ void Process(byte data)
 			_command = new SetInputParamsCommand(graph);
 			break;
 
+		case CommandType::SetFieldParams:
+			SERIAL_PRINTLN("CommandType::SetFieldParamsCommand");
+			_command = new SetFieldParamsCommand(graph);
+			break;
+
 		case CommandType::StartGraph: 
 		{
 			SERIAL_PRINTLN("CommandType::StartGraph");

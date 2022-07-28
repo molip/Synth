@@ -14,6 +14,7 @@
 #include "DelayModule.h"
 #include "ArpeggiatorModule.h"
 #include "KnobModule.h"
+#include "SequenceModule.h"
 
 using namespace Engine;
 
@@ -112,6 +113,7 @@ void Graph::AddModule(ModuleType type)
 	case ModuleType::Crush: mod = new CrushModule; break;
 	case ModuleType::Delay: mod = new DelayModule; break;
 	case ModuleType::Knob: mod = knobMod = new KnobModule(); break;
+	case ModuleType::Sequence: mod = new SequenceModule(); break;
 	default: return;
 	}
 

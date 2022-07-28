@@ -14,7 +14,7 @@ namespace Model
 	class ValueType
 	{
 	public:
-		enum class DisplayType { Number, Select, };
+		enum class DisplayType { Number, Select, String };
 
 		ValueType(DisplayType type, int defaultOffset, int defaultScale, int min, int max, int deltaMult = 1, int coarseSteps = 10) : _inputParams{ defaultOffset, defaultScale }, _min(min), _max(max), _deltaMult(deltaMult), _coarseSteps(coarseSteps) {}
 
@@ -67,6 +67,14 @@ namespace Model
 	{
 	public:
 		BoolValueType(bool default) : IntValueType(default, 1, 0, 1) {}
+	};
+
+	class StringValueType : public ValueType
+	{
+	public:
+		StringValueType(int defaultOffset, int defaultScale, int min, int max) : ValueType(DisplayType::Number, defaultOffset, defaultScale, min, max) {}
+		virtual std::string ToString(int val) const override;
+		virtual int FromString(const std::string& str) const override;
 	};
 
 }

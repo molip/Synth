@@ -38,7 +38,7 @@ Model::Rect ModuleIkon::GetLabelRect() const
 Model::Rect ModuleIkon::GetRect() const
 {
 	Model::Rect rect = GetLabelRect();
-	const int pinCount = (int)std::max(_module.GetDef().GetOutputs().size(), _module.GetDef().GetInputs().size());
+	const int pinCount = (int)_module.GetDef().GetFields().size() + (int)std::max(_module.GetDef().GetOutputs().size(), _module.GetDef().GetInputs().size());
 	rect.Bottom() += pinCount * (PinHeight + PinGap) + PinGap;
 	return rect;
 }
@@ -62,13 +62,54 @@ const ModuleIkon::Pin* ModuleIkon::FindPin(Model::Tag id, bool output)
 	return nullptr;
 }
 
+const ModuleIkon::Field* ModuleIkon::FindField(Model::Tag id)
+{
+	for (auto& field : _fields)
+		if (field.id == id)
+			return &field;
+
+	return nullptr;
+}
+
 const std::vector<ModuleIkon::Pin>& ModuleIkon::GetPins(bool outputs) const
 {
-	CreatePins(outputs);
+	Populate();
 	return outputs ? _outputs : _inputs;
 }
 
-void ModuleIkon::CreatePins(bool outputs) const
+const std::vector<ModuleIkon::Field>& ModuleIkon::GetFields() const 
+{
+	Populate();
+	return _fields; 
+}
+
+void ModuleIkon::Populate() const
+{
+	if (_fields.empty() && _inputs.empty() && _outputs.empty())
+	{
+		const int top = CreateFields();
+		CreatePins(false, top);
+		CreatePins(true, top);
+	}
+}
+
+int ModuleIkon::CreateFields() const
+{
+	const Model::Rect& modRect = GetLabelRect();
+	Model::Rect rect(modRect.Left(), modRect.Bottom(), modRect.Right(), modRect.Bottom() + PinHeight);
+	
+	for (const auto& fieldDef : _module.GetDef().GetFields())
+	{
+		const Model::FieldParams params = _module.FindFieldParams(fieldDef->GetID());
+
+		_fields.push_back({ rect, fieldDef->GetID(), params.content});
+		rect.Offset(0, PinHeight + PinGap);
+	}
+
+	return rect.Top();
+}
+
+void ModuleIkon::CreatePins(bool outputs, int top) const
 {
 	const auto& pinDefs = outputs ? _module.GetDef().GetOutputs() : _module.GetDef().GetInputs();
 	if (pinDefs.empty())
@@ -82,8 +123,6 @@ void ModuleIkon::CreatePins(bool outputs) const
 
 	if (!pinDefs.empty())
 	{
-		const int top = modRect.Bottom();
-
 		Model::Rect connectionRect(modRect.Left() + 1 - ConnectionWidth, top, modRect.Left(), top + PinHeight);
 		Model::Rect labelRect(modRect.Left(), top, modRect.Left() + LabelWidth, top + PinHeight);
 		Model::Rect offsetRect(labelRect.Right(), top, labelRect.Right() + ValueWidth, top + PinHeight);
@@ -99,8 +138,6 @@ void ModuleIkon::CreatePins(bool outputs) const
 		for (auto& pinDef : pinDefs)
 		{
 			Pin pin{ pinDef->GetName(), labelRect, connectionRect, offsetRect, scaleRect, outputs, pinDef->IsMulti() ? Colour::Red : Colour::Blue, pinDef->GetID() };
-
-			int pitch = PinHeight + PinGap;
 
 			if (pinDef->IsMonitor())
 			{
@@ -123,6 +160,7 @@ void ModuleIkon::CreatePins(bool outputs) const
 
 			pins.push_back(pin);
 
+			const int pitch = PinHeight + PinGap;
 			connectionRect.Offset(0, pitch);
 			labelRect.Offset(0, pitch);
 			offsetRect.Offset(0, pitch);

@@ -5,6 +5,8 @@
 #include "Model/Module.h"
 #include "Model/ModuleTypes.h"
 
+#include "../libKernel/Debug.h"
+
 using namespace Synth;
 using namespace Synth::Model;
 
@@ -88,6 +90,9 @@ BufferPtr GraphExporter::Export(byte polyphony)
 		for (auto& input : mod->GetDef().GetInputs())
 			WriteValues(*mod, *input);
 
+		for (auto& field : mod->GetDef().GetFields())
+			WriteField(*mod, *field);
+
 		for (auto& output : mod->GetDef().GetOutputs())
 		{
 			if (output->IsMonitor())
@@ -107,7 +112,13 @@ BufferPtr GraphExporter::Export(byte polyphony)
 BufferPtr GraphExporter::ExportValues(int moduleID, Tag pinID)
 {
 	auto& mod = *_graph.FindModule(moduleID);
-	WriteValues(mod, mod.GetInputDef(pinID));
+	if (const Model::PinType* pin = mod.GetDef().GetInput(pinID))
+		WriteValues(mod, *pin);
+	else if (const Model::FieldType* field = mod.GetDef().GetField(pinID))
+		WriteField(mod, *field);
+	else
+		KERNEL_FAIL;
+
 	return std::move(_buffer);
 }
 
@@ -124,4 +135,39 @@ void GraphExporter::WriteValues(const Module& mod, const PinType& input)
 		AddFloat(input.GetValueType()->ToFloat(params.offset));
 		AddFloat(input.GetValueType()->ToFloat(params.scale));
 	}
+}
+
+void GraphExporter::WriteField(const Module& mod, const FieldType& field)
+{
+	Add(Engine::CommandType::SetFieldParams);
+	Add(_modIndices[mod.GetID()]);
+	Add(field.GetEngineID());
+
+	const FieldParams params = mod.FindFieldParams(field.GetID());
+
+	std::vector<byte> data;
+	bool doing = false;
+	for (char c : params.content)
+	{
+		if (std::isdigit(c))
+		{
+			const byte n = c - '0';
+			if (doing)
+			{
+				data.back() = data.back() * 10 + n;
+			}
+			else
+			{
+				doing = true;
+				data.push_back(n);
+			}
+		}
+		else 
+			doing = false;
+	}
+
+	Add(static_cast<byte>(data.size()));
+
+	for (byte n : data)
+		Add(n);
 }

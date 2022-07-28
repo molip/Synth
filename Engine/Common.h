@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Maths, LFO, Crush, Delay, Multiply, Knob, _Count };
+enum class ModuleType { None, MIDI, Envelope, Oscillator, PolyMixer, Mixer, Target, Filter, Maths, LFO, Crush, Delay, Multiply, Knob, Sequence, _Count };
 
 namespace Pin
 {
@@ -69,8 +69,14 @@ namespace Pin
 		namespace Input { enum Type { _Count = 8 }; }
 		namespace Output { enum Type { _Count = 8 }; }
 	}
+	namespace Sequence
+	{
+		namespace Input { enum Type { Pitch, _Count }; }
+		namespace Output { enum Type { Value, Gate, _Count }; }
+		namespace Field { enum Type { Sequence, _Count }; }
+	}
 }
-enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, AddMonitor, EndGraph, SetInputParams, SetMIDIData, SetAllNotesOn, StopMIDIPlayback, MIDIInput, Settings };
+enum class CommandType { StartGraph, InitGraph, AddMonoModule, AddPolyModule, AddConnection, AddMonitor, EndGraph, SetInputParams, SetFieldParams, SetMIDIData, SetAllNotesOn, StopMIDIPlayback, MIDIInput, Settings };
 enum class Error { None, UnknownCommandType, InvalidParameter, TooManyParameters, PinTypeMismatch, GraphAlreadyStarted };
 
 enum class ConnectionType { None, Single, Multi, _Count };

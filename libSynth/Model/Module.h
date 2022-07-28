@@ -16,6 +16,7 @@ namespace Model
 	class Module;
 	class ModuleType;
 	class PinType;
+	class FieldType;
 
 	struct PinRef
 	{
@@ -40,17 +41,29 @@ namespace Model
 		void Load(Serial::LoadNode& node);
 	};
 
+	struct FieldParams
+	{
+		std::string content;
+
+		bool operator ==(const FieldParams& rhs) const;
+		void Save(Serial::SaveNode& node) const;
+		void Load(Serial::LoadNode& node);
+	};
+
 	class Module
 	{
 	public:
 		using ConnectionMap = std::map<Tag, PinRef>;
 		using InputParamsMap = std::map<Tag, InputParams>;
+		using FieldParamsMap = std::map<Tag, FieldParams>;
 
 		Module(Tag type = "");
 
 		const ModuleType& GetDef() const;
 		const PinType& GetInputDef(Tag type) const;
 		const PinType& GetOutputDef(Tag type) const;
+		const FieldType& GetFieldDef(Tag type) const;
+		
 		const Module& GetSourceModule(const PinRef& pin, const Graph& graph) const;
 		const PinType& GetSourceOutputDef(const PinRef& pin, const Graph& graph) const;
 
@@ -59,6 +72,9 @@ namespace Model
 		
 		void SetInputParams(Tag inputType, InputParams params);
 		const InputParams* FindInputParams(Tag type) const;
+
+		void SetFieldParams(Tag fieldType, FieldParams params);
+		FieldParams FindFieldParams(Tag type) const;
 
 		bool IsInstanced(const Graph& graph) const;
 		bool IsDependentOn(int modID, const Graph& graph) const;
@@ -91,6 +107,7 @@ namespace Model
 		Tag _type;
 		ConnectionMap _connections;
 		InputParamsMap _inputParams;
+		FieldParamsMap _fieldParams;
 		Point _position;
 	};
 }

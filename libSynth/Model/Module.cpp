@@ -38,6 +38,22 @@ bool InputParams::operator ==(const InputParams& rhs) const
 }
 
 
+void FieldParams::Save(Serial::SaveNode& node) const
+{
+	node.SaveType("content", content);
+}
+
+void FieldParams::Load(Serial::LoadNode& node)
+{
+	node.LoadType("content", content);
+}
+
+bool FieldParams::operator ==(const FieldParams& rhs) const
+{
+	return rhs.content == content;
+}
+
+
 Module::Module(Tag type) : _type(type)
 {
 }
@@ -55,6 +71,11 @@ const PinType& Module::GetInputDef(Tag type) const
 const PinType& Module::GetOutputDef(Tag type) const
 {
 	return *GetDef().GetOutput(type);
+}
+
+const FieldType& Module::GetFieldDef(Tag type) const
+{
+	return *GetDef().GetField(type);
 }
 
 const Module& Module::GetSourceModule(const PinRef& pin, const Graph& graph) const
@@ -91,6 +112,20 @@ const InputParams* Module::FindInputParams(Tag type) const
 		return &it->second;
 
 	return GetDefaultInputParams(type);
+}
+
+void Module::SetFieldParams(Tag fieldType, FieldParams params)
+{
+	_fieldParams[fieldType] = params;
+}
+
+FieldParams Module::FindFieldParams(Tag type) const
+{
+	auto it = _fieldParams.find(type);
+	if (it != _fieldParams.end())
+		return it->second;
+
+	return {};
 }
 
 const InputParams* Module::GetDefaultInputParams(Tag type) const
@@ -160,6 +195,7 @@ void Module::Load(Serial::LoadNode& node)
 	node.LoadType("type", _type);
 	node.LoadType("position", _position);
 	node.LoadMap("connections", _connections, Serial::TypeLoader(), Serial::ClassLoader());
+	node.LoadMap("field_params", _fieldParams, Serial::TypeLoader(), Serial::ClassLoader());
 	
 	if (!node.LoadMap("input_params", _inputParams, Serial::TypeLoader(), Serial::ClassLoader()))
 	{
@@ -186,6 +222,7 @@ void Module::Save(Serial::SaveNode& node) const
 	node.SaveType("position", _position);
 	node.SaveMap("connections", _connections, Serial::TypeSaver(), Serial::ClassSaver());
 	node.SaveMap("input_params", _inputParams, Serial::TypeSaver(), Serial::ClassSaver());
+	node.SaveMap("field_params", _fieldParams, Serial::TypeSaver(), Serial::ClassSaver());
 }
 
 Module::ConnectionUndo Module::AddConnection(Tag inputType, PinRef outputPin)

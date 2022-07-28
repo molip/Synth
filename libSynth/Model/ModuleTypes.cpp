@@ -97,6 +97,12 @@ ModuleTypes::ModuleTypes()
 		_types.back().AddInput(std::make_unique<PinType>(Kernel::FormatString("rem%0", i), Kernel::FormatString("Remote %0", i), PinType::ConnectionType::Single, i)).SetValueType(std::make_unique<PercentValueType>(0, 0, 0, 100, 5));
 		_types.back().AddOutput(std::make_unique<PinType>(Kernel::FormatString("val%0", i), Kernel::FormatString("Value %0", i), PinType::ConnectionType::Single, i));
 	}
+
+	_types.emplace_back("sqnc", "Sequence", Engine::ModuleType::Sequence);
+	_types.back().AddField(std::make_unique<FieldType>("sqnc", Engine::Pin::Sequence::Field::Sequence));
+	_types.back().AddInput(std::make_unique<PinType>("ptch", "Pitch", PinType::ConnectionType::Single, Engine::Pin::Sequence::Input::Pitch)).SetValueType(std::make_unique<PitchValueType>());
+	_types.back().AddOutput(std::make_unique<PinType>("valu", "Value", PinType::ConnectionType::Single, Engine::Pin::Sequence::Output::Value));
+	_types.back().AddOutput(std::make_unique<PinType>("gate", "Gate", PinType::ConnectionType::Single, Engine::Pin::Sequence::Output::Gate));
 }
 	
 const ModuleType* ModuleTypes::Find(Tag id)

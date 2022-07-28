@@ -82,3 +82,19 @@ void SetInputParamsCommand::Undo()
 	mod->SetInputParams(_pinID, _oldValue);
 	_graph.SendNotification(ValueChangedNotification(_modID, _pinID));
 }
+
+
+void SetFieldParamsCommand::Do()
+{
+	Module* mod = _graph.FindModule(_modID);
+	_oldValue = mod->FindFieldParams(_pinID);
+	mod->SetFieldParams(_pinID, _value);
+	_graph.SendNotification(ValueChangedNotification(_modID, _pinID));
+}
+
+void SetFieldParamsCommand::Undo()
+{
+	Module* mod = _graph.FindModule(_modID);
+	mod->SetFieldParams(_pinID, _oldValue);
+	_graph.SendNotification(ValueChangedNotification(_modID, _pinID));
+}

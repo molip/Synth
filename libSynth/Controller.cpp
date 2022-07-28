@@ -123,6 +123,12 @@ void Controller::OnLButtonDown(Model::Point point)
 			auto connectionPoint = ModuleIkon(module, false, *_graph).FindPin(_selection.pinID, false)->GetConnectionPoint();
 			_liveConnection = std::make_unique<Connection>(connectionPoint, point);
 		}
+		else if (_selection.element == Selection::Element::Field)
+		{
+			const Model::FieldParams params = module.FindFieldParams(_selection.pinID);
+			_view->StartValueEdit(elementRect, params.content);
+			return;
+		}
 		else
 		{
 			Model::InputParams params = *module.FindInputParams(_selection.pinID);
@@ -193,6 +199,22 @@ void Synth::UI::Controller::SetInputParams(Selection& sel, std::function<int(con
 	}
 }
 
+void Synth::UI::Controller::SetFieldParams(Selection& sel, const std::string& content)
+{
+	KERNEL_ASSERT(sel.element == Selection::Element::Field);
+
+	auto& module = *_graph->FindModule(sel.moduleID);
+	const auto& def = module.GetFieldDef(sel.pinID);
+
+	Model::FieldParams params = module.FindFieldParams(sel.pinID);
+
+	if (content != params.content) // TODO: Command::IsNull.
+	{
+		params.content = content;
+		_commandStack->Do(std::make_unique<SetFieldParamsCommand>(sel.moduleID, sel.pinID, params, *_graph));
+	}
+}
+
 void Synth::UI::Controller::OnMouseWheel(Model::Point point, bool negative, bool coarse)
 {
 	auto sel = HitTest(point);
@@ -225,10 +247,13 @@ void Controller::ExportRawMIDI(Buffer&& buffer)
 
 void Synth::UI::Controller::CommitValueEdit(const std::string& text)
 {
-	SetInputParams(_selection, [&](const Model::ValueType& valDef, int oldVal)
-	{
-		return valDef.FromString(text);
-	});
+	if (_selection.element == Selection::Element::Field)
+		SetFieldParams(_selection, text);
+	else
+		SetInputParams(_selection, [&](const Model::ValueType& valDef, int oldVal)
+		{
+			return valDef.FromString(text);
+		});
 
 	_view->InvalidateAll();
 }
@@ -238,6 +263,25 @@ Controller::Selection Controller::HitTest(Model::Point point, Model::Rect* eleme
 	Selection sel;
 	for (auto& ikon : GetModuleIkons(true))
 	{
+		auto HitTestFields = [&] ()
+		{
+			for (auto& field : ikon.GetFields())
+			{
+				if (field.rect.Contains(point))
+				{
+					sel.pinID = field.id;
+					sel.moduleID = ikon.GetModuleID();
+					sel.element = Selection::Element::Field;
+
+					if (elementRect)
+						*elementRect = field.rect;
+
+					return true;
+				}
+			}
+			return false;
+		};
+
 		auto HitTestPins = [&] (bool output)
 		{
 			for (auto& pin : output ? ikon.GetOutputPins() : ikon.GetInputPins())
@@ -271,6 +315,9 @@ Controller::Selection Controller::HitTest(Model::Point point, Model::Rect* eleme
 			}
 			return false;
 		};
+
+		if (HitTestFields())
+			break;
 
 		if (HitTestPins(false))
 			break;

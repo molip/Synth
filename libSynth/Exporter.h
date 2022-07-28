@@ -15,6 +15,7 @@ namespace Model
 	class Graph;
 	class Module;
 	class PinType;
+	class FieldType;
 	struct PinRef;
 
 	class Exporter
@@ -46,6 +47,7 @@ namespace Model
 		void Add(Engine::ModuleType data) { Add((byte)data); }
 
 		void WriteValues(const Module& mod, const PinType& input);
+		void WriteField(const Module& mod, const FieldType& field);
 
 		const Graph& _graph;
 		byte _monoModCount = 0;

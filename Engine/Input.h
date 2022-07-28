@@ -221,6 +221,46 @@ namespace RemoteInput
 		Value<uint32_t> _offset, _scale;
 	};
 
+	class SetFieldParamsCommand : public Command
+	{
+	public:
+		SetFieldParamsCommand(Graph* graph) : Command(graph) {}
+		virtual Error AddData(byte data) override
+		{
+			if (_modIndex < 0)
+				_modIndex = data;
+			else if (_fieldIndex < 0)
+				_fieldIndex = data;
+			else if (_length < 0)
+			{
+				_length = data;
+				_values = new Field::DataType;
+				_values->Reserve(_length);
+			}
+			else if (_values->GetSize() < _length)
+				_values->Push(data);
+			else
+				return Error::TooManyParameters;
+
+			return Error::None;
+		}
+
+		virtual bool Execute() const override
+		{
+			if (!_values || _values->GetSize() < _length)
+				return false;
+
+			_graph->GetMonoModule(_modIndex)->GetFields()[_fieldIndex].AttachData(_values);
+			return true;
+		}
+
+	protected:
+		int _modIndex = -1;
+		int _fieldIndex = -1;
+		int _length = -1;
+		Field::DataType* _values = nullptr;
+	};
+
 	class SetMIDIDataCommand : public Command
 	{
 	public:

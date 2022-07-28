@@ -42,6 +42,20 @@ namespace Model
 	};		
 	using PinTypePtr = std::unique_ptr<PinType>;
 
+	class FieldType
+	{
+	public:
+		FieldType(Tag id, int engineID) : _id(id), _engineID(engineID) {}
+
+		Tag GetID() const { return _id; }
+		int GetEngineID() const { return _engineID; }
+	
+	private:
+		Tag _id;
+		int _engineID;
+	};		
+	using FieldTypePtr = std::unique_ptr<FieldType>;
+
 	class ModuleType
 	{
 	public:
@@ -49,6 +63,7 @@ namespace Model
 	
 		PinType& AddInput(PinTypePtr input) { _inputs.push_back(std::move(input)); return *_inputs.back(); }
 		PinType& AddOutput(PinTypePtr output) { _outputs.push_back(std::move(output));  return *_outputs.back(); }
+		FieldType& AddField(FieldTypePtr field) { _fields.push_back(std::move(field));  return *_fields.back(); }
 
 		Tag GetID() const { return _id; }
 		const std::string& GetName() const { return _name; }
@@ -70,14 +85,24 @@ namespace Model
 			return nullptr;
 		}
 
+		const FieldType* GetField(Tag id) const
+		{
+			for (auto& field : _fields)
+				if (field->GetID() == id)
+					return field.get();
+			return nullptr;
+		}
+
 		const std::vector<PinTypePtr>& GetInputs() const { return _inputs; }
 		const std::vector<PinTypePtr>& GetOutputs() const { return _outputs; }
+		const std::vector<FieldTypePtr>& GetFields() const { return _fields; }
 
 	private:
 		Tag _id;
 		std::string _name;
 		Engine::ModuleType _engineID;
 		std::vector<PinTypePtr> _inputs, _outputs;
+		std::vector<FieldTypePtr> _fields;
 	};
 
 	class ModuleTypes

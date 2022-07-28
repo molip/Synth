@@ -79,7 +79,7 @@ namespace Synth
 		public:
 			int moduleID = 0;
 			Model::Tag pinID;
-			enum class Element { None, Input, Output, Offset, Scale } element {};
+			enum class Element { None, Input, Output, Offset, Scale, Field } element {};
 		};
 
 		// GraphObserver 
@@ -94,6 +94,7 @@ namespace Synth
 		bool DoExport(byte polyphony) const;
 		int& GetInputParamsValue(Model::InputParams& params, Selection::Element element) const;
 		void SetInputParams(Selection& sel, std::function<int(const Model::ValueType&, int)> fn);
+		void SetFieldParams(Selection& sel, const std::string& content);
 		void ExportSettings() const;
 
 		View* _view = nullptr;

@@ -111,4 +111,19 @@ namespace Synth
 		Model::InputParams _value;
 		Model::InputParams _oldValue;
 	};
+	
+	class SetFieldParamsCommand : public GraphCommand
+	{
+	public:
+		SetFieldParamsCommand(int modID, Model::Tag pinID, Model::FieldParams value, Model::Graph& graph) : GraphCommand(graph), _modID(modID), _pinID(pinID), _value(value) {}
+
+		virtual void Do();
+		virtual void Undo();
+	
+	protected:
+		int _modID;
+		Model::Tag _pinID;
+		Model::FieldParams _value;
+		Model::FieldParams _oldValue;
+	};
 }

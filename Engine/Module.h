@@ -83,6 +83,30 @@ private:
 	float _scale = 1;
 };
 
+class Field
+{
+public:
+	Field() = default;
+	Field(const Field&) = delete;
+
+	using DataType = Array<uint8_t>;
+
+	void AttachData(DataType* data)
+	{
+		delete _data;
+		_data = data;
+		_changed = true;
+	}
+
+	const DataType* GetData() const { return _data; }
+	bool HasChanged() const { return _changed; }
+	void ResetChanged() { _changed = false; }
+
+private:
+	bool _changed = true;
+	DataType* _data = nullptr;
+};
+
 inline void Output::SetValue(float val, bool forceChanged)
 {
 	if (forceChanged || val != _value)
@@ -112,11 +136,15 @@ public:
 	template<typename T> Array<T>& GetPins();
 	template<typename T> Array<Array<T>>& GetMultiPins();
 
+	Array<Field>& GetFields() { return _fields; }
+
 protected:
 	Array<Output> _outputs;
 	Array<MultiOutput> _multiOutputs;
 
 	Array<Input> _inputs;
 	Array<MultiInput> _multiInputs;
+
+	Array<Field> _fields;
 };
 }
